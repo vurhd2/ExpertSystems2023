@@ -5,7 +5,7 @@
 * Date of Creation: 1/20/23 
 * 
 * Description of Module:
-* Provides a user interface for calculating and returning the factorial 
+* Provides a user interface for calculating and outputting the factorial 
 * of a whole number, truncating the decimal places if a positive decimal is entered.
 *
 * Publicly Accessible Functions:
@@ -48,7 +48,7 @@
 
 /*
 * Provides a user interface for calculating the factorial of a whole number
-* and returns (if valid) the factorial of the inputted number.
+* and outputs (if valid) the factorial of the inputted number.
 * If num is a positive decimal number, the decimal places will be truncated.
 * @return         nil
 */
