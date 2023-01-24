@@ -50,7 +50,7 @@
 * Provides a user interface for calculating the factorial of a whole number
 * and returns (if valid) the factorial of the inputted number.
 * If num is a positive decimal number, the decimal places will be truncated.
-* @return         the factorial of the inputted (valid) number
+* @return         nil
 */
 (deffunction factorial ()
    (bind ?question "What whole number do you want to calculate the factorial of")
@@ -72,7 +72,7 @@
          (print ?validInt)
          (print " is ")
          (printline ?result)
-      )
+      )        ; if (< ?input 0) then
    )           ; if (not ?isNum) then
    
    (return)
