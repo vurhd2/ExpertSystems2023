@@ -13,7 +13,7 @@
 */
 
 /*
-* Casts and returns the integer parameter to a long if not already one,
+* Casts and returns the whole number parameter to a long if not already one,
 * circumventing crashes caused by casting a long to a long
 * @num            the number to cast to a long 
 * @precondition   num must be of a valid number data type
@@ -27,7 +27,6 @@
    )
 
    (return ?result)
-
 )              ; deffunction castLong (?num)
 
 /*
@@ -44,12 +43,13 @@
    )
 
    (return ?result)
-)
+)              ; deffunction fact (?num)
 
 /*
 * Provides a user interface for calculating the factorial of a whole number
 * and outputs (if valid) the factorial of the inputted number.
 * If num is a positive decimal number, the decimal places will be truncated.
+* If the inputted value is invalid, the program will be ended.
 * @return         nil
 */
 (deffunction factorial ()
@@ -58,12 +58,10 @@
    (bind ?isNum (numberp ?input))
 
    (if (not ?isNum) then
-      (printline "A number was not entered. Restarting program.")
-      (factorial)
+      (printline "Inputted value is not a number. Ending program.")
     else 
       (if (< ?input 0) then
-         (printline "Inputted number was less than zero. Restarting program.")
-         (factorial)
+         (printline "Inputted number was less than zero. Ending program.")
        else
          (bind ?validInt (castLong ?input))
          (bind ?result (fact ?validInt))
