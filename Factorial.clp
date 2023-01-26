@@ -7,6 +7,8 @@
 * Description of Module:
 * Provides a user interface for calculating and outputting the factorial 
 * of a whole number, truncating the decimal places if a positive decimal is entered.
+* Due to long data type limitations, an inaccurate value for inputs >= 21 
+* will be outputted.
 *
 * Publicly Accessible Functions:
 * factorial
@@ -16,7 +18,7 @@
 * Casts and returns the whole number parameter to a long if not already one,
 * circumventing crashes caused by casting a long to a long
 * @num            the number to cast to a long 
-* @precondition   num must be of a valid number data type
+* @precondition   num must be of a valid numerical data type
 * @return         num casted to a long form    
 */
 (deffunction castLong (?num)
@@ -30,10 +32,10 @@
 )              ; deffunction castLong (?num)
 
 /*
-* Returns the factorial of the given integer parameter
-* @num            the integer to calculate the factorial of
-* @precondition   num must be a whole number   
-* @return         the factorial of num
+* Returns the factorial of the given number parameter
+* @num            the number to calculate the factorial of
+* @precondition   num must be a positive number (including zero)  
+* @return         the factorial of num (truncating num's decimal places if any)
 */
 (deffunction fact (?num)
    (if (= ?num 0) then
@@ -48,7 +50,8 @@
 /*
 * Provides a user interface for calculating the factorial of a whole number
 * and outputs (if valid) the factorial of the inputted number.
-* If num is a positive decimal number, the decimal places will be truncated.
+* If num is a positive decimal number, it will be treated as if
+* the decimal places were truncated.
 * If the inputted value is invalid, the program will be ended.
 * @return         nil
 */
