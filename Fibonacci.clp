@@ -20,14 +20,13 @@
 
    (if (> ?num 2) then
       (for (bind ?index 3) (<= ?index ?num) (++ ?index)
-         (bind ?fibNum1 (nth$ (- ?index 2) ?fibNums)) ; get the number two indexes before
-         (printline ?fibNum1)
-         (bind ?fibNum2 (nth$ (- ?index 1) ?fibNums)) ; get the number one index before
-         (printline ?fibNum2)
-         (bind ?fibNumAdded (+ ?fibNum1 ?fibNum2))    ; combine the two to get the new fibonacci number
-         (printline ?fibNumAdded)
-         (bind ?fibNums (insert$ ?fibNums ?fibNumAdded))              ; add the new number to the list
-         (printline ?fibNums)
+         (bind ?fibNum1 (nth$ (- ?index 2) ?fibNums))             ; get the number two indexes before
+
+         (bind ?fibNum2 (nth$ (- ?index 1) ?fibNums))             ; get the number one index before
+
+         (bind ?fibNumAdded (+ ?fibNum1 ?fibNum2))                ; combine the two to get the new fibonacci number
+
+         (bind ?fibNums (insert$ ?fibNums ?index ?fibNumAdded))   ; add the new number to the list
       )
     else
       (if (= num 1) then
@@ -38,7 +37,7 @@
    )  ; if (> ?num 2)
 
    (return ?fibNums)
-)     ; deffunction fibo (?num)
+)  ; deffunction fibo (?num)
 
 /*
 * Determines whether the inputted number is valid
@@ -55,7 +54,7 @@
    )
 
    (return ?valid)
-)     ; deffunction isValid (?num)
+)  ; deffunction isValid (?num)
 
 /*
 * Takes in a numerical parameter and returns a list of 
@@ -71,7 +70,7 @@
    )
 
    (return ?result)
-)     ; deffunction fibonacci (?num)
+)  ; deffunction fibonacci (?num)
 
 /*
 * Provides a user interface for intaking a given length
@@ -84,7 +83,7 @@
 
    (bind ?result (fibonacci ?input))
 
-   (if (= ?result FALSE) then
+   (if (and (not (listp ?result)) (= ?result FALSE)) then
       (printline "Inputted length was not a whole number (integer >= 0). Ending program")
     else
       (print "Here is your list of fibonacci numbers: ")
