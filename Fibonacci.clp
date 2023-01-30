@@ -3,7 +3,13 @@
 /*
 * Author: Dhruv Aron 
 * Date of Creation: 1/26/23
+* 
 * Description of Module: 
+* Provides a user interface for calculating and outputting a list of fibonacci numbers 
+* of an inputted length, provided the inputted length is a whole number (longs are included).
+*
+* Publicly Accessible Functions:
+* fib
 */
 
 /*
@@ -11,7 +17,7 @@
 * determined by the inputted length parameter
 * @param num      the number of fibonacci numbers to return 
 *                 (length of the returned list)
-* @precondition   num >= 0
+* @precondition   num is a whole number (longs are acceptable)
 * @return         a list containing the given number of
 *                 fibonacci numbers
 */
@@ -29,12 +35,14 @@
          (bind ?fibNums (insert$ ?fibNums ?index ?fibNumAdded))   ; add the new number to the list
       )
     else
-      (if (= num 1) then
-         (bind ?fibNums (delete$ ?fibNums 1))
+      (if (= ?num 1) then
+         (bind ?fibNums (delete$ ?fibNums 1 1))                   ; only remove one of the elements
        else
-         (bind ?fibNums (delete$ ?fibNums 1 2))
+         (if (= ?num 0) then       
+            (bind ?fibNums (delete$ ?fibNums 1 2))                ; remove both of the existing elements
+         )
       )
-   )  ; if (> ?num 2)
+   )  ; if (> ?num 2) then
 
    (return ?fibNums)
 )  ; deffunction fibo (?num)
@@ -47,7 +55,7 @@
 */
 (deffunction isValid (?num)
    (bind ?valid FALSE)
-   (if (or (integerp ?num) (longp ?num)) then ; SEE IF LONGS SHOULD BE ACCEPTED
+   (if (or (integerp ?num) (longp ?num)) then
       (if (> ?num -1) then
          (bind ?valid TRUE)
       )
@@ -86,11 +94,13 @@
    (if (and (not (listp ?result)) (= ?result FALSE)) then
       (printline "Inputted length was not a whole number (integer >= 0). Ending program")
     else
-      (print "Here is your list of fibonacci numbers: ")
+      (print "Here is your list of ")
+      (print ?input)
+      (print " fibonacci numbers: ")
       (printline ?result)
-   )
+   ) 
 
    (return)
-)     ; deffunction fib ()
+)  ; deffunction fib ()
 
 (fib)
