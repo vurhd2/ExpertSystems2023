@@ -6,7 +6,7 @@
 * 
 * Description of Module: 
 * Provides a user interface for calculating and outputting a list of fibonacci numbers 
-* of an inputted length, provided the inputted length is a whole number (longs are included).
+* of an inputted length, provided the inputted length is a whole number (longs are acceptable).
 *
 * Publicly Accessible Functions:
 * fib
@@ -33,7 +33,7 @@
          (bind ?fibNumAdded (+ ?fibNum1 ?fibNum2))                ; combine the two to get the new fibonacci number
 
          (bind ?fibNums (insert$ ?fibNums ?index ?fibNumAdded))   ; add the new number to the list
-      )
+      )  ; for (bind ?index 3) (<= ?index ?num) ...
     else
       (if (= ?num 1) then
          (bind ?fibNums (delete$ ?fibNums 1 1))                   ; only remove one of the elements
@@ -48,15 +48,38 @@
 )  ; deffunction fibo (?num)
 
 /*
+* Checks only whether the given parameter is a float
+* equivalent to an integer without having to round or truncate
+*
+* Does NOT check/evaluate if the value is already of an integer 
+* data type
+* 
+* @param          the value being checked
+* @return         TRUE if num is a float and it is properly
+*                 representing an integer, otherwise FALSE
+*                 (even if num is of an integer or long data type)
+*/
+(deffunction floatIsIntRepresentation (?num)
+   (if (floatp ?num) then
+      (bind ?casted (long ?num))
+      (bind ?result (= ?num ?casted))
+    else
+      (bind ?result FALSE)
+   )
+   
+   (return ?result)
+)  ; deffunction floatIsIntRepresentation (?num)
+
+/*
 * Determines whether the inputted number is valid
 * @param num      the number being validated
-* @return         TRUE if num is an integer >= 0,
+* @return         TRUE if num represents an integer >= 0,
 *                 otherwise FALSE
 */
 (deffunction isValid (?num)
    (bind ?valid FALSE)
-   (if (or (integerp ?num) (longp ?num)) then
-      (if (> ?num -1) then
+   (if (or (integerp ?num) (longp ?num) (floatIsIntRepresentation ?num)) then
+      (if (>= ?num 0) then
          (bind ?valid TRUE)
       )
    )
@@ -82,7 +105,7 @@
 
 /*
 * Provides a user interface for intaking a given length
-* and outputting a corresponding list of fibonacci numbers
+* and outputting a corresponding list of fibonacci numbers if possible
 * @return         nil
 */
 (deffunction fib ()
@@ -92,7 +115,7 @@
    (bind ?result (fibonacci ?input))
 
    (if (and (not (listp ?result)) (= ?result FALSE)) then
-      (printline "Inputted length was not a whole number (integer >= 0). Ending program")
+      (printline "Inputted length was not a valid representation of a whole number (integer >= 0). Ending program")
     else
       (print "Here is your list of ")
       (print ?input)
