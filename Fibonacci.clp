@@ -6,7 +6,8 @@
 * 
 * Description of Module: 
 * Provides a user interface for calculating and outputting a list of fibonacci numbers 
-* of an inputted length, provided the inputted length is a whole number (longs are acceptable).
+* of an inputted length, provided the inputted length is a whole number 
+* (longs and floats accurately representing integers are acceptable).
 *
 * Publicly Accessible Functions:
 * fib
@@ -17,7 +18,7 @@
 * determined by the inputted length parameter
 * @param num      the number of fibonacci numbers to return 
 *                 (length of the returned list)
-* @precondition   num is a whole number (longs are acceptable)
+* @precondition   num is a valid representation of a whole number
 * @return         a list containing the given number of
 *                 fibonacci numbers
 */
@@ -59,7 +60,7 @@
 *                 representing an integer, otherwise FALSE
 *                 (even if num is of an integer or long data type)
 */
-(deffunction floatIsIntRepresentation (?num)
+(deffunction floatRepresentsInt (?num)
    (if (floatp ?num) then
       (bind ?casted (long ?num))
       (bind ?result (= ?num ?casted))
@@ -68,7 +69,7 @@
    )
    
    (return ?result)
-)  ; deffunction floatIsIntRepresentation (?num)
+)  ; deffunction floatRepresentsInt (?num)
 
 /*
 * Determines whether the inputted number is valid
@@ -78,7 +79,7 @@
 */
 (deffunction isValid (?num)
    (bind ?valid FALSE)
-   (if (or (integerp ?num) (longp ?num) (floatIsIntRepresentation ?num)) then
+   (if (or (integerp ?num) (longp ?num) (floatRepresentsInt ?num)) then
       (if (>= ?num 0) then
          (bind ?valid TRUE)
       )
