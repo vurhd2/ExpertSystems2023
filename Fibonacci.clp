@@ -31,7 +31,7 @@
 
          (bind ?fibNum2 (nth$ (- ?index 1) ?fibNums))             ; get the number one index before
 
-         (bind ?fibNumAdded (+ ?fibNum1 ?fibNum2))                ; combine the two to get the new fibonacci number
+         (bind ?fibNumAdded (+ ?fibNum1 ?fibNum2))                ; sum the two to get the new fibonacci number
 
          (bind ?fibNums (insert$ ?fibNums ?index ?fibNumAdded))   ; add the new number to the list
       )  ; for (bind ?index 3) (<= ?index ?num) ...
@@ -56,8 +56,8 @@
 * data type
 * 
 * @param          the value being checked
-* @return         TRUE if num is a float and it is properly
-*                 representing an integer, otherwise FALSE
+* @return         TRUE if num is a float and it properly
+*                 represents an integer, otherwise FALSE
 *                 (even if num is of an integer or long data type)
 */
 (deffunction floatRepresentsInt (?num)
