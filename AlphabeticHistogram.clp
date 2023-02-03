@@ -1,4 +1,5 @@
 (batch "utilities_v3.clp")
+;(batch AlphabeticHistogram.clp)
 
 /*
 * Author: Dhruv Aron
@@ -10,7 +11,14 @@
 * 
 */
 (deffunction slice$ (?text) ; CHECK IF ALLOWED TO USE EXPLODE
-   (return (explode$ ?text))
+   (bind ?spliced (create$))
+   (for (bind ?index 1) (<= ?index (str-length ?text)) (++ ?index)
+      (bind ?character (sub-string ?index ?index ?text))
+      (bind ?spliced (insert$ ?spliced ?index ?character))
+   )
+
+   (return ?spliced)
+   ;(return (explode$ ?text))
 )
 
 /*
