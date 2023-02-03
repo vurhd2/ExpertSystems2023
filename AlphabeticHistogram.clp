@@ -1,7 +1,4 @@
 (batch "utilities_v3.clp")
-;(batch AlphabeticHistogram.clp)
-
-; SPACES SEEM TO BE NULLIFYING EVERYTHING AFTER <----------------------------------------------------------------------------
 
 /*
 * Author: Dhruv Aron
@@ -40,7 +37,6 @@
       (bind ?spliced (insert$ ?spliced ?index ?character))
    )
 
-   (printline ?spliced)
    (return ?spliced)
 )  ; deffunction slice$ (?text)
 
@@ -58,8 +54,6 @@
       (bind ?index (member$ (upcase ?character) ?*ASCII_LIST*))
       (bind ?counts (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1)))
    )
-
-   (printline ?counts)
 
    (return ?counts)
 )  ; deffunction count (?spliced)
@@ -79,7 +73,7 @@
 */
 (deffunction histo ()
    (bind ?prompt "Please enter the text you wish to be alphabetically counted: ")
-   (bind ?input (ask ?prompt))
+   (bind ?input (askline ?prompt))
 
    (bind ?spliced (slice$ ?input))
    (bind ?counted (count ?spliced))
