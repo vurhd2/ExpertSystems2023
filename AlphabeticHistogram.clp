@@ -1,6 +1,8 @@
 (batch "utilities_v3.clp")
 ;(batch AlphabeticHistogram.clp)
 
+; SPACES SEEM TO BE NULLIFYING EVERYTHING AFTER <----------------------------------------------------------------------------
+
 /*
 * Author: Dhruv Aron
 * Date of Creation: 2/1/23
@@ -38,25 +40,32 @@
       (bind ?spliced (insert$ ?spliced ?index ?character))
    )
 
+   (printline ?spliced)
    (return ?spliced)
 )  ; deffunction slice$ (?text)
 
 /*
-* 
+* Counts 
 */
 (deffunction count (?spliced)
    (bind ?counts (create$))
 
+   (for (bind ?index 1) (<= ?index ?*Z_ASCII_INDEX*) (++ ?index)
+      (bind ?counts (insert$ ?counts ?index 0))
+   )
+
    (foreach ?character ?spliced
       (bind ?index (member$ (upcase ?character) ?*ASCII_LIST*))
-      (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1))
+      (bind ?counts (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1)))
    )
+
+   (printline ?counts)
 
    (return ?counts)
 )  ; deffunction count (?spliced)
 
 (deffunction printHisto (?counts)
-   (for (bind ?index (?*A_ASCII_INDEX*)) (<= ?index ?*Z_ASCII_INDEX*) (++ ?index)
+   (for (bind ?index ?*A_ASCII_INDEX*) (<= ?index ?*Z_ASCII_INDEX*) (++ ?index)
       (print (nth$ ?index ?*ASCII_LIST*))
       (print ": ")
       (printline (nth$ ?index ?counts))
