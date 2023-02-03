@@ -8,36 +8,76 @@
 */
 
 /*
-* 
+* The list of ASCII characters returned by asciiList$ in utilities_v3
 */
-(deffunction slice$ (?text) ; CHECK IF ALLOWED TO USE EXPLODE
+(defglobal ?*ASCII_LIST* = (asciiList$))
+
+/*
+* Index of "A" in the list returned by asciiList$ in utilities_v3
+*/
+(defglobal ?*A_ASCII_INDEX* = 66)
+
+/*
+* Index of "Z" in the list returned by asciiList$ in utilities_v3
+*/
+(defglobal ?*Z_ASCII_INDEX* = 91)
+
+/*
+* Slices the given string into a list containing each character in
+* the string within each index (in the original order)
+* @param text        the string to slice into a list
+* @precondition      text is a string
+* @return            a list containing all of the string's characters
+*                    in the same order         
+*/
+(deffunction slice$ (?text)
    (bind ?spliced (create$))
+
    (for (bind ?index 1) (<= ?index (str-length ?text)) (++ ?index)
       (bind ?character (sub-string ?index ?index ?text))
       (bind ?spliced (insert$ ?spliced ?index ?character))
    )
 
    (return ?spliced)
-   ;(return (explode$ ?text))
-)
+)  ; deffunction slice$ (?text)
 
 /*
 * 
 */
 (deffunction count (?spliced)
-   (for (bind ?index 1) (<= ?index (length$ ?spliced)) (++ ?index)
+   (bind ?counts (create$))
 
+   (foreach ?character ?spliced
+      (bind ?index (member$ (upcase ?character) ?*ASCII_LIST*))
+      (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1))
    )
-)
+
+   (return ?counts)
+)  ; deffunction count (?spliced)
+
+(deffunction printHisto (?counts)
+   (for (bind ?index (?*A_ASCII_INDEX*)) (<= ?index ?*Z_ASCII_INDEX*) (++ ?index)
+      (print (nth$ ?index ?*ASCII_LIST*))
+      (print ": ")
+      (printline (nth$ ?index ?counts))
+   )
+
+   (return)
+)  ; deffunction printHisto (?counts)
 
 /*
 * 
 */
 (deffunction histo ()
    (bind ?prompt "Please enter the text you wish to be alphabetically counted: ")
-   (bind ?input (ask (?prompt)))
+   (bind ?input (ask ?prompt))
 
    (bind ?spliced (slice$ ?input))
-   (bind ?counted )
+   (bind ?counted (count ?spliced))
+
+   (printHisto ?counted)
+
    (return)
 )  ; deffunction histo ()
+
+(histo)
