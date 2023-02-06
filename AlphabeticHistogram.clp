@@ -64,7 +64,7 @@
    )
 
    (foreach ?character ?sliced
-      (bind ?index (+ (asc (upcase ?character) ?*ASCII_LIST*) 1))
+      (bind ?index (+ (asc (upcase ?character)) 1))
       (bind ?counts (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1)))
    )
 
