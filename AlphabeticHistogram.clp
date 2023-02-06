@@ -1,7 +1,5 @@
 (batch "utilities_v4.clp")
 
- ; --------------------------------- TABs ARE SCREWING IT OVER
-
 /*
 * Author: Dhruv Aron
 * Date of Creation: 2/1/23
@@ -66,7 +64,7 @@
    )
 
    (foreach ?character ?sliced
-      (bind ?index (member$ (upcase ?character) ?*ASCII_LIST*))
+      (bind ?index (+ (asc (upcase ?character) ?*ASCII_LIST*) 1))
       (bind ?counts (replace$ ?counts ?index ?index (+ (nth$ ?index ?counts) 1)))
    )
 
