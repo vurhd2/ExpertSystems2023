@@ -53,8 +53,8 @@
 * @param sliced      a list of the sliced characters 
 *                    in the original inputted text
 * @precondition      sliced only contains ascii characters
-* @return            a list of the frequencies of each
-*                    letter in the text in the same order
+* @return            a list of the frequencies of each ascii
+*                    letter in the text in the numerical ascii order
 */
 (deffunction count (?sliced)
    (bind ?counts (create$))
@@ -74,9 +74,10 @@
 /*
 * Prints out the results of the alphabetic histogram,
 * specifically each alphabetic letter and its frequency 
-* within the given text
+* within the inputted text
 * @param counts      a list of the frequencies of each
-*                    letter in the text in the same order
+*                    ascii character in the text in the 
+*                    numerical ascii order
 * @return            nil
 */
 (deffunction printHisto (?counts)
@@ -95,6 +96,7 @@
 * Provides a user interface for intaking a block of ascii text and 
 * outputting the frequency/count of each alphabetic letter in the given
 * text (independent of case)
+* @precondition      the inputted text only contains valid ascii characters
 * @return            nil      
 */
 (deffunction histo ()
