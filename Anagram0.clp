@@ -10,4 +10,6 @@
    (printout t ?c1 ?c2 ?c3 ?c4 " ")
 )
 
-(assert (L A) (L T) (L C) (L S))
+(assert (L A) (L A) (L C) (L S))
+
+(run)
