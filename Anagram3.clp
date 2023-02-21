@@ -12,18 +12,27 @@
 /*
 * 
 */
-(defglobal ?*FIXED_WORD_LENGTH* = 6)
+(defglobal ?*FIXED_WORD_LENGTH* = 6) ; the fixed length of the word that is used to be
 
 /*
 * 
-* @param l        
+* @param c
+* @param p        
 */
 (deftemplate Letter (slot c) (slot p))
 
-(defrule anagram "DOCUMENT THIS PLEASE"
-
+/*
+*  
+*/
+(defrule anagram "Generates all possible combinations of the given 6 letter word"
+   (Letter (c ?c1) (p ?p1))
+   (Letter (c ?c2) (p ?p2 &~?p1))
+   (Letter (c ?c3) (p ?p3 &~?p2 &~?p1))
+   (Letter (c ?c4) (p ?p4 &~?p3 &~?p2 &~?p1))
+   (Letter (c ?c5) (p ?p5 &~?p4 &~?p3 &~?p2 &~?p1))
+   (Letter (c ?c6) (p ?p6 &~?p5 &~?p4 &~?p3 &~?p2 &~?p1))
 =>
-
+   (printout t ?c1 ?c2 ?c3 ?c4 ?c5 ?c6 " ")
 )
 
 /*
@@ -31,7 +40,7 @@
 * @param letter
 * @param position
 */
-(deffunction assertLetter (?letter) (?position)
+(deffunction assertLetter (?letter ?position)
    (assert (Letter (c ?letter) (p ?position)))
 
    (return)
@@ -43,7 +52,7 @@
 */
 (deffunction assertList (?letters)
    (for (bind ?index 1) (<= ?index ?*FIXED_WORD_LENGTH*) (++ ?index)
-      (assertLetter (nth$ ?index ?letters) ?index)
+      (assertLetter (nth$ ?index ?letters) ?index) 
    )
 
    (return)
@@ -54,7 +63,7 @@
 * @param input          the 
 */
 (deffunction inputIsValid (?input)
-   (return (and (string ?input) (= (str-length ?input )) ?*FIXED_WORD_LENGTH*))
+   (return (and (stringp ?input) (= (str-length ?input) ?*FIXED_WORD_LENGTH*)))
 )  ; deffunction inputIsValid (?input)
 
 /*
@@ -80,16 +89,22 @@
 * 
 */
 (deffunction getInput ()
-   (bind ?prompt (sym-cat "Please enter a " ?*FIXED_WORD_LENGTH* " letter word to generate anagrams for"))
+   (bind ?prompt (sym-cat "Please enter a " ?*FIXED_WORD_LENGTH* " letter word to generate anagrams for: "))
    (bind ?input (askline ?prompt))
 
-   (if (not (inputisValid ?input))
-      (printline (sym-cat "Inputted word was not of length " ?*FIXED_WORD_LENGTH* ". Ending program"))
+   (if (not (inputIsValid ?input)) then
+      (printline (sym-cat "Inputted word was not of length " ?*FIXED_WORD_LENGTH* ". Ending program."))
     else
       (bind ?sliced (slice$ ?input))
       (assertList ?sliced)
-      (run)
+
+      (bind ?combinations (run))
+      (print "The rule was fired ")
+      (print ?combinations)
+      (printline " times!")
    )
 
    (return)
 )
+
+(getInput)
