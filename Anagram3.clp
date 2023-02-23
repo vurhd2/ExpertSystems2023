@@ -26,7 +26,7 @@
 /*
 * Defines a template for letters being used to generate anagrams with possible duplicate letters
 * @slot c               the actual character value of the letter
-* @slot p               the position of the letter in the anagram (allows duplicate letters)       
+* @slot p               the position of the letter in the anagram (this allows duplicate letters)       
 */
 (deftemplate Letter (slot c) (slot p))
 
@@ -39,7 +39,7 @@
    (Letter (c ?c6) (p ?p6 &~?p5 &~?p4 &~?p3 &~?p2 &~?p1))
 =>
    (printout t ?c1 ?c2 ?c3 ?c4 ?c5 ?c6 " ")
-)
+)  ; defrule anagram "Generates and prints all possible combinations of the given 6 letter word"
 
 /*
 * 
