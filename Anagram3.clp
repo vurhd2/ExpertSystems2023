@@ -6,19 +6,31 @@
 /*
 * Author: Dhruv Aron
 * Date of Creation: 2/9/23
+* 
 * Description of Module: 
+* Provides a user interface for intaking a word from the user and
+* generating/printing anagrams of the inputted word if the input is of a valid length
+*
+* Publicly Accessible Functions:
+* main
+*
+* FACTS:
+* 
+* 
+* RULES:
+* anagram               Generates and prints all possible combinations of the given 6 letter word
 */
 
 (defglobal ?*FIXED_WORD_LENGTH* = 6) ; the fixed length of the word that is used to generate anagrams
 
 /*
-* 
-* @param c
-* @param p        
+* Defines a template for letters being used to generate anagrams with possible duplicate letters
+* @slot c               the actual character value of the letter
+* @slot p               the position of the letter in the anagram (allows duplicate letters)       
 */
 (deftemplate Letter (slot c) (slot p))
 
-(defrule anagram "Generates all possible combinations of the given 6 letter word"
+(defrule anagram "Generates and prints all possible combinations of the given 6 letter word"
    (Letter (c ?c1) (p ?p1))
    (Letter (c ?c2) (p ?p2 &~?p1))
    (Letter (c ?c3) (p ?p3 &~?p2 &~?p1))
@@ -130,8 +142,8 @@
 )  ; deffunction generateResult (?input)
 
 /*
-* Provides a user interface for intaking a word and generating/printing
-* anagrams of the inputted word if the input is of a valid length
+* Provides a user interface for intaking a word from the user and
+* generating/printing anagrams of the inputted word if the input is of a valid length
 */
 (deffunction main ()
    (bind ?input (getInput))
