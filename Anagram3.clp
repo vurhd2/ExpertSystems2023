@@ -9,10 +9,7 @@
 * Description of Module: 
 */
 
-/*
-* 
-*/
-(defglobal ?*FIXED_WORD_LENGTH* = 6) ; the fixed length of the word that is used to be
+(defglobal ?*FIXED_WORD_LENGTH* = 6) ; the fixed length of the word that is used to generate anagrams
 
 /*
 * 
@@ -21,9 +18,6 @@
 */
 (deftemplate Letter (slot c) (slot p))
 
-/*
-*  
-*/
 (defrule anagram "Generates all possible combinations of the given 6 letter word"
    (Letter (c ?c1) (p ?p1))
    (Letter (c ?c2) (p ?p2 &~?p1))
@@ -37,8 +31,9 @@
 
 /*
 * 
-* @param letter
-* @param position
+* @param letter         the character that is being asserted for the anagram
+* @param position       the position of the character being asserted 
+*                       (in order to allow duplicates)
 */
 (deffunction assertLetter (?letter ?position)
    (assert (Letter (c ?letter) (p ?position)))
@@ -47,7 +42,8 @@
 )  ; deffunction assertLetter (?letter) (?position)
 
 /*
-* 
+* Takes in a sliced list of letters/characters and asserts 
+* each individual character with a distinct position
 * @param letters        the list of letters to be asserted
 */
 (deffunction assertList (?letters)
@@ -60,7 +56,9 @@
 
 /*
 * Checks to ensure that the user input is of the necessitated length
-* @param input          the 
+* @param input          the user input
+* @return               true if the user input is a string and it is of the appropriate length,
+*                       otherwise false
 */
 (deffunction inputIsValid (?input)
    (return (and (stringp ?input) (= (str-length ?input) ?*FIXED_WORD_LENGTH*)))
@@ -69,10 +67,10 @@
 /*
 * Slices the given string into a list containing each character in
 * the string within each index (in the original order)
-* @param text        the string to slice into a list
-* @precondition      text is a string
-* @return            a list containing all of the string's characters
-*                    in the same order         
+* @param text           the string to slice into a list
+* @precondition         text is a string
+* @return               a list containing all of the string's individual 
+*                       characters in the same order         
 */
 (deffunction slice$ (?text)
    (bind ?sliced (create$))
@@ -86,25 +84,61 @@
 )  ; deffunction slice$ (?text)
 
 /*
-* 
+* Provides a user interface for entering a word to generate anagrams of
+* @return               the user's input (in the form of a string)
 */
 (deffunction getInput ()
    (bind ?prompt (sym-cat "Please enter a " ?*FIXED_WORD_LENGTH* " letter word to generate anagrams for: "))
    (bind ?input (askline ?prompt))
 
+   (return ?input)
+)  ; deffunction getInput () 
+
+/*
+* Generates and prints out anagrams of the user's inputted word of
+* an appropriate length
+* @param input          the user's input
+* @precondition         input must be a string
+*/
+(deffunction printAnagrams (?input)
+   (bind ?sliced (slice$ ?input))
+   (assertList ?sliced)
+
+   (bind ?combinations (run))
+   (printline "")
+   (print "The rule was fired ")
+   (print ?combinations)
+   (printline " times!")
+
+   (return)
+)  ; deffunction printAnagrams (?input)
+
+/*
+* Notifies the user that the input is invalid if not of the appropriate length, or
+* instead proceeds to generate/print the anagrams if the input is valid
+* @param input          the user's input
+* @precondition         input must be a string
+*/
+(deffunction generateResult (?input)
    (if (not (inputIsValid ?input)) then
       (printline (sym-cat "Inputted word was not of length " ?*FIXED_WORD_LENGTH* ". Ending program."))
     else
-      (bind ?sliced (slice$ ?input))
-      (assertList ?sliced)
-
-      (bind ?combinations (run))
-      (print "The rule was fired ")
-      (print ?combinations)
-      (printline " times!")
-   )
+      (printAnagrams ?input)
+   ) 
 
    (return)
-)
+)  ; deffunction generateResult (?input)
 
-(getInput)
+/*
+* Provides a user interface for intaking a word and generating/printing
+* anagrams of the inputted word if the input is of a valid length
+*/
+(deffunction main ()
+   (bind ?input (getInput))
+
+   (generateResult ?input)
+
+   (return)
+)  ; deffunction main ()
+
+(main)
