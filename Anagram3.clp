@@ -13,12 +13,9 @@
 *
 * Publicly Accessible Functions:
 * main
-*
-* FACTS:
-* 
 * 
 * RULES:
-* anagram               Generates and prints all possible combinations of the given 6 letter word
+* anagram               Generates and prints all possible combinations of the given 6 letter word using six characters and distinct positions
 */
 
 (defglobal ?*FIXED_WORD_LENGTH* = 6) ; the fixed length of the word that is used to generate anagrams
@@ -30,7 +27,7 @@
 */
 (deftemplate Letter (slot c) (slot p))
 
-(defrule anagram "Generates and prints all possible combinations of the given 6 letter word"
+(defrule anagram "Generates and prints all possible combinations of the given 6 letter word using six characters and distinct positions"
    (Letter (c ?c1) (p ?p1))
    (Letter (c ?c2) (p ?p2 &~?p1))
    (Letter (c ?c3) (p ?p3 &~?p2 &~?p1))
@@ -42,7 +39,8 @@
 )  ; defrule anagram "Generates and prints all possible combinations of the given 6 letter word"
 
 /*
-* 
+* Asserts a letter using the Letter template as well as a character and 
+* position so the anagram rule can fire
 * @param letter         the character that is being asserted for the anagram
 * @param position       the position of the character being asserted 
 *                       (in order to allow duplicates)
