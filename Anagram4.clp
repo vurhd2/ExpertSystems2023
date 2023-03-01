@@ -1,8 +1,3 @@
-use (build ?string) for creating a string that will be dynamically turned into rules
-
-for the function that dynamically generates the rules, include an example in the block comment 
-of the string/rule that is dynamically generated
-
 (clear)
 (reset)
 
@@ -19,8 +14,12 @@ of the string/rule that is dynamically generated
 * main
 * 
 * RULES:
-* anagram               Generates and prints all possible combinations of the given 6 letter word using six characters and distinct positions
+* main                  Begins the process for intaking a word of any length and generating all possible anagrams of it
+* anagram               Generates and prints all possible combinations of the given word using distinct positions
 */
+
+(defglobal ?*ASCII_DOUBLE_QUOTE* = 34)                ; the ascii value for double quotes ("")
+(defglobal ?*CRASH_LIMIT* = 10)                       ; the maximum length word that can be used for anagrams without crashing the program
 
 /*
 * Defines a template for letters being used to generate anagrams with possible duplicate letters
@@ -40,23 +39,49 @@ of the string/rule that is dynamically generated
    (printout t ?c1 ?c2 ?c3 ?c4 ?c5 ?c6 " ")
 )  ; defrule anagram "Generates and prints all possible combinations of the given 6 letter word"
 
+(defrule main "Begins the process for intaking a word of any length and generating all possible anagrams of it"
+
+=>
+   (main)
+)  ; defrule main "Begins the process for intaking a word of any length and generating all possible anagrams of it"
+
 /*
 * 
+* 
+* Example for an inputted word of length six:
+* (defrule anagram "Generates and prints all possible combinations of the given six letter word using six characters and distinct positions"
+*     (Letter (c ?c1) (p ?p1))
+*     (Letter (c ?c2) (p ?p2 &~?p1))
+*     (Letter (c ?c3) (p ?p3 &~?p2 &~?p1))
+*     (Letter (c ?c4) (p ?p4 &~?p3 &~?p2 &~?p1))
+*     (Letter (c ?c5) (p ?p5 &~?p4 &~?p3 &~?p2 &~?p1))
+*     (Letter (c ?c6) (p ?p6 &~?p5 &~?p4 &~?p3 &~?p2 &~?p1))
+*  =>
+*     (printout t ?c1 ?c2 ?c3 ?c4 ?c5 ?c6 " ")
+)
 */
 (deffunction makeRules (?len)
-   (bind ?rule_left (sym-cat "(Letter (c ?c1) (p ?p1))" crlf))
-   (bind ?character_rule_index 13)                             ; the index of the character number needing to be changed in the str-rule
-   (bind ?position_rule_index 19)                              ; the index of the position arguments needing to be changed in the str-rule
+   (bind ?double_quote (toChar ?*ASCII_DOUBLE_QUOTE*))
+   (bind ?rule (sym-cat "(defrule anagram " ?double_quote "Generates and prints all possible combinations of the given " ?len " letter word using " ?len " characters and distinct positions" ?double_quote crlf))
+   
+   (for (bind ?char_index 1) (<= ?char_index ?len) (++ ?char_index)
+      (bind ?rule (sym-cat "(Letter (c ?c" ?char_index ") (p "))
 
-   (for (bind ?index 2) (<= ?index ?len) (++ ?index)
-      (bind ?copy ?rule_left)
-      (bind ?len_copy (str-length ?copy))
-
-      (bind ?copy (insert$ ?copy ?character_rule_index (delete$ ?copy ?character_rule_index ?character_rule_index)))
-      (bind ?copy (insert$ ?))
-      
 
    )
+
+   (bind ?rule (sym-cat ?rule "=>" crlf))
+
+   (bind ?rule (sym-cat ?rule "(printout t "))
+   (for (bind ?print_index 1) (<= ?print_index ?len) (++ ?print_index)
+      (bind ?rule (sym-cat ?rule "?c" ?print_index " "))
+   )
+   (bind ?rule (sym-cat ?double_quote " " ?double_quote ")" crlf))
+   (bind ?rule (sym-cat ?rule ")"))
+   
+   (build ?rule)
+
+   (return)
 )  ; deffunction makeRules (?len)
 
 /*
@@ -147,5 +172,3 @@ of the string/rule that is dynamically generated
 
    (return)
 )  ; deffunction main ()
-
-(main)
