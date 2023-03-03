@@ -169,7 +169,7 @@
 * @return               the user's input (in the form of a string)
 */
 (deffunction getInput ()
-   (bind ?prompt (sym-cat "Enter a word with a maximum length of " ?*CRASH_LIMIT* " characters: "))
+   (bind ?prompt (sym-cat "Enter a word not longer than " ?*CRASH_LIMIT* " characters to generate anagrams for: "))
    (bind ?input (askline ?prompt))
 
    (return ?input)
