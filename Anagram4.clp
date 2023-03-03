@@ -90,7 +90,7 @@
    (bind ?rule (sym-cat ?rule ?*DOUBLE_QUOTE_CHAR* " " ?*DOUBLE_QUOTE_CHAR* ")"))
 
    (return ?rule)
-) ; deffunction makeRuleRight (?len)
+)  ; deffunction makeRuleRight (?len)
 
 /*
 * Builds the dynamic anagram rule by creating and evaluating/building a string rule determined by the length of the inputted word
@@ -134,6 +134,7 @@
 * Takes in a sliced list of letters/characters and asserts 
 * each individual character with a distinct position
 * @param letters        the list of letters to be asserted
+* @param len            the length of the inputted word
 * @precondition         ?len <= ?*CRASH_LIMIT* to avoid crashing/stalling
 */
 (deffunction assertList (?letters ?len)
@@ -142,7 +143,7 @@
    )
 
    (return)
-)  ; deffunction assertList (?letters)
+)  ; deffunction assertList (?letters ?len)
 
 /*
 * Slices the given string into a list containing each character in
@@ -168,16 +169,16 @@
 * @return               the user's input (in the form of a string)
 */
 (deffunction getInput ()
-   (bind ?prompt (sym-cat "Enter a word with at maximum " ?*CRASH_LIMIT* " characters: "))
+   (bind ?prompt (sym-cat "Enter a word with a maximum length of " ?*CRASH_LIMIT* " characters: "))
    (bind ?input (askline ?prompt))
 
    (return ?input)
 )  ; deffunction getInput () 
 
 /*
-* Checks to ensure that the user input is of an appropriate length (< ?*CRASH_LIMIT*)
-* @param input          the user input
-* @return               true if the user input is a string and it is of an appropriate length,
+* Checks to ensure that the user input is of an appropriate length (<= ?*CRASH_LIMIT*)
+* @param input          the user's input
+* @return               true if the user input is a string and it is of an appropriate length (<= ?*CRASH_LIMIT*),
 *                       otherwise false
 */
 (deffunction inputIsValid (?input)
@@ -186,9 +187,9 @@
 
 /*
 * Generates and prints out anagrams of the user's inputted word of
-* an appropriate length
+* an appropriate length (<= ?*CRASH_LIMIT*)
 * @param input          the user's input
-* @precondition         input must be a string
+* @precondition         input must be a string and it's length must be <= ?*CRASH_LIMIT*
 */
 (deffunction printAnagrams (?input)
    (bind ?sliced (slice$ ?input))
@@ -206,7 +207,7 @@
 
 /*
 * Notifies the user that the input is invalid if longer than ?*CRASH_LIMIT* characters
-* (which would cause the program to crash or stiall), or instead proceeds to generate/print 
+* (which would cause the program to crash or stall), or instead proceeds to generate/print 
 * the anagrams if the input is valid
 * @param input          the user's input
 * @precondition         input must be a string
