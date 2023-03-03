@@ -222,3 +222,5 @@
 
    (return)
 )  ; deffunction generateResult (?input)
+
+(run)
