@@ -54,7 +54,8 @@
 *                       be used to generate all possible anagrams for the inputted word
 */
 (deffunction makeRuleLeft (?len)
-   (bind ?rule (sym-cat "(defrule anagram " ?*DOUBLE_QUOTE_CHAR* "Generates and prints all possible combinations of the given " ?len " letter word using " ?len " characters and distinct positions" ?*DOUBLE_QUOTE_CHAR*))
+   (bind ?rule (sym-cat "(defrule anagram " ?*DOUBLE_QUOTE_CHAR* "Generates and prints all possible combinations of the given " ?len))
+   (bind ?rule (sym-cat ?rule " letter word using " ?len " characters and distinct positions" ?*DOUBLE_QUOTE_CHAR*))
    
    (for (bind ?char_index 1) (<= ?char_index ?len) (++ ?char_index)
       (bind ?rule_line (sym-cat "(Letter (c ?c" ?char_index ") (p ?p" ?char_index))
