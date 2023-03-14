@@ -12,7 +12,6 @@
 (deftemplate attribute (slot name) (slot value))
 
 (defrule startGame ""
-   (declare (salience 100))
 =>
    (printline "Welcome to the 20 questions animal game! ")
    (printline "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
@@ -215,8 +214,7 @@
 (defrule liveOnLand "liveOnLand"
    (declare (salience 90))
    =>
-   (ask "Does your animal live on land?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Does your animal live on land? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -228,8 +226,7 @@
 
 (defrule canFly "canFly"
    =>
-   (ask "Does your animal fly?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Does your animal fly? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -244,8 +241,7 @@
 
 (defrule hasFeathers "hasFeathers"
    =>
-   (ask "Does your animal have feathers?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Does your animal have feathers? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -263,8 +259,7 @@
 
 (defrule isMammal "isMammal"
    =>
-   (ask "Is your animal mammalian?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Is your animal mammalian? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -280,8 +275,7 @@
 
 (defrule isNocturnal "isNocturnal"
    =>
-   (ask "Is your animal nocturnal?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Is your animal nocturnal? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -293,8 +287,8 @@
 
 (defrule isHerbivore "isHerbivore"
    =>
-   (ask "Is your animal mainly herbivorous?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Is your animal mainly herbivorous? ")))
+   ;(bind ?value (convertInput (readline)))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -306,8 +300,7 @@
 
 (defrule hasClaws "hasClaws"
    =>
-   (ask "Does your animal have claws?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Does your animal have claws? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -322,8 +315,7 @@
 
 (defrule hasLegs "hasLegs"
    =>
-   (ask "Does your animal have limbs classified as legs (or feet)?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (ask "Does your animal have limbs classified as legs (or feet)? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -335,8 +327,7 @@
 
 (defrule inGroups "inGroups"
    =>
-   (ask "Does your animal often travel in groups (packs, herds, etc.)?")
-   (bind ?value (convertInput (readLine)))
+   (bind ?value (convertInput (askline "Does your animal often travel in groups (packs, herds, etc.)? ")))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -350,7 +341,7 @@
    (declare (salience -100))
 =>
    (halt)
-   (printline "I give up. What is your animal?")
+   (printline "I give up. What is your animal? ")
 )
 
 (deffunction convertInput (?input)
@@ -368,7 +359,7 @@
 )
 
 (deffunction guessAnimal (?animal)
-   (printline (sym-cat "Is your animal a(n) " ?animal))
+   (printline (sym-cat "Is your animal a(n) " ?animal " ?"))
    (return)
 )
 
