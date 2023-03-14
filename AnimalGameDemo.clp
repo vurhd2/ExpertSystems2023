@@ -215,7 +215,14 @@
    (declare (salience 90))
    =>
    (ask "Does your animal live on land?")
-   (assert (attribute (name "land") (value (convertInput (readLine)))))
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (print "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "land") (value ?value)))
+   )
 )
 
 (defrule giveUp ""
@@ -226,14 +233,14 @@
 )
 
 (deffunction convertInput (?input)
-   (bind ?result "")
+   (bind ?result "invalid")
    
    (if (= ?input "y") then
       (bind ?result TRUE)
-    else if (= ?input "n") then
-      (bind ?result FALSE)
-    else
-      (print "Improper input detected. Ending program")
+    else 
+      (if (= ?input "n") then
+         (bind ?result FALSE)
+      )
    )
 
    (return ?result)
