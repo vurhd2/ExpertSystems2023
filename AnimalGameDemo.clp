@@ -14,8 +14,9 @@
 (defrule startGame ""
    (declare (salience 100))
 =>
-   (print "Welcome to the 20 questions animal game! ")
-   (print "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
+   (printline "Welcome to the 20 questions animal game! ")
+   (printline "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
+   (printline)
 )
 
 (defrule goat "guesses a goat"
@@ -211,17 +212,137 @@
    (guessAnimal "whale")
 )
 
-(defrule askLand "askLand"
+(defrule liveOnLand "liveOnLand"
    (declare (salience 90))
    =>
    (ask "Does your animal live on land?")
    (bind ?value (convertInput (readLine)))
 
    (if (= ?value "invalid") then
-      (print "Improper input detected. Ending program")
+      (printline "Improper input detected. Ending program")
       (halt)
     else 
       (assert (attribute (name "land") (value ?value)))
+   )
+)
+
+(defrule canFly "canFly"
+   =>
+   (ask "Does your animal fly?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "fly") (value ?value)))
+      (if ?value then
+         (assert (attribute (name "land") (value ?value)))
+      )
+   )
+)
+
+(defrule hasFeathers "hasFeathers"
+   =>
+   (ask "Does your animal have feathers?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "feathers") (value ?value)))
+      (if ?value then
+         (assert (attribute (name "land") (value ?value)))
+         (assert (attribute (name "mammal") (value FALSE)))
+         (assert (attribute (name "legs") (value TRUE)))
+         (assert (attribute (name "claws") (value TRUE)))
+      )
+   )
+)
+
+(defrule isMammal "isMammal"
+   =>
+   (ask "Is your animal mammalian?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "mammal") (value ?value)))
+      (if ?value then
+         (assert (attribute (name "legs") (value ?value)))
+         (assert (attribute (name "feathers") (value FALSE)))
+      )
+   )
+)
+
+(defrule isNocturnal "isNocturnal"
+   =>
+   (ask "Is your animal nocturnal?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "nocturnal") (value ?value)))
+   )
+)
+
+(defrule isHerbivore "isHerbivore"
+   =>
+   (ask "Is your animal mainly herbivorous?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "herbivorous") (value ?value)))
+   )
+)
+
+(defrule hasClaws "hasClaws"
+   =>
+   (ask "Does your animal have claws?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "claws") (value ?value)))
+      (if ?value then
+         (assert (attribute (name "legs") (value ?value)))
+      )
+   )
+)
+
+(defrule hasLegs "hasLegs"
+   =>
+   (ask "Does your animal have limbs classified as legs (or feet)?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "legs") (value ?value)))
+   )
+)
+
+(defrule inGroups "inGroups"
+   =>
+   (ask "Does your animal often travel in groups (packs, herds, etc.)?")
+   (bind ?value (convertInput (readLine)))
+
+   (if (= ?value "invalid") then
+      (printline "Improper input detected. Ending program")
+      (halt)
+    else 
+      (assert (attribute (name "groups") (value ?value)))
    )
 )
 
@@ -229,7 +350,7 @@
    (declare (salience -100))
 =>
    (halt)
-   (print "I give up. What is your animal?")
+   (printline "I give up. What is your animal?")
 )
 
 (deffunction convertInput (?input)
@@ -247,7 +368,7 @@
 )
 
 (deffunction guessAnimal (?animal)
-   (print (sym-cat "Is your animal a " ?animal))
+   (printline (sym-cat "Is your animal a(n) " ?animal))
    (return)
 )
 
