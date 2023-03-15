@@ -11,13 +11,6 @@
 
 (deftemplate attribute (slot name) (slot value))
 
-(defrule startGame ""
-=>
-   (printline "Welcome to the 20 questions animal game! ")
-   (printline "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
-   (printline)
-)
-
 (defrule goat "guesses a goat"
    (attribute (name "land") (value TRUE))
    (attribute (name "fly") (value FALSE))
@@ -211,9 +204,19 @@
    (guessAnimal "whale")
 )
 
+
+(defrule startGame ""
+   (declare (salience 100))
+=>
+   (printline "Welcome to the 20 questions animal game! ")
+   (printline "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
+   (printline)
+)
+
 (defrule liveOnLand "liveOnLand"
    (declare (salience 90))
-   =>
+   (not (attribute (name "land")))
+=>
    (bind ?value (convertInput (askline "Does your animal live on land? ")))
 
    (if (= ?value "invalid") then
@@ -221,11 +224,16 @@
       (halt)
     else 
       (assert (attribute (name "land") (value ?value)))
+      (if (not ?value) then
+         (assert (attribute (name "fly") (value FALSE)))
+         (assert (attribute (name "feathers") (value FALSE)))
+      )
    )
 )
 
 (defrule canFly "canFly"
-   =>
+   (not (attribute (name "fly")))
+=>
    (bind ?value (convertInput (askline "Does your animal fly? ")))
 
    (if (= ?value "invalid") then
@@ -240,7 +248,8 @@
 )
 
 (defrule hasFeathers "hasFeathers"
-   =>
+   (not (attribute (name "feathers")))
+=>
    (bind ?value (convertInput (askline "Does your animal have feathers? ")))
 
    (if (= ?value "invalid") then
@@ -258,7 +267,8 @@
 )
 
 (defrule isMammal "isMammal"
-   =>
+   (not (attribute (name "mammal")))
+=>
    (bind ?value (convertInput (askline "Is your animal mammalian? ")))
 
    (if (= ?value "invalid") then
@@ -274,7 +284,8 @@
 )
 
 (defrule isNocturnal "isNocturnal"
-   =>
+   (not (attribute (name "nocturnal")))
+=>
    (bind ?value (convertInput (askline "Is your animal nocturnal? ")))
 
    (if (= ?value "invalid") then
@@ -286,9 +297,9 @@
 )
 
 (defrule isHerbivore "isHerbivore"
-   =>
+   (not (attribute (name "herbivorous")))
+=>
    (bind ?value (convertInput (askline "Is your animal mainly herbivorous? ")))
-   ;(bind ?value (convertInput (readline)))
 
    (if (= ?value "invalid") then
       (printline "Improper input detected. Ending program")
@@ -299,7 +310,8 @@
 )
 
 (defrule hasClaws "hasClaws"
-   =>
+   (not (attribute (name "claws")))
+=>
    (bind ?value (convertInput (askline "Does your animal have claws? ")))
 
    (if (= ?value "invalid") then
@@ -314,7 +326,8 @@
 )
 
 (defrule hasLegs "hasLegs"
-   =>
+   (not (attribute (name "legs")))
+=>
    (bind ?value (convertInput (ask "Does your animal have limbs classified as legs (or feet)? ")))
 
    (if (= ?value "invalid") then
@@ -322,11 +335,17 @@
       (halt)
     else 
       (assert (attribute (name "legs") (value ?value)))
+      (if (not ?value) then
+         (assert (attribute (name "claws") (value FALSE)))
+         (assert (attribute (name "feathers") (value FALSE)))
+         (assert (attribute (name "fly") (value FALSE)))
+      )
    )
 )
 
 (defrule inGroups "inGroups"
-   =>
+   (not (attribute (name "groups")))
+=>
    (bind ?value (convertInput (askline "Does your animal often travel in groups (packs, herds, etc.)? ")))
 
    (if (= ?value "invalid") then
@@ -341,16 +360,17 @@
    (declare (salience -100))
 =>
    (halt)
-   (printline "I give up. What is your animal? ")
+   (printline "I give up. Looks like I lose... ")
 )
 
 (deffunction convertInput (?input)
    (bind ?result "invalid")
-   
-   (if (= ?input "y") then
+   (bind ?character (upcase (sub-string 1 1 ?input)))
+
+   (if (= ?character "Y") then
       (bind ?result TRUE)
     else 
-      (if (= ?input "n") then
+      (if (= ?character "N") then
          (bind ?result FALSE)
       )
    )
@@ -359,7 +379,17 @@
 )
 
 (deffunction guessAnimal (?animal)
-   (printline (sym-cat "Is your animal a(n) " ?animal " ?"))
+   (bind ?input (convertInput (askline (sym-cat "Is your animal a(n) " ?animal "? "))))
+
+   (if (= ?input TRUE) then
+      (printline "I win! ")
+    else
+      (if (= ?input FALSE) then
+         (printline "Looks like I lose...")
+       else
+         (printline "Sorry, I couldn't understand that. I'll just assume that I lost... ")
+      )
+   )
    (return)
 )
 
