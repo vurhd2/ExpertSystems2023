@@ -24,9 +24,11 @@
 * octopus
 * whale
 *
-* Attribute/Game RULES:
+* Game RULES:
 * startGame
 * giveUp
+*
+* Attribute RULES:
 * liveOnLand
 * canFly
 * hasFeathers
@@ -48,216 +50,151 @@
 (deftemplate attribute (slot name) (slot value))
 
 /******
-* Rules defining the attributes belonging to the stored animals
+* Rules guessing the titular animal if the animal's assigned traits 
+* match the ones inputted by the user
 */
 
 (defrule goat "guesses a goat if the inputted attributes match the ones belonging to a goat"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value TRUE))
    (attribute (name "claws") (value FALSE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "goat")
 )  ; defrule goat "guesses a goat if the inputted attributes match the ones belonging to a goat"
 
 (defrule kangaroo "guesses a kangaroo if the inputted attributes match the ones belonging to a kangaroo"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
    (attribute (name "herbivorous") (value TRUE))
    (attribute (name "claws") (value TRUE))
    (attribute (name "legs") (value TRUE))
    (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "kangaroo")
 )  ; defrule kangaroo "guesses a kangaroo if the inputted attributes match the ones belonging to a kangaroo"
 
 (defrule panda "guesses a panda if the inputted attributes match the ones belonging to a panda"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
    (attribute (name "herbivorous") (value TRUE))
    (attribute (name "claws") (value TRUE))
    (attribute (name "legs") (value TRUE))
    (attribute (name "groups") (value FALSE))
-   =>
+=>
    (halt)
    (guessAnimal "panda")
 )  ; defrule panda "guesses a panda if the inputted attributes match the ones belonging to a panda"
 
 (defrule cat "guesses a cat if the inputted attributes match the ones belonging to a cat"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
    (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value FALSE))
-   =>
+=>
    (halt)
    (guessAnimal "cat")
 )  ; defrule cat "guesses a cat if the inputted attributes match the ones belonging to a cat"
 
 (defrule frog "guesses a frog if the inputted attributes match the ones belonging to a frog"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
    (attribute (name "herbivorous") (value FALSE))
    (attribute (name "claws") (value FALSE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "frog")
 )  ; defrule frog "guesses a frog if the inputted attributes match the ones belonging to a frog"
 
 (defrule snail "guesses a snail if the inputted attributes match the ones belonging to a snail"
    (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value TRUE))
-   (attribute (name "claws") (value FALSE))
    (attribute (name "legs") (value FALSE))
-   (attribute (name "groups") (value FALSE))
-   =>
+=>
    (halt)
    (guessAnimal "snail")
 )  ; defrule snail "guesses a snail if the inputted attributes match the ones belonging to a snail"
 
 (defrule bee "guesses a bee if the inputted attributes match the ones belonging to a bee"
-   (attribute (name "land") (value TRUE))
    (attribute (name "fly") (value TRUE))
    (attribute (name "feathers") (value FALSE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value TRUE))
-   (attribute (name "claws") (value FALSE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "bee")
 )  ; defrule bee "guesses a bee if the inputted attributes match the ones belonging to a bee"
 
 (defrule eagle "guesses an eagle if the inputted attributes match the ones belonging to an eagle"
-   (attribute (name "land") (value TRUE))
    (attribute (name "fly") (value TRUE))
    (attribute (name "feathers") (value TRUE))
-   (attribute (name "mammal") (value FALSE))
    (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
    (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "eagle")
 )  ; defrule eagle "guesses an eagle if the inputted attributes match the ones belonging to an eagle"
 
 (defrule owl "guesses an owl if the inputted attributes match the ones belonging to an owl"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "fly") (value TRUE))
-   (attribute (name "feathers") (value TRUE))
-   (attribute (name "mammal") (value FALSE))
    (attribute (name "nocturnal") (value TRUE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "owl")
 )  ; defrule owl "guesses an owl if the inputted attributes match the ones belonging to an owl"
 
 (defrule penguin "guesses a penguin if the inputted attributes match the ones belonging to a penguin"
-   (attribute (name "land") (value TRUE))
    (attribute (name "fly") (value FALSE))
    (attribute (name "feathers") (value TRUE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "penguin")
 )  ; defrule penguin "guesses a penguin if the inputted attributes match the ones belonging to a penguin"
 
 (defrule fish "guesses a fish if the inputted attributes match the ones belonging to a fish"
    (attribute (name "land") (value FALSE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value FALSE))
    (attribute (name "legs") (value FALSE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "fish")
 )  ; defrule fish "guesses a fish if the inputted attributes match the ones belonging to a fish"
 
 (defrule octopus "guesses an octopus if the inputted attributes match the ones belonging to an octopus"
    (attribute (name "land") (value FALSE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value FALSE))
    (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value FALSE))
-   =>
+=>
    (halt)
    (guessAnimal "octopus")
 )  ; defrule octopus "guesses an octopus if the inputted attributes match the ones belonging to an octopus"
 
 (defrule whale "guesses a whale if the inputted attributes match the ones belonging to a whale"
    (attribute (name "land") (value FALSE))
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value FALSE))
    (attribute (name "mammal") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value FALSE))
-   (attribute (name "legs") (value FALSE))
-   (attribute (name "groups") (value TRUE))
-   =>
+=>
    (halt)
    (guessAnimal "whale")
 )  ; defrule whale "guesses a whale if the inputted attributes match the ones belonging to a whale"
 
 /******
-* Starting and ending rules alongside rules checking for each stored attribute 
+* Starting and ending rules 
 */
 
-(defrule startGame ""
+(defrule startGame "Begins the animal game"
    (declare (salience 100))
 =>
+   (printline)
    (printline "Welcome to the 20 questions animal game! ")
    (printline "Please think of an animal and respond honestly to the following questions with either a yes ('y') or no ('n')!")
    (printline)
 )
 
+(defrule giveUp "Ends the game and notifies the user that we were unable to guess their animal with the given info"
+   (declare (salience -100))
+=>
+   (halt)
+   (printline "I give up. Looks like I lose... ")
+) 
+
+/******
+* Rules checking whether the user's animal has the titular attribute 
+*/
 (defrule liveOnLand "Checks whether the user's animal mainly lives on land (sleeps and breathes on it)"
    (declare (salience 90))
    (not (attribute (name "land")))
@@ -277,6 +214,7 @@
 )  ; defrule liveOnLand "Checks whether the user's animal mainly lives on land (sleeps and breathes on it)"
 
 (defrule canFly "Checks whether the user's animal actively uses energy to fly"
+   (declare (salience 70))
    (not (attribute (name "fly")))
 =>
    (bind ?value (convertInput (askline "Does your animal fly (active use of energy involved)? ")))
@@ -312,6 +250,7 @@
 )  ; defrule hasFeathers "Checks whether the user's animal has feathers"
 
 (defrule isMammal "Checks whether the user's animal is a mammal"
+   (declare (salience 80))
    (not (attribute (name "mammal")))
 =>
    (bind ?value (convertInput (askline "Is your animal mammalian? ")))
@@ -322,7 +261,7 @@
     else 
       (assert (attribute (name "mammal") (value ?value)))
       (if ?value then
-         (assert (attribute (name "legs") (value ?value)))
+         (assert (attribute (name "fly") (value FALSE)))
          (assert (attribute (name "feathers") (value FALSE)))
       )
    )
@@ -400,13 +339,6 @@
       (assert (attribute (name "groups") (value ?value)))
    )
 )  ; defrule inGroups "Checks whether the user's animal travels in groups"
-
-(defrule giveUp "Ends the game and notifies the user that we were unable to guess their animal with the given info"
-   (declare (salience -100))
-=>
-   (halt)
-   (printline "I give up. Looks like I lose... ")
-) 
 
 /*
 * Determines whether the user's input is an affirmative or negative response (or neither)          
