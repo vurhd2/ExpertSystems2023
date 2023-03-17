@@ -6,7 +6,9 @@
 /*
 * Author: Dhruv Aron
 * Date of Creation: 3/6/23
-* Description of Module: Provides a user interface for essentially playing 20 questions
+* 
+* Description of Module: 
+* Provides a user interface for essentially playing 20 questions
 * to guess the user's animal
 *
 * Animal RULES:
@@ -126,7 +128,6 @@
    (attribute (name "fly") (value TRUE))
    (attribute (name "feathers") (value TRUE))
    (attribute (name "nocturnal") (value FALSE))
-   (attribute (name "claws") (value TRUE))
 =>
    (halt)
    (guessAnimal "eagle")
