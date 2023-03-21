@@ -46,131 +46,131 @@
 /*
 * Defines a template for each animal trait being used to differentiate animals
 * @slot name            the name of the animal trait
-* @slot value           the boolean value indicating whether this 
-*                       trait applies to a given animal
+* @slot value           the value indicating whether this trait applies to a given animal,
+*                       with 'TRUE' indicating that it does and 'FALSE' indicating the opposite
 */
 (deftemplate attribute (slot name) (slot value))
 
 /******
 * Rules guessing the titular animal if the animal's assigned traits 
-* match the ones inputted by the user
+* match the patterns inputted by the user
 */
 
 (defrule goat "guesses a goat if the inputted attributes match the ones belonging to a goat"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "mammal") (value TRUE))
-   (attribute (name "claws") (value FALSE))
+   (attribute (name land)   (value TRUE))
+   (attribute (name mammal) (value TRUE))
+   (attribute (name claws)  (value FALSE))
 =>
    (halt)
-   (guessAnimal "goat")
+   (guessAnimal goat)
 )  ; defrule goat "guesses a goat if the inputted attributes match the ones belonging to a goat"
 
 (defrule kangaroo "guesses a kangaroo if the inputted attributes match the ones belonging to a kangaroo"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "mammal") (value TRUE))
-   (attribute (name "herbivorous") (value TRUE))
-   (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value TRUE))
+   (attribute (name land) (value TRUE))
+   (attribute (name mammal) (value TRUE))
+   (attribute (name herbivorous) (value TRUE))
+   (attribute (name claws) (value TRUE))
+   (attribute (name legs) (value TRUE))
+   (attribute (name groups) (value TRUE))
 =>
    (halt)
-   (guessAnimal "kangaroo")
+   (guessAnimal kangaroo)
 )  ; defrule kangaroo "guesses a kangaroo if the inputted attributes match the ones belonging to a kangaroo"
 
 (defrule panda "guesses a panda if the inputted attributes match the ones belonging to a panda"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "mammal") (value TRUE))
-   (attribute (name "herbivorous") (value TRUE))
-   (attribute (name "claws") (value TRUE))
-   (attribute (name "legs") (value TRUE))
-   (attribute (name "groups") (value FALSE))
+   (attribute (name land) (value TRUE))
+   (attribute (name mammal) (value TRUE))
+   (attribute (name herbivorous) (value TRUE))
+   (attribute (name claws) (value TRUE))
+   (attribute (name legs) (value TRUE))
+   (attribute (name groups) (value FALSE))
 =>
    (halt)
-   (guessAnimal "panda")
+   (guessAnimal panda)
 )  ; defrule panda "guesses a panda if the inputted attributes match the ones belonging to a panda"
 
 (defrule cat "guesses a cat if the inputted attributes match the ones belonging to a cat"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "mammal") (value TRUE))
-   (attribute (name "herbivorous") (value FALSE))
+   (attribute (name land) (value TRUE))
+   (attribute (name mammal) (value TRUE))
+   (attribute (name herbivorous) (value FALSE))
 =>
    (halt)
-   (guessAnimal "cat")
+   (guessAnimal cat)
 )  ; defrule cat "guesses a cat if the inputted attributes match the ones belonging to a cat"
 
 (defrule frog "guesses a frog if the inputted attributes match the ones belonging to a frog"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "herbivorous") (value FALSE))
-   (attribute (name "claws") (value FALSE))
+   (attribute (name land) (value TRUE))
+   (attribute (name mammal) (value FALSE))
+   (attribute (name herbivorous) (value FALSE))
+   (attribute (name claws) (value FALSE))
 =>
    (halt)
-   (guessAnimal "frog")
+   (guessAnimal frog)
 )  ; defrule frog "guesses a frog if the inputted attributes match the ones belonging to a frog"
 
 (defrule snail "guesses a snail if the inputted attributes match the ones belonging to a snail"
-   (attribute (name "land") (value TRUE))
-   (attribute (name "legs") (value FALSE))
+   (attribute (name land) (value TRUE))
+   (attribute (name legs) (value FALSE))
 =>
    (halt)
-   (guessAnimal "snail")
+   (guessAnimal snail)
 )  ; defrule snail "guesses a snail if the inputted attributes match the ones belonging to a snail"
 
 (defrule bee "guesses a bee if the inputted attributes match the ones belonging to a bee"
-   (attribute (name "fly") (value TRUE))
-   (attribute (name "feathers") (value FALSE))
+   (attribute (name fly) (value TRUE))
+   (attribute (name feathers) (value FALSE))
 =>
    (halt)
-   (guessAnimal "bee")
+   (guessAnimal bee)
 )  ; defrule bee "guesses a bee if the inputted attributes match the ones belonging to a bee"
 
 (defrule eagle "guesses an eagle if the inputted attributes match the ones belonging to an eagle"
-   (attribute (name "fly") (value TRUE))
-   (attribute (name "feathers") (value TRUE))
-   (attribute (name "nocturnal") (value FALSE))
+   (attribute (name fly) (value TRUE))
+   (attribute (name feathers) (value TRUE))
+   (attribute (name nocturnal) (value FALSE))
 =>
    (halt)
-   (guessAnimal "eagle")
+   (guessAnimal eagle)
 )  ; defrule eagle "guesses an eagle if the inputted attributes match the ones belonging to an eagle"
 
 (defrule owl "guesses an owl if the inputted attributes match the ones belonging to an owl"
-   (attribute (name "nocturnal") (value TRUE))
+   (attribute (name nocturnal) (value TRUE))
 =>
    (halt)
-   (guessAnimal "owl")
+   (guessAnimal owl)
 )  ; defrule owl "guesses an owl if the inputted attributes match the ones belonging to an owl"
 
 (defrule penguin "guesses a penguin if the inputted attributes match the ones belonging to a penguin"
-   (attribute (name "fly") (value FALSE))
-   (attribute (name "feathers") (value TRUE))
+   (attribute (name fly) (value FALSE))
+   (attribute (name feathers) (value TRUE))
 =>
    (halt)
-   (guessAnimal "penguin")
+   (guessAnimal penguin)
 )  ; defrule penguin "guesses a penguin if the inputted attributes match the ones belonging to a penguin"
 
 (defrule fish "guesses a fish if the inputted attributes match the ones belonging to a fish"
-   (attribute (name "land") (value FALSE))
-   (attribute (name "mammal") (value FALSE))
-   (attribute (name "legs") (value FALSE))
+   (attribute (name land) (value FALSE))
+   (attribute (name mammal) (value FALSE))
+   (attribute (name legs) (value FALSE))
 =>
    (halt)
-   (guessAnimal "fish")
+   (guessAnimal fish)
 )  ; defrule fish "guesses a fish if the inputted attributes match the ones belonging to a fish"
 
 (defrule octopus "guesses an octopus if the inputted attributes match the ones belonging to an octopus"
-   (attribute (name "land") (value FALSE))
-   (attribute (name "legs") (value TRUE))
+   (attribute (name land) (value FALSE))
+   (attribute (name legs) (value TRUE))
 =>
    (halt)
-   (guessAnimal "octopus")
+   (guessAnimal octopus)
 )  ; defrule octopus "guesses an octopus if the inputted attributes match the ones belonging to an octopus"
 
 (defrule whale "guesses a whale if the inputted attributes match the ones belonging to a whale"
-   (attribute (name "land") (value FALSE))
-   (attribute (name "mammal") (value TRUE))
+   (attribute (name land) (value FALSE))
+   (attribute (name mammal) (value TRUE))
 =>
    (halt)
-   (guessAnimal "whale")
+   (guessAnimal whale)
 )  ; defrule whale "guesses a whale if the inputted attributes match the ones belonging to a whale"
 
 /******
@@ -198,7 +198,7 @@
 */
 (defrule liveOnLand "Checks whether the user's animal mainly lives on land (sleeps and breathes on it)"
    (declare (salience 90))
-   (not (attribute (name "land")))
+   (not (attribute (name land)))
 =>
    (bind ?value (convertInput (askline "Does your animal mainly live on land (sleeps and breathes on land)? ")))
 
@@ -206,17 +206,17 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "land") (value ?value)))
+      (assert (attribute (name land) (value ?value)))
       (if (not ?value) then
-         (assert (attribute (name "fly") (value FALSE)))
-         (assert (attribute (name "feathers") (value FALSE)))
+         (assert (attribute (name fly) (value FALSE)))
+         (assert (attribute (name feathers) (value FALSE)))
       )
    )
 )  ; defrule liveOnLand "Checks whether the user's animal mainly lives on land (sleeps and breathes on it)"
 
 (defrule canFly "Checks whether the user's animal actively uses energy to fly"
    (declare (salience 70))
-   (not (attribute (name "fly")))
+   (not (attribute (name fly)))
 =>
    (bind ?value (convertInput (askline "Does your animal fly (active use of energy involved)? ")))
 
@@ -224,15 +224,15 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "fly") (value ?value)))
+      (assert (attribute (name fly) (value ?value)))
       (if ?value then
-         (assert (attribute (name "land") (value ?value)))
+         (assert (attribute (name land) (value ?value)))
       )
    )
 )  ; defrule canFly "Checks whether the user's animal actively uses energy to fly"
 
 (defrule hasFeathers "Checks whether the user's animal has feathers"
-   (not (attribute (name "feathers")))
+   (not (attribute (name feathers)))
 =>
    (bind ?value (convertInput (askline "Does your animal have feathers? ")))
 
@@ -240,19 +240,19 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "feathers") (value ?value)))
+      (assert (attribute (name feathers) (value ?value)))
       (if ?value then
-         (assert (attribute (name "land") (value ?value)))
-         (assert (attribute (name "mammal") (value FALSE)))
-         (assert (attribute (name "legs") (value TRUE)))
-         (assert (attribute (name "claws") (value TRUE)))
+         (assert (attribute (name land) (value ?value)))
+         (assert (attribute (name mammal) (value FALSE)))
+         (assert (attribute (name legs) (value TRUE)))
+         (assert (attribute (name claws) (value TRUE)))
       )
    )
 )  ; defrule hasFeathers "Checks whether the user's animal has feathers"
 
 (defrule isMammal "Checks whether the user's animal is a mammal"
    (declare (salience 80))
-   (not (attribute (name "mammal")))
+   (not (attribute (name mammal)))
 =>
    (bind ?value (convertInput (askline "Is your animal mammalian? ")))
 
@@ -260,16 +260,16 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "mammal") (value ?value)))
+      (assert (attribute (name mammal) (value ?value)))
       (if ?value then
-         (assert (attribute (name "fly") (value FALSE)))
-         (assert (attribute (name "feathers") (value FALSE)))
+         (assert (attribute (name fly) (value FALSE)))
+         (assert (attribute (name feathers) (value FALSE)))
       )
    )
 )  ; defrule isMammal "Checks whether the user's animal is a mammal"
 
 (defrule isNocturnal "Checks whether the user's animal is nocturnal"
-   (not (attribute (name "nocturnal")))
+   (not (attribute (name nocturnal)))
 =>
    (bind ?value (convertInput (askline "Is your animal nocturnal? ")))
 
@@ -277,12 +277,12 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "nocturnal") (value ?value)))
+      (assert (attribute (name nocturnal) (value ?value)))
    )
 )  ; defrule isNocturnal "Checks whether the user's animal is nocturnal"
 
 (defrule isHerbivore "Checks whether the user's animal is mainly herbivorous"
-   (not (attribute (name "herbivorous")))
+   (not (attribute (name herbivorous)))
 =>
    (bind ?value (convertInput (askline "Is your animal mainly herbivorous? ")))
 
@@ -290,12 +290,12 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "herbivorous") (value ?value)))
+      (assert (attribute (name herbivorous) (value ?value)))
    )
 )  ; defrule isHerbivore "Checks whether the user's animal is mainly herbivorous"
 
 (defrule hasClaws "Checks whether the user's animal has claws on their hands or feet"
-   (not (attribute (name "claws")))
+   (not (attribute (name claws)))
 =>
    (bind ?value (convertInput (askline "Does your animal have claws? ")))
 
@@ -303,15 +303,15 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "claws") (value ?value)))
+      (assert (attribute (name claws) (value ?value)))
       (if ?value then
-         (assert (attribute (name "legs") (value ?value)))
+         (assert (attribute (name legs) (value ?value)))
       )
    )
 )  ; defrule hasClaws "Checks whether the user's animal has claws on their hands or feet"
 
 (defrule hasLegs "Checks whether the user's animal has limbs classified as legs or feet"
-   (not (attribute (name "legs")))
+   (not (attribute (name legs)))
 =>
    (bind ?value (convertInput (ask "Does your animal have limbs classified as legs (or feet)? ")))
 
@@ -319,17 +319,17 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "legs") (value ?value)))
+      (assert (attribute (name legs) (value ?value)))
       (if (not ?value) then
-         (assert (attribute (name "claws") (value FALSE)))
-         (assert (attribute (name "feathers") (value FALSE)))
-         (assert (attribute (name "fly") (value FALSE)))
+         (assert (attribute (name claws) (value FALSE)))
+         (assert (attribute (name feathers) (value FALSE)))
+         (assert (attribute (name fly) (value FALSE)))
       )
    )
 )  ; defrule hasLegs "Checks whether the user's animal has limbs classified as legs or feet"
 
 (defrule inGroups "Checks whether the user's animal travels in groups"
-   (not (attribute (name "groups")))
+   (not (attribute (name groups)))
 =>
    (bind ?value (convertInput (askline "Does your animal often travel in groups (packs, herds, etc.)? ")))
 
@@ -337,7 +337,7 @@
       (printline "Improper input detected. Ending program")
       (halt)
     else 
-      (assert (attribute (name "groups") (value ?value)))
+      (assert (attribute (name groups) (value ?value)))
    )
 )  ; defrule inGroups "Checks whether the user's animal travels in groups"
 
@@ -366,7 +366,7 @@
 
 /*
 * Guesses the given animal if the given attributes match those of the given animal
-* @param animal            the animal to guess
+* @param animal              the animal to guess
 */
 (deffunction guessAnimal (?animal)
    (bind ?input (convertInput (askline (sym-cat "Is your animal a(n) " ?animal "? "))))
