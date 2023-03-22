@@ -280,10 +280,11 @@
 *                            FALSE if the first character of input is an 'n' or 'N'
 */
 (deffunction convertInput (?question)
-   (bind ?input (askline ?question))
-
    (bind ?result "invalid")
-   (while (= ?result "invalid")
+   (while (stringp ?result)
+      (printline)
+
+      (bind ?input (askline ?question))
       (bind ?character (upcase (sub-string 1 1 ?input)))
 
       (if (= ?character "Y") then
@@ -292,7 +293,7 @@
          (if (= ?character "N") then
             (bind ?result FALSE)
           else
-            (askline "Improper input detected. Please enter your response again ('y' or 'n'): ")
+            (printline "Improper input detected. Please enter your response again to following question again ('y' or 'n').")
          )
       )
    )  ; while (not (= ?result "invalid"))
@@ -306,7 +307,7 @@
 */
 (deffunction guessAnimal (?animal)
    (halt)
-   (bind ?input (convertInput (askline (sym-cat "Is your animal a(n) " ?animal "? "))))
+   (bind ?input (convertInput (sym-cat "Is your animal a(n) " ?animal "? ")))
 
    (if (= ?input TRUE) then
       (printline "I win! ")
