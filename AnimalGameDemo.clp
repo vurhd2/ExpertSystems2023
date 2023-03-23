@@ -293,13 +293,13 @@
          (if (= ?character "N") then
             (bind ?result FALSE)
           else
-            (printline "Improper input detected. Please enter your response again to following question again ('y' or 'n').")
+            (printline "Improper input detected. Please enter your response to the following question again ('y' or 'n').")
          )
       )
-   )  ; while (not (= ?result "invalid"))
+   )  ; while (stringp ?result)
 
    (return ?result)
-)  ; deffunction convertInput (?input)
+)  ; deffunction convertInput (?question)
 
 /*
 * Guesses the given animal if the given attributes match those of the given animal
