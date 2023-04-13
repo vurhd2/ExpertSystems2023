@@ -23,11 +23,8 @@
 
 (do-backward-chaining attribute)
 
-(defrule nameBackward ""
-   (need-attribute (name ?x &~nil))
-=>
-   
-)
+(defglobal ?*question_limit* 20)
+(defglobal ?*questions_asked* 0)
 
 (defrule startGame "Begins the animal game"
    (declare (salience 100))
@@ -44,6 +41,13 @@
    (halt)
    (printline "I give up. Looks like I lose... ")
 ) 
+
+(defrule loseGame "Ends the game forcefully if the question limit has been reached and notifies the user of their win"
+   (> ?*questions_asked* ?*question_limit*)
+=>
+   (halt)
+   (printline "We have reached the question limit. You win!")
+)
 
 (defrule mammal
    (attribute (name milk) (value TRUE))
@@ -66,8 +70,8 @@
 )
 
 (defrule mollusk
-   (attribute (name exoskeleton) (value TRUE))
-   (attribute (name radial)      (value FALSE))
+   (attribute (name exoskeleton)  (value TRUE))
+   (attribute (name radial)       (value FALSE))
    (attribute (name appendages)   (value FALSE))
 =>
    (batch mollusks.clp)
@@ -107,51 +111,87 @@
 )
 
 (defrule produceMilk
-   
+   (need-attribute (name milk) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal produce milk?"))
+   (assert (attribute (name milk) (value ?value)))
 )
 
 (defrule hasFeathers
-   
+   (need-attribute (name feathers) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal have feathers?"))
+   (assert (attribute (name feathers) (value ?value)))
 )
 
 (defrule vertebrate
-   
+   (need-attribute (name vertebrate) (value ?))
+=>
+   (bind ?value (convertInput "Is your animal considered a vertebrate (has a central spinal column or backbone)?"))
+   (assert (attribute (name vertebrate) (value ?value)))
 )
 
 (defrule hasExoskeleton
-   
+   (need-attribute (name exoskeleton) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal have an exoskeleton?"))
+   (assert (attribute (name exoskeleton) (value ?value)))
 )
 
 (defrule endothermic
-   
+   (need-attribute (name endothermic) (value ?))
+=>
+   (bind ?value (convertInput "Is your animal considered endothermic (naturally warm-blooded)?"))
+   (assert (attribute (name endothermic) (value ?value)))
 )
 
 (defrule radiallySymmetrical
-   
+   (need-attribute (name radial) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal exhibit radial symmetry?"))
+   (assert (attribute (name radial) (value ?value)))
 )
 
 (defrule undergoMetamorphosis
-   
+   (need-attribute (name metamorphosis) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal undergo metamorphosis?"))
+   (assert (attribute (name metamorphosis) (value ?value)))
 )
 
 (defrule jointedAppendages
-   
+   (need-attribute (name appendages) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal produce milk?"))
+   (assert (attribute (name appendages) (value ?value)))
 )
 
 (defrule livesOnLand
-   
+   (need-attribute (name land) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal spend most of its time on land (above sea level)?"))
+   (assert (attribute (name land) (value ?value)))
 )
 
 (defrule fly
-   
+   (need-attribute (name fly) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
+   (assert (attribute (name fly) (value ?value)))
 )
 
 (defrule solitary
-   
+   (need-attribute (name solitary) (value ?))
+=>
+   (bind ?value (convertInput "Is your animal considered solitary (spends most of its time alone)?"))
+   (assert (attribute (name solitary) (value ?value)))
 )
 
 (defrule shell
-   
+   (need-attribute (name shell) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal have an outer shell?"))
+   (assert (attribute (name shell) (value ?value)))
 )
 
 /*
@@ -167,6 +207,7 @@
       (printline)
 
       (bind ?input (askline ?question))
+      (bind ?*questions_asked* (++ ?*questions_asked*))
       (bind ?character (upcase (sub-string 1 1 ?input)))
 
       (if (= ?character "Y") then

@@ -11,19 +11,27 @@
 (defrule bee
    (attribute (name fly)      (value TRUE))
    (attribute (name solitary) (value FALSE))
+=>
+   (guessAnimal bee)
 )
 
 (defrule spider
    (attribute (name fly)      (value FALSE))
    (attribute (name solitary) (value TRUE))
+=>
+   (guessAnimal spider)
 )
 
 (defrule ant
    (attribute (name fly)      (value FALSE))
    (attribute (name solitary) (value FALSE))
+=>
+   (guessAnimal ant)
 )
 
 (defrule beetle
    (attribute (name fly)      (value TRUE))
    (attribute (name solitary) (value TRUE))
+=>
+   (guessAnimal beetle)
 )
