@@ -129,6 +129,9 @@
 =>
    (bind ?value (convertInput "Is your animal considered a vertebrate (has a central spinal column or backbone)?"))
    (assert (attribute (name vertebrate) (value ?value)))
+   (if ?value then
+      (assert (attribute (name exoskeleton) (value FALSE)))
+   )
 )
 
 (defrule hasExoskeleton
@@ -136,6 +139,9 @@
 =>
    (bind ?value (convertInput "Does your animal have an exoskeleton?"))
    (assert (attribute (name exoskeleton) (value ?value)))
+   (if ?value then
+      (assert (attribute (name vertebrate) (value FALSE)))
+   )
 )
 
 (defrule endothermic
@@ -166,11 +172,24 @@
    (assert (attribute (name appendages) (value ?value)))
 )
 
+(defrule hasGills
+   (need-attribute (name gills) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal have gills?"))
+   (assert (attribute (name gills) (value ?value)))
+   (if ?value then
+      (assert (attribute (name land) (value FALSE)))
+   )
+)
+
 (defrule livesOnLand
    (need-attribute (name land) (value ?))
 =>
    (bind ?value (convertInput "Does your animal spend most of its time on land (above sea level)?"))
    (assert (attribute (name land) (value ?value)))
+   (if (not ?value) then
+      (assert (attribute (name fly) (value FALSE)))
+   )
 )
 
 (defrule fly
@@ -178,6 +197,11 @@
 =>
    (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
    (assert (attribute (name fly) (value ?value)))
+   (if ?value then
+      (assert (attribute (name land)        (value TRUE)))
+    else
+      (assert (attribute (name roundwinged) (value FALSE)))
+   )
 )
 
 (defrule solitary
@@ -192,6 +216,9 @@
 =>
    (bind ?value (convertInput "Does your animal have an outer shell?"))
    (assert (attribute (name shell) (value ?value)))
+   (if (not ?value) then
+      (assert (attribute (name hinged) (value FALSE)))
+   )
 )
 
 /*

@@ -18,7 +18,7 @@
 (defrule eagle
    (attribute (name land)    (value TRUE))
    (attribute (name fly)     (value TRUE))
-   (attribute (name rounded) (value TRUE))
+   (attribute (name roundwinged) (value TRUE))
    (attribute (name piping)  (value TRUE))
 =>
    (guessAnimal eagle)
@@ -33,7 +33,7 @@
 (defrule hawk
    (attribute (name land)    (value TRUE))
    (attribute (name fly)     (value TRUE))
-   (attribute (name rounded) (value TRUE))
+   (attribute (name roundwinged) (value TRUE))
    (attribute (name piping)  (value FALSE))
 =>
    (guessAnimal hawk)
@@ -42,7 +42,7 @@
 (defrule falcon
    (attribute (name land)    (value TRUE))
    (attribute (name fly)     (value TRUE))
-   (attribute (name rounded) (value FALSE))
+   (attribute (name roundwinged) (value FALSE))
    (attribute (name piping)  (value TRUE))
 =>
    (guessAnimal falcon)
@@ -63,10 +63,13 @@
 )
 
 (defrule hasRoundedWings
-   (need-attribute (name rounded) (value ?))
+   (need-attribute (name roundwinged) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have rounded wings?"))
-   (assert (attribute (name rounded) (value ?value)))
+   (assert (attribute (name roundwinged) (value ?value)))
+   (if ?value then
+      (assert (attribute (name fly) (value TRUE)))
+   )
 )
 
 (defrule makesPipingSound
