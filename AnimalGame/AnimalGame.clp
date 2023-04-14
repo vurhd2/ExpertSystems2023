@@ -52,13 +52,31 @@
 (defrule mammal
    (attribute (name milk) (value TRUE))
 =>
-   (batch mammals.clp)
+   (batch AnimalGame/mammals.clp)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule bird
    (attribute (name feathers) (value TRUE))
 =>
-   (batch birds.clp)
+   (batch AnimalGame/birds.clp)
+
+   (undefrule mammal)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule reptile
@@ -66,7 +84,16 @@
    (attribute (name endothermic) (value FALSE))
    (attribute (name gills)       (value FALSE))
 =>
-   (batch reptiles.clp)
+   (batch AnimalGame/reptiles.clp)
+
+   (undefrule bird)
+   (undefrule mammal)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule mollusk
@@ -74,20 +101,47 @@
    (attribute (name radial)       (value FALSE))
    (attribute (name appendages)   (value FALSE))
 =>
-   (batch mollusks.clp)
+   (batch AnimalGame/mollusks.clp)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mammal)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule insect
    (attribute (name appendages) (value TRUE))
 =>
-   (batch insects.clp)
+   (batch AnimalGame/insects.clp)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule mammal)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule amphibian
    (attribute (name vertebrate)    (value TRUE))
    (attribute (name metamorphosis) (value TRUE))
 =>
-   (batch amphibians.clp)
+   (batch AnimalGame/amphibians.clp)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule mammal)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule fish
@@ -96,6 +150,15 @@
    (attribute (name gills)         (value TRUE))
 =>
    (guessAnimal fish)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule mammal)
+   (undefrule jellyfish)
+   (undefrule sea_urchin)
 )
 
 (defrule jellyfish
@@ -103,6 +166,15 @@
    (attribute (name radial)      (value TRUE))
 =>
    (guessAnimal jellyfish)
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule mammal)
+   (undefrule sea_urchin)
 )
 
 (defrule sea_urchin
@@ -110,6 +182,15 @@
    (attribute (name radial)      (value TRUE))
 =>
    (guessAnimal "sea urchin")
+
+   (undefrule bird)
+   (undefrule reptile)
+   (undefrule mollusk)
+   (undefrule insect)
+   (undefrule amphibian)
+   (undefrule fish)
+   (undefrule jellyfish)
+   (undefrule mammal)
 )
 
 (defrule produceMilk
@@ -170,7 +251,7 @@
 (defrule hasJointedAppendages
    (need-attribute (name appendages) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal produce milk?"))
+   (bind ?value (convertInput "Does your animal have jointed appendages?"))
    (assert (attribute (name appendages) (value ?value)))
 )
 
@@ -245,7 +326,7 @@
          (if (= ?character "N") then
             (bind ?result FALSE)
           else
-            (printline "Improper input detected. Please enter your response to the following question again ('y' or 'n').")
+            (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
          )
       )
    )  ; while (stringp ?result)
