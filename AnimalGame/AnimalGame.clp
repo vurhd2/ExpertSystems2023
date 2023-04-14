@@ -23,8 +23,8 @@
 
 (do-backward-chaining attribute)
 
-(defglobal ?*question_limit* 20)
-(defglobal ?*questions_asked* 0)
+(defglobal ?*question_limit* = 20)
+(defglobal ?*questions_asked* = 0)
 
 (defrule startGame "Begins the animal game"
    (declare (salience 100))
@@ -101,6 +101,8 @@
 (defrule jellyfish
    (attribute (name exoskeleton) (value FALSE))
    (attribute (name radial)      (value TRUE))
+=>
+   (guessAnimal jellyfish)
 )
 
 (defrule sea_urchin
@@ -124,7 +126,7 @@
    (assert (attribute (name feathers) (value ?value)))
 )
 
-(defrule vertebrate
+(defrule isVertebrate
    (need-attribute (name vertebrate) (value ?))
 =>
    (bind ?value (convertInput "Is your animal considered a vertebrate (has a central spinal column or backbone)?"))
@@ -144,7 +146,7 @@
    )
 )
 
-(defrule endothermic
+(defrule isEndothermic
    (need-attribute (name endothermic) (value ?))
 =>
    (bind ?value (convertInput "Is your animal considered endothermic (naturally warm-blooded)?"))
@@ -165,7 +167,7 @@
    (assert (attribute (name metamorphosis) (value ?value)))
 )
 
-(defrule jointedAppendages
+(defrule hasJointedAppendages
    (need-attribute (name appendages) (value ?))
 =>
    (bind ?value (convertInput "Does your animal produce milk?"))
@@ -192,7 +194,7 @@
    )
 )
 
-(defrule fly
+(defrule canFly
    (need-attribute (name fly) (value ?))
 =>
    (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
@@ -204,14 +206,14 @@
    )
 )
 
-(defrule solitary
+(defrule isSolitary
    (need-attribute (name solitary) (value ?))
 =>
    (bind ?value (convertInput "Is your animal considered solitary (spends most of its time alone)?"))
    (assert (attribute (name solitary) (value ?value)))
 )
 
-(defrule shell
+(defrule hasShell
    (need-attribute (name shell) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have an outer shell?"))
@@ -233,7 +235,7 @@
    (while (stringp ?result)
       (printline)
 
-      (bind ?input (askline ?question))
+      (bind ?input (askline ?question " "))
       (bind ?*questions_asked* (++ ?*questions_asked*))
       (bind ?character (upcase (sub-string 1 1 ?input)))
 
