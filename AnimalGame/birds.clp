@@ -16,10 +16,10 @@
 )
 
 (defrule eagle
-   (attribute (name land)    (value TRUE))
-   (attribute (name fly)     (value TRUE))
+   (attribute (name land)        (value TRUE))
+   (attribute (name fly)         (value TRUE))
    (attribute (name roundwinged) (value TRUE))
-   (attribute (name piping)  (value TRUE))
+   (attribute (name piping)      (value TRUE))
 =>
    (guessAnimal eagle)
 )
@@ -31,26 +31,25 @@
 )
 
 (defrule hawk
-   (attribute (name land)    (value TRUE))
-   (attribute (name fly)     (value TRUE))
+   (attribute (name land)        (value TRUE))
+   (attribute (name fly)         (value TRUE))
    (attribute (name roundwinged) (value TRUE))
-   (attribute (name piping)  (value FALSE))
+   (attribute (name piping)      (value FALSE))
 =>
    (guessAnimal hawk)
 )
 
 (defrule falcon
-   (attribute (name land)    (value TRUE))
-   (attribute (name fly)     (value TRUE))
+   (attribute (name land)        (value TRUE))
+   (attribute (name fly)         (value TRUE))
    (attribute (name roundwinged) (value FALSE))
-   (attribute (name piping)  (value TRUE))
+   (attribute (name piping)      (value TRUE))
 =>
    (guessAnimal falcon)
 )
 
 (defrule penguin
    (attribute (name land) (value FALSE))
-   (attribute (name fly)  (value FALSE))
 =>
    (guessAnimal penguin)
 )

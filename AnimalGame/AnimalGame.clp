@@ -33,14 +33,14 @@
    (printline "Welcome to the 20 questions animal game! ")
    (printline "Please think of an animal and respond honestly to the following questions with either yes ('y'), no ('n'), or unknown ('u') !")
    (printline)
-)
+)  
 
 (defrule giveUp "Ends the game and notifies the user that we were unable to guess their animal with the given info"
    (declare (salience -100))
 =>
    (halt)
    (printline "I give up. Looks like I lose... ")
-) 
+)  
 
 (defrule loseGame "Ends the game forcefully if the question limit has been reached and notifies the user of their win"
    (> ?*questions_asked* ?*question_limit*)
@@ -54,30 +54,33 @@
 =>
    (batch AnimalGame/mammals.clp)
 
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule hasFeathers)
+   (undefrule isEndothermic)
+   (undefrule isVertebrate)
+   (undefrule hasExoskeleton)
+   (undefrule radiallySymmetrical)
+   (undefrule undergoMetamorphosis)
+   (undefrule hasJointedAppendages)
+   (undefrule hasGills)
+   (undefrule hasShell)
+)  ; defrule mammal
 
 (defrule bird
    (attribute (name feathers) (value TRUE))
 =>
    (batch AnimalGame/birds.clp)
 
-   (undefrule mammal)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule produceMilk)
+   (undefrule isEndothermic)
+   (undefrule isVertebrate)
+   (undefrule hasExoskeleton)
+   (undefrule radiallySymmetrical)
+   (undefrule undergoMetamorphosis)
+   (undefrule hasJointedAppendages)
+   (undefrule hasGills)
+   (undefrule hasShell)
+   (undefrule isSolitary)
+)  ; defrule bird
 
 (defrule reptile
    (attribute (name vertebrate)  (value TRUE))
@@ -86,15 +89,13 @@
 =>
    (batch AnimalGame/reptiles.clp)
 
-   (undefrule bird)
-   (undefrule mammal)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule hasFeathers)
+   (undefrule produceMilk)
+   (undefrule hasExoskeleton)
+   (undefrule radiallySymmetrical)
+   (undefrule undergoMetamorphosis)
+   (undefrule hasJointedAppendages)
+)  ; defrule reptile
 
 (defrule mollusk
    (attribute (name exoskeleton)  (value TRUE))
@@ -103,30 +104,27 @@
 =>
    (batch AnimalGame/mollusks.clp)
 
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mammal)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule hasFeathers)
+   (undefrule produceMilk)
+   (undefrule isEndothermic)
+   (undefrule isVertebrate)
+   (undefrule hasExoskeleton)
+   (undefrule hasGills)
+)  ; defrule mollusk
 
 (defrule insect
    (attribute (name appendages) (value TRUE))
 =>
    (batch AnimalGame/insects.clp)
 
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule mammal)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule hasFeathers)
+   (undefrule isEndothermic)
+   (undefrule isVertebrate)
+   (undefrule hasExoskeleton)
+   (undefrule radiallySymmetrical)
+   (undefrule hasGills)
+   (undefrule hasShell)
+)  ; defrule insect
 
 (defrule amphibian
    (attribute (name vertebrate)    (value TRUE))
@@ -134,15 +132,15 @@
 =>
    (batch AnimalGame/amphibians.clp)
 
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule mammal)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+   (undefrule hasFeathers)
+   (undefrule produceMilk)
+   (undefrule isEndothermic)
+   (undefrule hasExoskeleton)
+   (undefrule radiallySymmetrical)
+   (undefrule hasJointedAppendages)
+   (undefrule hasGills)
+   (undefrule hasShell)
+)  ; defrule amphibian
 
 (defrule fish
    (attribute (name vertebrate)    (value TRUE))
@@ -150,62 +148,35 @@
    (attribute (name gills)         (value TRUE))
 =>
    (guessAnimal fish)
-
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule mammal)
-   (undefrule jellyfish)
-   (undefrule sea_urchin)
-)
+)  ; defrule fish
 
 (defrule jellyfish
    (attribute (name exoskeleton) (value FALSE))
    (attribute (name radial)      (value TRUE))
 =>
    (guessAnimal jellyfish)
-
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule mammal)
-   (undefrule sea_urchin)
-)
+)  ; defrule jellyfish
 
 (defrule sea_urchin
    (attribute (name exoskeleton) (value TRUE))
    (attribute (name radial)      (value TRUE))
 =>
    (guessAnimal "sea urchin")
-
-   (undefrule bird)
-   (undefrule reptile)
-   (undefrule mollusk)
-   (undefrule insect)
-   (undefrule amphibian)
-   (undefrule fish)
-   (undefrule jellyfish)
-   (undefrule mammal)
-)
+)  ; defrule sea_urchin
 
 (defrule produceMilk
    (need-attribute (name milk) (value ?))
 =>
    (bind ?value (convertInput "Does your animal produce milk?"))
    (assert (attribute (name milk) (value ?value)))
-)
+) ; defrule produceMilk
 
 (defrule hasFeathers
    (need-attribute (name feathers) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have feathers?"))
    (assert (attribute (name feathers) (value ?value)))
-)
+) ; defrule hasFeathers
 
 (defrule isVertebrate
    (need-attribute (name vertebrate) (value ?))
@@ -215,7 +186,7 @@
    (if ?value then
       (assert (attribute (name exoskeleton) (value FALSE)))
    )
-)
+)  ; defrule isVertebrate
 
 (defrule hasExoskeleton
    (need-attribute (name exoskeleton) (value ?))
@@ -225,35 +196,35 @@
    (if ?value then
       (assert (attribute (name vertebrate) (value FALSE)))
    )
-)
+)  ; defrule hasExoskeleton
 
 (defrule isEndothermic
    (need-attribute (name endothermic) (value ?))
 =>
    (bind ?value (convertInput "Is your animal considered endothermic (naturally warm-blooded)?"))
    (assert (attribute (name endothermic) (value ?value)))
-)
+)  ; defrule isEndothermic
 
 (defrule radiallySymmetrical
    (need-attribute (name radial) (value ?))
 =>
    (bind ?value (convertInput "Does your animal exhibit radial symmetry?"))
    (assert (attribute (name radial) (value ?value)))
-)
+)  ; defrule radiallySymmetrical
 
 (defrule undergoMetamorphosis
    (need-attribute (name metamorphosis) (value ?))
 =>
    (bind ?value (convertInput "Does your animal undergo metamorphosis?"))
    (assert (attribute (name metamorphosis) (value ?value)))
-)
+)  ; defrule undergoMetamorphosis
 
 (defrule hasJointedAppendages
    (need-attribute (name appendages) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have jointed appendages?"))
    (assert (attribute (name appendages) (value ?value)))
-)
+)  ; defrule hasJointedAppendages
 
 (defrule hasGills
    (need-attribute (name gills) (value ?))
@@ -263,7 +234,7 @@
    (if ?value then
       (assert (attribute (name land) (value FALSE)))
    )
-)
+)  ; defrule hasGills
 
 (defrule livesOnLand
    (need-attribute (name land) (value ?))
@@ -273,7 +244,7 @@
    (if (not ?value) then
       (assert (attribute (name fly) (value FALSE)))
    )
-)
+)  ; defrule livesOnLand
 
 (defrule canFly
    (need-attribute (name fly) (value ?))
@@ -285,14 +256,14 @@
     else
       (assert (attribute (name roundwinged) (value FALSE)))
    )
-)
+)  ; defrule canFly
 
 (defrule isSolitary
    (need-attribute (name solitary) (value ?))
 =>
    (bind ?value (convertInput "Is your animal considered solitary (spends most of its time alone)?"))
    (assert (attribute (name solitary) (value ?value)))
-)
+)  ; defrule isSolitary
 
 (defrule hasShell
    (need-attribute (name shell) (value ?))
@@ -302,7 +273,7 @@
    (if (not ?value) then
       (assert (attribute (name hinged) (value FALSE)))
    )
-)
+)  ; defrule hasShell
 
 /*
 * Determines whether the user's input to the given question is an affirmative or negative response (or neither)          
