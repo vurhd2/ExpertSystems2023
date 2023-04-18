@@ -17,21 +17,32 @@
 * Defines a template for each animal trait being used to differentiate animals
 * @slot name            the name of the animal trait
 * @slot value           the value indicating whether this trait applies to a given animal,
-*                       with 'TRUE' indicating that it does and 'FALSE' indicating the opposite
+*                       with 'T' indicating that it does and 'F' indicating the opposite
 */
 (deftemplate attribute (slot name) (slot value))
 
 (do-backward-chaining attribute)
 
-(defglobal ?*question_limit* = 20)
-(defglobal ?*questions_asked* = 0)
+(defglobal ?*question_limit* = 20)  ; the amount of questions that can be asked without losing
+(defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
 
+/*
+* path of the folder within the jess working directory that contains the files for this animal game
+*/
+(defglobal ?*directory* = "AnimalGame/")
+
+/*****
+* Rules either starting or ending the animal game based on certain conditions
+* such as exceeding the question limit or running out of questions to ask
+*/
 (defrule startGame "Begins the animal game"
    (declare (salience 100))
 =>
    (printline)
    (printline "Welcome to the 20 questions animal game! ")
-   (printline "Please think of an animal and respond honestly to the following questions with either yes ('y'), no ('n'), or unknown ('u') !")
+   (printline "Please think of an animal and respond honestly to the following questions with either 'yes' ('y'), 'no' ('n'), or 'unknown' ('u')!")
+   (printline "Feel free to use Google or other resources to learn more about your own animal in the process!")
+   (printline "Ready? The game is beginning! ")
    (printline)
 )  
 
@@ -39,20 +50,24 @@
    (declare (salience -100))
 =>
    (halt)
-   (printline "I give up. Looks like I lose... ")
+   (printline "I ran out of questions to ask, so I give up. Looks like I lose... ")
 )  
 
 (defrule loseGame "Ends the game forcefully if the question limit has been reached and notifies the user of their win"
    (> ?*questions_asked* ?*question_limit*)
 =>
    (halt)
-   (printline "We have reached the question limit. You win!")
+   (printline "We have reached the question limit. Seems like you win!")
 )
 
+/*****
+* Rules batching in the respective knowledge island if the animal group's listed traits are
+* the same as the ones inputted by the user
+*/
 (defrule mammal
-   (attribute (name milk) (value TRUE))
+   (attribute (name milk) (value T))
 =>
-   (batch AnimalGame/mammals.clp)
+   (batch (concatDirectory mammals.clp))
 
    (undefrule hasFeathers)
    (undefrule isEndothermic)
@@ -66,11 +81,11 @@
 )  ; defrule mammal
 
 (defrule bird
-   (attribute (name feathers) (value TRUE))
+   (attribute (name feathers) (value T))
 =>
-   (batch AnimalGame/birds.clp)
+   (batch (concatDirectory birds.clp))
 
-   (undefrule produceMilk)
+   (undefrule producesMilk)
    (undefrule isEndothermic)
    (undefrule isVertebrate)
    (undefrule hasExoskeleton)
@@ -83,14 +98,14 @@
 )  ; defrule bird
 
 (defrule reptile
-   (attribute (name vertebrate)  (value TRUE))
-   (attribute (name endothermic) (value FALSE))
-   (attribute (name gills)       (value FALSE))
+   (attribute (name vertebrate)  (value T))
+   (attribute (name endothermic) (value F))
+   (attribute (name gills)       (value F))
 =>
-   (batch AnimalGame/reptiles.clp)
+   (batch (concatDirectory reptiles.clp))
 
    (undefrule hasFeathers)
-   (undefrule produceMilk)
+   (undefrule producesMilk)
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
@@ -98,14 +113,14 @@
 )  ; defrule reptile
 
 (defrule mollusk
-   (attribute (name exoskeleton)  (value TRUE))
-   (attribute (name radial)       (value FALSE))
-   (attribute (name appendages)   (value FALSE))
+   (attribute (name exoskeleton)  (value T))
+   (attribute (name radial)       (value F))
+   (attribute (name appendages)   (value F))
 =>
-   (batch AnimalGame/mollusks.clp)
+   (batch (concatDirectory mollusks.clp))
 
    (undefrule hasFeathers)
-   (undefrule produceMilk)
+   (undefrule producesMilk)
    (undefrule isEndothermic)
    (undefrule isVertebrate)
    (undefrule hasExoskeleton)
@@ -113,9 +128,9 @@
 )  ; defrule mollusk
 
 (defrule insect
-   (attribute (name appendages) (value TRUE))
+   (attribute (name appendages) (value T))
 =>
-   (batch AnimalGame/insects.clp)
+   (batch (concatDirectory insects.clp))
 
    (undefrule hasFeathers)
    (undefrule isEndothermic)
@@ -127,13 +142,13 @@
 )  ; defrule insect
 
 (defrule amphibian
-   (attribute (name vertebrate)    (value TRUE))
-   (attribute (name metamorphosis) (value TRUE))
+   (attribute (name vertebrate)    (value T))
+   (attribute (name metamorphosis) (value T))
 =>
-   (batch AnimalGame/amphibians.clp)
+   (batch (concatDirectory amphibians.clp))
 
    (undefrule hasFeathers)
-   (undefrule produceMilk)
+   (undefrule producesMilk)
    (undefrule isEndothermic)
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
@@ -142,34 +157,55 @@
    (undefrule hasShell)
 )  ; defrule amphibian
 
+/*****
+* Rules guessing the titular animal if the animal's assigned traits
+* match the ones inputted by the user 
+*/
 (defrule fish
-   (attribute (name vertebrate)    (value TRUE))
-   (attribute (name metamorphosis) (value FALSE))
-   (attribute (name gills)         (value TRUE))
+   (attribute (name vertebrate)    (value T))
+   (attribute (name metamorphosis) (value F))
+   (attribute (name gills)         (value T))
 =>
    (guessAnimal fish)
 )  ; defrule fish
 
 (defrule jellyfish
-   (attribute (name exoskeleton) (value FALSE))
-   (attribute (name radial)      (value TRUE))
+   (attribute (name exoskeleton) (value F))
+   (attribute (name radial)      (value T))
 =>
    (guessAnimal jellyfish)
 )  ; defrule jellyfish
 
 (defrule sea_urchin
-   (attribute (name exoskeleton) (value TRUE))
-   (attribute (name radial)      (value TRUE))
+   (attribute (name exoskeleton) (value T))
+   (attribute (name radial)      (value T))
 =>
    (guessAnimal "sea urchin")
 )  ; defrule sea_urchin
 
-(defrule produceMilk
+
+/*****
+* Rules checking whether the user's animal has the titular attribute
+*/
+(defrule producesMilk
    (need-attribute (name milk) (value ?))
 =>
    (bind ?value (convertInput "Does your animal produce milk?"))
    (assert (attribute (name milk) (value ?value)))
-) ; defrule produceMilk
+) ; defrule producesMilk
+
+(defrule canFly "Checks whether the user's animal flies (and actively uses energy in the process)"
+   (need-attribute (name fly) (value ?))
+=>
+   (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
+   (assert (attribute (name fly) (value ?value)))
+   (if (= ?value T) then
+      (assert (attribute (name land)        (value T)))
+      (assert (attribute (name hooves)      (value F)))
+    else
+      (assert (attribute (name roundwinged) (value F)))
+   )
+)  ; defrule canFly
 
 (defrule hasFeathers
    (need-attribute (name feathers) (value ?))
@@ -183,8 +219,8 @@
 =>
    (bind ?value (convertInput "Is your animal considered a vertebrate (has a central spinal column or backbone)?"))
    (assert (attribute (name vertebrate) (value ?value)))
-   (if ?value then
-      (assert (attribute (name exoskeleton) (value FALSE)))
+   (if (= ?value T) then
+      (assert (attribute (name exoskeleton) (value F)))
    )
 )  ; defrule isVertebrate
 
@@ -193,8 +229,8 @@
 =>
    (bind ?value (convertInput "Does your animal have an exoskeleton?"))
    (assert (attribute (name exoskeleton) (value ?value)))
-   (if ?value then
-      (assert (attribute (name vertebrate) (value FALSE)))
+   (if (= ?value T) then
+      (assert (attribute (name vertebrate) (value F)))
    )
 )  ; defrule hasExoskeleton
 
@@ -212,10 +248,10 @@
    (assert (attribute (name radial) (value ?value)))
 )  ; defrule radiallySymmetrical
 
-(defrule undergoMetamorphosis
+(defrule undergoMetamorphosis "Checks whether the user's animal undergoes metamorphosis at least once in its life"
    (need-attribute (name metamorphosis) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal undergo metamorphosis?"))
+   (bind ?value (convertInput "Does your animal undergo metamorphosis at least once in its life?"))
    (assert (attribute (name metamorphosis) (value ?value)))
 )  ; defrule undergoMetamorphosis
 
@@ -231,32 +267,20 @@
 =>
    (bind ?value (convertInput "Does your animal have gills?"))
    (assert (attribute (name gills) (value ?value)))
-   (if ?value then
-      (assert (attribute (name land) (value FALSE)))
+   (if (= ?value T) then
+      (assert (attribute (name land) (value F)))
    )
 )  ; defrule hasGills
 
-(defrule livesOnLand
+(defrule livesOnLand "Checks whether the user's animal lives on land (spends most of its time above sea level)"
    (need-attribute (name land) (value ?))
 =>
    (bind ?value (convertInput "Does your animal spend most of its time on land (above sea level)?"))
    (assert (attribute (name land) (value ?value)))
-   (if (not ?value) then
-      (assert (attribute (name fly) (value FALSE)))
+   (if (= ?value F) then
+      (assert (attribute (name fly) (value F)))
    )
 )  ; defrule livesOnLand
-
-(defrule canFly
-   (need-attribute (name fly) (value ?))
-=>
-   (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
-   (assert (attribute (name fly) (value ?value)))
-   (if ?value then
-      (assert (attribute (name land)        (value TRUE)))
-    else
-      (assert (attribute (name roundwinged) (value FALSE)))
-   )
-)  ; defrule canFly
 
 (defrule isSolitary
    (need-attribute (name solitary) (value ?))
@@ -265,22 +289,31 @@
    (assert (attribute (name solitary) (value ?value)))
 )  ; defrule isSolitary
 
-(defrule hasShell
+(defrule hasShell "Checks whether the user's animal has an outer shell (not inner)"
    (need-attribute (name shell) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have an outer shell?"))
    (assert (attribute (name shell) (value ?value)))
-   (if (not ?value) then
-      (assert (attribute (name hinged) (value FALSE)))
+   (if (= ?value F) then
+      (assert (attribute (name hinged) (value F)))
    )
 )  ; defrule hasShell
 
 /*
+* Returns a string containing the path of the given file within the current jess working directory
+* @param file                 the name of the file to access/batch within the animal game directory
+* @return                     a string containing the concatenated path
+*/
+(deffunction concatDirectory (?file)
+   (return (sym-cat ?*directory* ?file))
+)
+
+/*
 * Determines whether the user's input to the given question is an affirmative or negative response (or neither)          
-* @param question            the question to ask and retrieve input from
-* @precondition              input is a string
-* @return                    TRUE if the first character of user input is a 'y' or 'Y',
-*                            FALSE if the first character of input is an 'n' or 'N'
+* @param question             the question to ask and retrieve input from
+* @precondition               input is a string
+* @return                     TRUE if the first character of user input is a 'y' or 'Y',
+*                             FALSE if the first character of input is an 'n' or 'N'
 */
 (deffunction convertInput (?question)
    (bind ?result "invalid")
@@ -291,15 +324,15 @@
       (bind ?*questions_asked* (++ ?*questions_asked*))
       (bind ?character (upcase (sub-string 1 1 ?input)))
 
-      (if (= ?character "Y") then
-         (bind ?result TRUE)
+      (if (or (= ?character "Y") (= ?character "U")) then
+         (bind ?result T)
        else 
          (if (= ?character "N") then
-            (bind ?result FALSE)
+            (bind ?result F)
           else
             (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
          )
-      )
+      )  ; if (or (= ?character "Y") (= ?character "U")) then
    )  ; while (stringp ?result)
 
    (return ?result)
@@ -313,15 +346,16 @@
    (halt)
    (bind ?input (convertInput (sym-cat "Is your animal a(n) " ?animal "? ")))
 
-   (if (= ?input TRUE) then
+   (if (= ?input T) then
       (printline "I win! ")
     else
-      (if (= ?input FALSE) then
+      (if (= ?input F) then
          (printline "Looks like I lose...")
        else
          (printline "Sorry, I couldn't understand that. I'll just assume that I lost... ")
       )
-   )
+   )  ; if (= ?input TRUE) then
+
    (return)
 )  ; deffunction guessAnimal (?animal)
 

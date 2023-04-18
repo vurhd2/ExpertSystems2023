@@ -9,47 +9,48 @@
 */
 
 (defrule chicken
-   (attribute (name land) (value TRUE))
-   (attribute (name fly)  (value FALSE))
+   (attribute (name land) (value T))
+   (attribute (name fly)  (value F))
 =>
    (guessAnimal chicken)
 )
 
 (defrule eagle
-   (attribute (name land)        (value TRUE))
-   (attribute (name fly)         (value TRUE))
-   (attribute (name roundwinged) (value TRUE))
-   (attribute (name piping)      (value TRUE))
+   (attribute (name land)        (value T))
+   (attribute (name fly)         (value T))
+   (attribute (name roundwinged) (value T))
+   (attribute (name piping)      (value T))
+   (attribute (name nocturnal)   (value F))
 =>
    (guessAnimal eagle)
 )
 
 (defrule owl
-   (attribute (name nocturnal) (value TRUE))
+   (attribute (name nocturnal) (value T))
 =>
    (guessAnimal owl)
 )
 
 (defrule hawk
-   (attribute (name land)        (value TRUE))
-   (attribute (name fly)         (value TRUE))
-   (attribute (name roundwinged) (value TRUE))
-   (attribute (name piping)      (value FALSE))
+   (attribute (name land)        (value T))
+   (attribute (name fly)         (value T))
+   (attribute (name roundwinged) (value T))
+   (attribute (name piping)      (value F))
 =>
    (guessAnimal hawk)
 )
 
 (defrule falcon
-   (attribute (name land)        (value TRUE))
-   (attribute (name fly)         (value TRUE))
-   (attribute (name roundwinged) (value FALSE))
-   (attribute (name piping)      (value TRUE))
+   (attribute (name land)        (value T))
+   (attribute (name fly)         (value T))
+   (attribute (name roundwinged) (value F))
+   (attribute (name piping)      (value T))
 =>
    (guessAnimal falcon)
 )
 
 (defrule penguin
-   (attribute (name land) (value FALSE))
+   (attribute (name land) (value F))
 =>
    (guessAnimal penguin)
 )
@@ -66,8 +67,8 @@
 =>
    (bind ?value (convertInput "Does your animal have rounded wings?"))
    (assert (attribute (name roundwinged) (value ?value)))
-   (if ?value then
-      (assert (attribute (name fly) (value TRUE)))
+   (if (= ?value T) then
+      (assert (attribute (name fly) (value T)))
    )
 )
 
@@ -75,5 +76,5 @@
    (need-attribute (name piping) (value ?))
 =>
    (bind ?value (convertInput "Does your animal emit a piping sound?"))
-   (assert (attribute (name appendages) (value ?value)))
+   (assert (attribute (name piping) (value ?value)))
 )

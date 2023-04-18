@@ -9,112 +9,112 @@
 */
 
 (defrule goat
-   (attribute (name pierce)   (value TRUE))
-   (attribute (name pattern)  (value FALSE))
-   (attribute (name solitary) (value FALSE))
+   (attribute (name pierce)   (value T))
+   (attribute (name pattern)  (value F))
+   (attribute (name solitary) (value F))
 =>
    (guessAnimal goat)
 )
 
 (defrule pig
-   (attribute (name land)      (value TRUE))
-   (attribute (name herbivore) (value TRUE))
-   (attribute (name hooves)    (value TRUE))
-   (attribute (name pierce)    (value FALSE))
-   (attribute (name pattern)   (value FALSE))
-   (attribute (name solitary)  (value FALSE))
+   (attribute (name land)      (value T))
+   (attribute (name herbivore) (value T))
+   (attribute (name hooves)    (value T))
+   (attribute (name pierce)    (value F))
+   (attribute (name pattern)   (value F))
+   (attribute (name solitary)  (value F))
 =>
    (guessAnimal pig)
 )
 
 (defrule cow
-   (attribute (name pierce)    (value TRUE))
-   (attribute (name pattern)   (value TRUE))
+   (attribute (name pierce)    (value T))
+   (attribute (name pattern)   (value T))
 =>
    (guessAnimal cow)
 )
 
 (defrule whale
-   (attribute (name land)     (value FALSE))
-   (attribute (name solitary) (value TRUE))
-   (attribute (name snout)    (value FALSE))
+   (attribute (name land)     (value F))
+   (attribute (name solitary) (value T))
+   (attribute (name snout)    (value F))
 =>
    (guessAnimal whale)
 )
 
 (defrule platypus
-   (attribute (name land)     (value FALSE))
-   (attribute (name solitary) (value TRUE))
-   (attribute (name snout)    (value TRUE))
+   (attribute (name land)     (value F))
+   (attribute (name solitary) (value T))
+   (attribute (name snout)    (value T))
 =>
    (guessAnimal platypus)
 )
 
 (defrule dolphin
-   (attribute (name land)     (value FALSE))
-   (attribute (name solitary) (value FALSE))
-   (attribute (name snout)    (value TRUE))
+   (attribute (name land)     (value F))
+   (attribute (name solitary) (value F))
+   (attribute (name snout)    (value T))
 =>
    (guessAnimal dolphin)
 )
 
 (defrule kangaroo
-   (attribute (name herbivore) (value TRUE))
-   (attribute (name claws)     (value TRUE))
-   (attribute (name snout)     (value TRUE))
+   (attribute (name herbivore) (value T))
+   (attribute (name claws)     (value T))
+   (attribute (name snout)     (value T))
 =>
    (guessAnimal kangaroo)
 )
 
 (defrule panda
-   (attribute (name herbivore) (value TRUE))
-   (attribute (name claws)     (value TRUE))
-   (attribute (name snout)     (value FALSE))
+   (attribute (name herbivore) (value T))
+   (attribute (name claws)     (value T))
+   (attribute (name snout)     (value F))
 =>
    (guessAnimal panda)
 )
 
 (defrule cat
-   (attribute (name pattern)   (value TRUE))
-   (attribute (name solitary)  (value FALSE))
-   (attribute (name herbivore) (value FALSE))
+   (attribute (name pattern)   (value T))
+   (attribute (name solitary)  (value F))
+   (attribute (name herbivore) (value F))
 =>
    (guessAnimal cat)
 )
 
 (defrule elephant
-   (attribute (name pierce)   (value TRUE))
-   (attribute (name pattern)  (value FALSE))
-   (attribute (name solitary) (value TRUE))
+   (attribute (name pierce)   (value T))
+   (attribute (name pattern)  (value F))
+   (attribute (name solitary) (value T))
 =>
    (guessAnimal elephant)
 )
 
 (defrule dog
-   (attribute (name pattern) (value TRUE))
-   (attribute (name snout)   (value TRUE))
+   (attribute (name pattern) (value T))
+   (attribute (name snout)   (value T))
 =>
    (guessAnimal dog)
 )
 
 (defrule hippo
-   (attribute (name hooves)    (value TRUE))
-   (attribute (name herbivore) (value FALSE))
+   (attribute (name hooves)    (value T))
+   (attribute (name herbivore) (value F))
 =>
    (guessAnimal hippo)
 )
 
 (defrule bat
-   (attribute (name fly) (value TRUE))
+   (attribute (name fly) (value T))
 =>
    (guessAnimal bat)
 )
 
 (defrule monkey
-   (attribute (name land)      (value TRUE))
-   (attribute (name herbivore) (value FALSE))
-   (attribute (name claws)     (value FALSE))
-   (attribute (name hooves)    (value FALSE))
+   (attribute (name land)      (value T))
+   (attribute (name herbivore) (value F))
+   (attribute (name claws)     (value F))
+   (attribute (name hooves)    (value F))
 =>
    (guessAnimal monkey)
 )
@@ -131,8 +131,8 @@
 =>
    (bind ?value (convertInput "Does your animal have claws?"))
    (assert (attribute (name claws) (value ?value)))
-   (if ?value then
-      (assert (attribute (name hooves) (value FALSE)))
+   (if (= ?value T) then
+      (assert (attribute (name hooves) (value F)))
    )
 )
 
@@ -141,15 +141,16 @@
 =>
    (bind ?value (convertInput "Does your animal have hooves?"))
    (assert (attribute (name hooves) (value ?value)))
-   (if ?value then
-      (assert (attribute (name claws) (value FALSE)))
+   (if (= ?value T) then
+      (assert (attribute (name claws) (value F)))
+      (assert (attribute (name fly)   (value F)))
    )
 )
 
 (defrule hasElongatedSnout
    (need-attribute (name snout) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have an elongated snout of some sort?"))
+   (bind ?value (convertInput "Does your animal have an elongated snout of some sort (such as a bill or long, pointed nose)?"))
    (assert (attribute (name snout) (value ?value)))
 )
 

@@ -9,29 +9,29 @@
 */
 
 (defrule frog
-   (attribute (name tail)    (value FALSE))
-   (attribute (name eyelids) (value TRUE))
+   (attribute (name tail)    (value F))
+   (attribute (name eyelids) (value T))
 =>
    (guessAnimal frog)
 )
 
 (defrule salamander
-   (attribute (name tail)    (value TRUE))
-   (attribute (name eyelids) (value TRUE))
+   (attribute (name tail)    (value T))
+   (attribute (name eyelids) (value T))
 =>
    (guessAnimal salamander)
 )
 
 (defrule axolotl
-   (attribute (name tail)    (value TRUE))
-   (attribute (name eyelids) (value FALSE))
+   (attribute (name tail)    (value T))
+   (attribute (name eyelids) (value F))
 =>
    (guessAnimal axolotl)
 )
 
 (defrule caecilian
-   (attribute (name tail)    (value FALSE))
-   (attribute (name eyelids) (value FALSE))
+   (attribute (name tail)    (value F))
+   (attribute (name eyelids) (value F))
 =>
    (guessAnimal caecilian)
 )

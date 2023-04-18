@@ -9,13 +9,13 @@
 */
 
 (defrule turtle
-   (attribute (name shell) (value TRUE))
+   (attribute (name shell) (value T))
 =>
    (guessAnimal turtle)
 )
 
 (defrule crocodile
-   (attribute (name shell) (value FALSE))
+   (attribute (name shell) (value F))
 =>
    (guessAnimal crocodile)
 )
