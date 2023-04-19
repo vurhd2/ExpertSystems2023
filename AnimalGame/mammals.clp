@@ -157,7 +157,7 @@
 (defrule hasSkinPattern
    (need-attribute (name pattern) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have a visual pattern on its skin, fur, etc.?"))
+   (bind ?value (convertInput "Does your animal have a distinct visual pattern on its skin, fur, etc. (such as spots or stripes)?"))
    (assert (attribute (name pattern) (value ?value)))
 )
 

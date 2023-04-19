@@ -67,7 +67,7 @@
 (defrule mammal
    (attribute (name milk) (value T))
 =>
-   (batch (concatDirectory mammals.clp))
+   (batchFile mammals.clp)
 
    (undefrule hasFeathers)
    (undefrule isEndothermic)
@@ -83,7 +83,7 @@
 (defrule bird
    (attribute (name feathers) (value T))
 =>
-   (batch (concatDirectory birds.clp))
+   (batchFile birds.clp)
 
    (undefrule producesMilk)
    (undefrule isEndothermic)
@@ -102,7 +102,7 @@
    (attribute (name endothermic) (value F))
    (attribute (name gills)       (value F))
 =>
-   (batch (concatDirectory reptiles.clp))
+   (batchFile reptiles.clp)
 
    (undefrule hasFeathers)
    (undefrule producesMilk)
@@ -117,7 +117,7 @@
    (attribute (name radial)       (value F))
    (attribute (name appendages)   (value F))
 =>
-   (batch (concatDirectory mollusks.clp))
+   (batchFile mollusks.clp)
 
    (undefrule hasFeathers)
    (undefrule producesMilk)
@@ -130,7 +130,7 @@
 (defrule insect
    (attribute (name appendages) (value T))
 =>
-   (batch (concatDirectory insects.clp))
+   (batchFile insects.clp)
 
    (undefrule hasFeathers)
    (undefrule isEndothermic)
@@ -145,7 +145,7 @@
    (attribute (name vertebrate)    (value T))
    (attribute (name metamorphosis) (value T))
 =>
-   (batch (concatDirectory amphibians.clp))
+   (batchFile amphibians.clp)
 
    (undefrule hasFeathers)
    (undefrule producesMilk)
@@ -274,7 +274,7 @@
 )  ; defrule hasGills
 
 (defrule livesOnLand "Checks whether the user's animal lives on land (spends most of its time above sea level)"
-   (need-attribute (name land) (value ?))
+   (not (attribute (name land)))
 =>
    (bind ?value (convertInput "Does your animal spend most of its time on land (above sea level)?"))
    (assert (attribute (name land) (value ?value)))
@@ -284,14 +284,14 @@
 )  ; defrule livesOnLand
 
 (defrule isSolitary
-   (need-attribute (name solitary) (value ?))
+   (not (attribute (name solitary)))
 =>
    (bind ?value (convertInput "Is your animal considered solitary (spends most of its time alone)?"))
    (assert (attribute (name solitary) (value ?value)))
 )  ; defrule isSolitary
 
 (defrule hasShell "Checks whether the user's animal has an outer shell (not inner)"
-   (need-attribute (name shell) (value ?))
+   (not (attribute (name shell) (value ?)))
 =>
    (bind ?value (convertInput "Does your animal have an outer shell?"))
    (assert (attribute (name shell) (value ?value)))
@@ -301,40 +301,63 @@
 )  ; defrule hasShell
 
 /*
-* Returns a string containing the path of the given file within the current jess working directory
+* Batches the given file in the Animal Game sub-folder within the current jess working directory
 * @param file                 the name of the file to access/batch within the animal game directory
-* @return                     a string containing the concatenated path
 */
-(deffunction concatDirectory (?file)
-   (return (sym-cat ?*directory* ?file))
+(deffunction batchFile (?file)
+   (batch (sym-cat ?*directory* ?file))
+
+   (return)
 )
 
 /*
-* Determines whether the user's input to the given question is an affirmative or negative response (or neither)          
+* Creates and returns a list containing the six valid user inputs to the animal game: 
+* 'y', 'Y', 'u', 'U', 'n', and 'N'
+* @return                     the list of the six inputs
+*/
+(deffunction validInputs ()
+   (bind ?inputs (create$))
+
+   (bind ?inputs (insert$ ?inputs 1 "y"))
+   (bind ?inputs (insert$ ?inputs 2 "Y"))
+   (bind ?inputs (insert$ ?inputs 3 "u"))
+   (bind ?inputs (insert$ ?inputs 4 "U"))
+   (bind ?inputs (insert$ ?inputs 5 "n"))
+   (bind ?inputs (insert$ ?inputs 6 "N"))
+
+   (return ?inputs)
+)
+
+/*
+* Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        
 * @param question             the question to ask and retrieve input from
-* @precondition               input is a string
-* @return                     TRUE if the first character of user input is a 'y' or 'Y',
-*                             FALSE if the first character of input is an 'n' or 'N'
+* @return                     T if the first character of user input is a 'y', 'Y', 'u', or 'U'
+*                             F if the first character of input is an 'n' or 'N'
 */
 (deffunction convertInput (?question)
    (bind ?result "invalid")
-   (while (stringp ?result)
+
+   (while (= ?result "invalid")
       (printline)
 
       (bind ?input (askline ?question " "))
-      (bind ?*questions_asked* (++ ?*questions_asked*))
-      (bind ?character (upcase (sub-string 1 1 ?input)))
+      (bind ?character (sub-string 1 1 ?input))
 
-      (if (or (= ?character "Y") (= ?character "U")) then
-         (bind ?result T)
-       else 
-         (if (= ?character "N") then
+      (bind ?validInputs (validInputs))
+      (bind ?valid (member$ ?character ?validInputs))
+
+      (if (integerp ?valid) then
+         (if (<= ?valid 4) then
+            (bind ?result T)
+          else 
             (bind ?result F)
-          else
-            (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
-         )
-      )  ; if (or (= ?character "Y") (= ?character "U")) then
-   )  ; while (stringp ?result)
+         )   
+       else
+         (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
+      )  ; if (integerp ?valid) then
+   )  ; while (= ?result "invalid)
+
+   (bind ?*questions_asked* (++ ?*questions_asked*))
 
    (return ?result)
 )  ; deffunction convertInput (?question)
