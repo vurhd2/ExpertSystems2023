@@ -194,11 +194,11 @@
    (assert (attribute (name milk) (value ?value)))
 ) ; defrule producesMilk
 
-(defrule canFly "Checks whether the user's animal flies (and actively uses energy in the process)"
-   ;(need-attribute (name fly) (value ?))
-   (not (attribute (name fly)))
+(defrule canFly "Checks whether the user's animal flies (actively requires energy output to be airborne)"
+   (need-attribute (name fly) (value ?))
+   ;(not (attribute (name fly)))
 =>
-   (bind ?value (convertInput "Does your animal fly (active use of energy involved)?"))
+   (bind ?value (convertInput "Does your animal fly (actively requires energy output to be airborne)?"))
    (assert (attribute (name fly) (value ?value)))
    (if (= ?value T) then
       (assert (attribute (name land)        (value T)))

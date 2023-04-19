@@ -76,7 +76,7 @@
 
 (defrule cat
    (attribute (name pattern)   (value T))
-   (attribute (name solitary)  (value F))
+   (attribute (name solitary)  (value T))
    (attribute (name herbivore) (value F))
 =>
    (guessAnimal cat)
@@ -105,7 +105,7 @@
 )
 
 (defrule bat
-   (attribute (name fly) (value T))
+   (attribute (name fly)       (value T))
 =>
    (guessAnimal bat)
 )
@@ -157,13 +157,13 @@
 (defrule hasSkinPattern
    (need-attribute (name pattern) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have a distinct visual pattern on its skin, fur, etc. (such as spots or stripes)?"))
+   (bind ?value (convertInput "Is it common for your animal to have a distinct visual pattern on its skin, fur, etc. (such as spots or stripes)?"))
    (assert (attribute (name pattern) (value ?value)))
 )
 
 (defrule canPierce
    (need-attribute (name pierce) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have a horns or tusks (sharp piercing body part)?"))
+   (bind ?value (convertInput "Does your animal have horns or tusks (sharp piercing body part)?"))
    (assert (attribute (name pierce) (value ?value)))
 )
