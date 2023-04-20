@@ -8,9 +8,51 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
+* Provides a user interface for essentially playing 20 questions
+* to guess the user's animal with both forward and backward chaining rules
 *
+* User Interface Rules:
+* startGame
+* giveUp
+* loseGame
 *
+* Knowledge Island Rules:
+* mammal
+* bird
+* reptile
+* amphibian
+* mollusk
+* insect
 *
+* Animal Rules (not in the above knowledge islands):
+* fish
+* sea urchin
+* jellyfish
+*
+* Attribute Rules (not in the above knowledge islands):
+* producesMilk
+* canFly
+* hasFeathers
+* isVertebrate
+* hasExoskeleton
+* isEndothermic
+* radiallySymmetrical
+* undergoMetamorphosis
+* hasJointedAppendages
+* hasGills
+* livesOnLand
+* isSolitary
+* hasShell
+* 
+* Global Variables:
+* question_limit
+* questions_asked
+* 
+* Functions:
+* batchFile
+* validInputs
+* convertInput
+* guessAnimal
 */
 
 /*
@@ -72,6 +114,7 @@
    (undefrule hasFeathers)
    (undefrule isEndothermic)
    (undefrule isVertebrate)
+   (undefrule fly)
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
@@ -133,6 +176,7 @@
    (batchFile insects.clp)
 
    (undefrule hasFeathers)
+   (undefrule producesMilk)
    (undefrule isEndothermic)
    (undefrule isVertebrate)
    (undefrule hasExoskeleton)
@@ -196,7 +240,6 @@
 
 (defrule canFly "Checks whether the user's animal flies (actively requires energy output to be airborne)"
    (need-attribute (name fly) (value ?))
-   ;(not (attribute (name fly)))
 =>
    (bind ?value (convertInput "Does your animal fly (actively requires energy output to be airborne)?"))
    (assert (attribute (name fly) (value ?value)))
@@ -206,7 +249,7 @@
     else
       (assert (attribute (name roundwinged) (value F)))
    )
-)  ; defrule canFly
+)  ; defrule canFly "Checks whether the user's animal flies (actively requires energy output to be airborne)"
 
 (defrule hasFeathers
    (need-attribute (name feathers) (value ?))
@@ -326,7 +369,7 @@
    (bind ?inputs (insert$ ?inputs 6 "N"))
 
    (return ?inputs)
-)
+)  ; deffunction validInputs ()
 
 /*
 * Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        

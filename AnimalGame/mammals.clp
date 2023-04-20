@@ -104,12 +104,6 @@
    (guessAnimal hippo)
 )
 
-(defrule bat
-   (attribute (name fly)       (value T))
-=>
-   (guessAnimal bat)
-)
-
 (defrule monkey
    (attribute (name land)      (value T))
    (attribute (name herbivore) (value F))
