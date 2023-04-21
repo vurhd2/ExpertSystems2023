@@ -3,11 +3,36 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
+* Contains rules for select mammals as well as rules for select attributes 
+* to help differentiate between these mammals
 *
+* Mammal Rules:
+* goat
+* pig
+* whale
+* platypus
+* dolphin
+* kangaroo
+* panda
+* cat
+* elephant
+* dog
+* hippo
+* monkey
 *
-*
+* Atttribute Rules:
+* herbivorous
+* hasClaws
+* hasHooves
+* hasElongatedSnout
+* hasSkinPattern
+* canPierce
 */
 
+/*****
+* Rules guessing the titular mammal if the mammal's assigned traits
+* match the ones inputted by the user 
+*/
 (defrule goat
    (attribute (name pierce)   (value T))
    (attribute (name pattern)  (value F))
@@ -17,7 +42,6 @@
 )
 
 (defrule pig
-   (attribute (name land)      (value T))
    (attribute (name herbivore) (value T))
    (attribute (name hooves)    (value T))
    (attribute (name pierce)    (value F))
@@ -25,13 +49,6 @@
    (attribute (name solitary)  (value F))
 =>
    (guessAnimal pig)
-)
-
-(defrule cow
-   (attribute (name pierce)    (value T))
-   (attribute (name pattern)   (value T))
-=>
-   (guessAnimal cow)
 )
 
 (defrule whale
@@ -113,6 +130,9 @@
    (guessAnimal monkey)
 )
 
+/*****
+* Rules checking whether the user's animal has the titular attribute
+*/
 (defrule herbivorous
    (need-attribute (name herbivore) (value ?))
 =>
@@ -137,7 +157,6 @@
    (assert (attribute (name hooves) (value ?value)))
    (if (= ?value T) then
       (assert (attribute (name claws) (value F)))
-      (assert (attribute (name fly)   (value F)))
    )
 )
 

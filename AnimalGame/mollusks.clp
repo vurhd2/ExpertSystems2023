@@ -3,11 +3,25 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
+* Contains rules for select mollusks as well as rules for select attributes 
+* to help differentiate between these mollusks
 *
+* Mollusk Rules:
+* snail
+* clam
+* octopus
+* squid
 *
-*
+* Attribute Rules:
+* hasHingedShell
+* hasLegs
+* 
 */
 
+/*****
+* Rules guessing the titular mollusk if the mollusk's assigned traits
+* match the ones inputted by the user 
+*/
 (defrule snail
    (attribute (name shell)  (value T))
    (attribute (name hinged) (value F))
@@ -35,6 +49,9 @@
    (guessAnimal squid)
 )
 
+/*****
+* Rules checking whether the user's animal has the titular attribute
+*/
 (defrule hasHingedShell
    (need-attribute (name hinged) (value ?))
 =>
@@ -42,10 +59,10 @@
    (assert (attribute (name hinged) (value ?value)))
 )
 
-(defrule hasLegs
-   (need-attribute (name tail) (value ?))
+(defrule hasLegs "Checks if the user's animal has limbs technically classified as legs (not feet)"
+   (need-attribute (name legs) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have limbs technically classified as legs?"))
+   (bind ?value (convertInput "Does your animal have limbs technically classified as legs (not feet)?"))
    (assert (attribute (name legs) (value ?value)))
 )
 

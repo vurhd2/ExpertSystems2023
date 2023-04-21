@@ -3,11 +3,27 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
+* Contains rules for select birds as well as rules for select attributes 
+* to help differentiate between these birds
 *
+* Bird Rules:
+* chicken
+* eagle
+* owl
+* hawk
+* falcon
+* penguin
 *
-*
+* Attribute Rules:
+* isNocturnal
+* hasRoundedWings
+* makesPipingSound
 */
 
+/*****
+* Rules guessing the titular bird if the bird's assigned traits
+* match the ones inputted by the user 
+*/
 (defrule chicken
    (attribute (name land) (value T))
    (attribute (name fly)  (value F))
@@ -55,6 +71,9 @@
    (guessAnimal penguin)
 )
 
+/*****
+* Rules checking whether the user's animal has the titular attribute
+*/
 (defrule isNocturnal
    (need-attribute (name nocturnal) (value ?))
 =>

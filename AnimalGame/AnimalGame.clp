@@ -153,6 +153,8 @@
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
    (undefrule hasJointedAppendages)
+   (undefrule isSolitary)
+   (undefrule livesOnLand)
 )  ; defrule reptile
 
 (defrule mollusk
@@ -168,6 +170,8 @@
    (undefrule isVertebrate)
    (undefrule hasExoskeleton)
    (undefrule hasGills)
+   (undefrule isSolitary)
+   (undefrule livesOnLand)
 )  ; defrule mollusk
 
 (defrule insect
@@ -375,7 +379,7 @@
 * Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        
 * @param question             the question to ask and retrieve input from
 * @return                     T if the first character of user input is a 'y', 'Y', 'u', or 'U'
-*                             F if the first character of input is an 'n' or 'N'
+*                             F if the first character of user input is an 'n' or 'N'
 */
 (deffunction convertInput (?question)
    (bind ?result "invalid")
@@ -421,7 +425,7 @@
        else
          (printline "Sorry, I couldn't understand that. I'll just assume that I lost... ")
       )
-   )  ; if (= ?input TRUE) then
+   )  ; if (= ?input T) then
 
    (return)
 )  ; deffunction guessAnimal (?animal)
