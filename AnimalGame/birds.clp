@@ -90,6 +90,7 @@
 =>
    (bind ?value (convertInput "Does your animal have rounded wings?"))
    (assert (attribute (name roundwinged) (value ?value)))
+   
    (if (= ?value T) then
       (assert (attribute (name fly) (value T)))
    )

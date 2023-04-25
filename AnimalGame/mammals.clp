@@ -149,6 +149,7 @@
 =>
    (bind ?value (convertInput "Does your animal have claws?"))
    (assert (attribute (name claws) (value ?value)))
+
    (if (= ?value T) then
       (assert (attribute (name hooves) (value F)))
    )
@@ -159,6 +160,7 @@
 =>
    (bind ?value (convertInput "Does your animal have hooves?"))
    (assert (attribute (name hooves) (value ?value)))
+   
    (if (= ?value T) then
       (assert (attribute (name claws) (value F)))
    )

@@ -26,7 +26,7 @@
 *
 * Animal Rules (those not within the above knowledge islands):
 * fish
-* sea urchin
+* sea_urchin
 * jellyfish
 *
 * Attribute Rules (those not within the above knowledge islands):
@@ -38,7 +38,7 @@
 * isEndothermic
 * radiallySymmetrical
 * undergoMetamorphosis
-* hasJointedAppendages
+* hasSegmentedBody
 * hasGills
 * livesOnLand
 * isSolitary
@@ -128,7 +128,7 @@
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
-   (undefrule hasJointedAppendages)
+   (undefrule hasSegmentedBody)
    (undefrule hasGills)
    (undefrule hasShell)
 )  ; defrule mammal
@@ -144,7 +144,7 @@
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
-   (undefrule hasJointedAppendages)
+   (undefrule hasSegmentedBody)
    (undefrule hasGills)
    (undefrule hasShell)
    (undefrule isSolitary)
@@ -162,15 +162,15 @@
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
    (undefrule undergoMetamorphosis)
-   (undefrule hasJointedAppendages)
+   (undefrule hasSegmentedBody)
    (undefrule isSolitary)
    (undefrule livesOnLand)
 )  ; defrule reptile
 
 (defrule mollusk
-   (attribute (name exoskeleton)  (value T))
-   (attribute (name radial)       (value F))
-   (attribute (name appendages)   (value F))
+   (attribute (name exoskeleton) (value T))
+   (attribute (name radial)      (value F))
+   (attribute (name segmented)   (value F))
 =>
    (batchFile mollusks.clp)
 
@@ -185,7 +185,7 @@
 )  ; defrule mollusk
 
 (defrule insect
-   (attribute (name appendages) (value T))
+   (attribute (name segmented) (value T))
 =>
    (batchFile insects.clp)
 
@@ -210,7 +210,7 @@
    (undefrule isEndothermic)
    (undefrule hasExoskeleton)
    (undefrule radiallySymmetrical)
-   (undefrule hasJointedAppendages)
+   (undefrule hasSegmentedBody)
    (undefrule hasGills)
    (undefrule hasShell)
 )  ; defrule amphibian
@@ -245,10 +245,10 @@
 /*****
 * Rules checking whether the user's animal has the titular attribute
 */
-(defrule producesMilk
+(defrule producesMilk "Checks whether the user's animal produces milk (not milk-like substances such as crop milk)"
    (need-attribute (name milk) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal produce milk?"))
+   (bind ?value (convertInput "Does your animal produce milk (not a milk-like substance such as crop milk)?"))
    (assert (attribute (name milk) (value ?value)))
 ) ; defrule producesMilk
 
@@ -257,6 +257,7 @@
 =>
    (bind ?value (convertInput "Does your animal fly (actively requires energy output to be airborne)?"))
    (assert (attribute (name fly) (value ?value)))
+
    (if (= ?value T) then
       (assert (attribute (name land)        (value T)))
       (assert (attribute (name hooves)      (value F)))
@@ -277,6 +278,7 @@
 =>
    (bind ?value (convertInput "Is your animal considered a vertebrate (has a central spinal column or backbone)?"))
    (assert (attribute (name vertebrate) (value ?value)))
+
    (if (= ?value T) then
       (assert (attribute (name exoskeleton) (value F)))
    )
@@ -287,6 +289,7 @@
 =>
    (bind ?value (convertInput "Does your animal have an exoskeleton?"))
    (assert (attribute (name exoskeleton) (value ?value)))
+
    (if (= ?value T) then
       (assert (attribute (name vertebrate) (value F)))
    )
@@ -313,18 +316,19 @@
    (assert (attribute (name metamorphosis) (value ?value)))
 )  ; defrule undergoMetamorphosis
 
-(defrule hasJointedAppendages "Checks whether the user's animal has multiple types of jointed appendages instead of just arms or legs"
-   (need-attribute (name appendages) (value ?))
+(defrule hasSegmentedBody
+   (need-attribute (name segmented) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have multiple types of jointed appendages (instead of just arms or legs)?"))
-   (assert (attribute (name appendages) (value ?value)))
-)  ; defrule hasJointedAppendages "Checks whether the user's animal has multiple types of jointed appendages instead of just arms or legs"
+   (bind ?value (convertInput "Does your animal have a segmented body?"))
+   (assert (attribute (name segmented) (value ?value)))
+)  ; defrule hasSegmentedBody 
 
 (defrule hasGills
    (need-attribute (name gills) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have gills?"))
    (assert (attribute (name gills) (value ?value)))
+
    (if (= ?value T) then
       (assert (attribute (name land) (value F)))
    )
@@ -335,6 +339,7 @@
 =>
    (bind ?value (convertInput "Does your animal spend most of its time on land (above sea level)?"))
    (assert (attribute (name land) (value ?value)))
+
    (if (= ?value F) then
       (assert (attribute (name fly) (value F)))
    )
@@ -352,6 +357,7 @@
 =>
    (bind ?value (convertInput "Does your animal have an outer shell?"))
    (assert (attribute (name shell) (value ?value)))
+
    (if (= ?value F) then
       (assert (attribute (name hinged) (value F)))
    )
@@ -473,12 +479,14 @@
    (bind ?input (convertInput ?question))
 
    (if (= ?input T) then
-      (printline "I win! ")
+      (printline "Seems like I win! ")
     else
       (if (= ?input F) then
          (printline "Looks like I lost! Congratulations on your win! ")
       )
    )  ; if (= ?input T) then
+
+   (printline)
 
    (return)
 )  ; deffunction guessAnimal (?animal)
