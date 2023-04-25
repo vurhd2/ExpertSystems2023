@@ -25,7 +25,7 @@
 * insect
 *
 * Animal Rules (those not within the above knowledge islands):
-* fish
+* goldfish
 * sea_urchin
 * jellyfish
 *
@@ -51,6 +51,7 @@
 * 
 * Functions:
 * batchFile
+* haltGame
 * validInputs
 * convertInput
 * vowels
@@ -94,14 +95,14 @@
 (defrule giveUp "Ends the game and notifies the user that we were unable to guess their animal with the given info"
    (declare (salience -100))
 =>
-   (halt)
+   (haltGame)
    (printline "I ran out of questions to ask, so I give up. Looks like I lose... ")
 )  
 
 (defrule loseGame "Ends the game forcefully if the question limit has been reached and notifies the user of their win"
    (> ?*questions_asked* ?*question_limit*)
 =>
-   (halt)
+   (haltGame)
    (printline "We have reached the question limit. Seems like you win!")
 )
 
@@ -219,13 +220,13 @@
 * Rules guessing the titular animal if the animal's assigned traits
 * match the ones inputted by the user 
 */
-(defrule fish
+(defrule goldfish
    (attribute (name vertebrate)    (value T))
    (attribute (name metamorphosis) (value F))
    (attribute (name gills)         (value T))
 =>
-   (guessAnimal "fish")
-)  ; defrule fish
+   (guessAnimal "goldfish")
+)  ; defrule goldfish
 
 (defrule jellyfish
    (attribute (name exoskeleton) (value F))
@@ -374,6 +375,15 @@
 )
 
 /*
+* Halts the rule engine for the animal game
+*/
+(deffunction haltGame ()
+   (halt)
+
+   (return)
+)
+
+/*
 * Creates and returns a list containing the six valid user inputs to the animal game: 
 * 'y', 'Y', 'u', 'U', 'n', and 'N'
 * @return                     the list of the six valid inputs
@@ -474,7 +484,8 @@
 * @precondition                animal is provided in a string form
 */
 (deffunction guessAnimal (?animal)
-   (halt)
+   (haltGame)
+
    (bind ?question (sym-cat "Is your animal " (properArticle ?animal) " " ?animal "? "))
    (bind ?input (convertInput ?question))
 
