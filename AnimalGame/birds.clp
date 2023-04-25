@@ -3,7 +3,7 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
-* Contains rules for select birds as well as rules for select attributes 
+* Contains rules for guessing select birds as well as rules for certain attributes 
 * to help differentiate between these birds
 *
 * Bird Rules:
@@ -14,10 +14,14 @@
 * falcon
 * penguin
 *
-* Attribute Rules:
+* Bird Attribute Rules:
 * isNocturnal
 * hasRoundedWings
 * makesPipingSound
+*
+* Main File Attribute Rules Used:
+* liveOnLand
+* canFly
 */
 
 /*****

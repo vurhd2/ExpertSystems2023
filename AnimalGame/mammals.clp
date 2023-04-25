@@ -3,7 +3,7 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
-* Contains rules for select mammals as well as rules for select attributes 
+* Contains rules for guessing select mammals as well as rules for certain attributes 
 * to help differentiate between these mammals
 *
 * Mammal Rules:
@@ -20,13 +20,17 @@
 * hippo
 * monkey
 *
-* Atttribute Rules:
-* herbivorous
+* Mammal Attribute Rules:
+* isHerbivorous
 * hasClaws
 * hasHooves
 * hasElongatedSnout
 * hasSkinPattern
 * canPierce
+*
+* Main File Attribute Rules Used:
+* liveOnLand
+* isSolitary
 */
 
 /*****
@@ -133,7 +137,7 @@
 /*****
 * Rules checking whether the user's animal has the titular attribute
 */
-(defrule herbivorous
+(defrule isHerbivorous
    (need-attribute (name herbivore) (value ?))
 =>
    (bind ?value (convertInput "Is your animal predominantly herbivorous?"))
@@ -160,21 +164,21 @@
    )
 )
 
-(defrule hasElongatedSnout
+(defrule hasElongatedSnout "Checks if the user's animal has an elongated snout or beak of some sort (such as a bill or long nose)"
    (need-attribute (name snout) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have an elongated snout of some sort (such as a bill or long, pointed nose)?"))
    (assert (attribute (name snout) (value ?value)))
 )
 
-(defrule hasSkinPattern
+(defrule hasSkinPattern "Checks if it is common for the user's animal to have a distinct visual pattern on the exterior"
    (need-attribute (name pattern) (value ?))
 =>
    (bind ?value (convertInput "Is it common for your animal to have a distinct visual pattern on its skin, fur, etc. (such as spots or stripes)?"))
    (assert (attribute (name pattern) (value ?value)))
 )
 
-(defrule canPierce
+(defrule canPierce "Checks if the user's animal has piercing body parts (such as horns or tusks)"
    (need-attribute (name pierce) (value ?))
 =>
    (bind ?value (convertInput "Does your animal have horns or tusks (sharp piercing body part)?"))

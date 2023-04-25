@@ -24,12 +24,12 @@
 * mollusk
 * insect
 *
-* Animal Rules (not in the above knowledge islands):
+* Animal Rules (those not within the above knowledge islands):
 * fish
 * sea urchin
 * jellyfish
 *
-* Attribute Rules (not in the above knowledge islands):
+* Attribute Rules (those not within the above knowledge islands):
 * producesMilk
 * canFly
 * hasFeathers
@@ -47,23 +47,26 @@
 * Global Variables:
 * question_limit
 * questions_asked
+* directory
 * 
 * Functions:
 * batchFile
 * validInputs
 * convertInput
+* vowels
+* properArticle
 * guessAnimal
 */
 
 /*
 * Defines a template for each animal trait being used to differentiate animals
-* @slot name            the name of the animal trait
-* @slot value           the value indicating whether this trait applies to a given animal,
-*                       with 'T' indicating that it does and 'F' indicating the opposite
+* @slot name                  the name of the animal trait
+* @slot value                 the value indicating whether this trait applies to a given animal,
+*                             with 'T' indicating that it does and 'F' indicating the opposite
 */
 (deftemplate attribute (slot name) (slot value))
 
-(do-backward-chaining attribute)
+(do-backward-chaining attribute)    ; enable backward chaining using the attribute template
 
 (defglobal ?*question_limit* = 20)  ; the amount of questions that can be asked without losing
 (defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
@@ -83,8 +86,8 @@
    (printline)
    (printline "Welcome to the 20 questions animal game! ")
    (printline "Please think of an animal and respond honestly to the following questions with either 'yes' ('y'), 'no' ('n'), or 'unknown' ('u')!")
-   (printline "Feel free to use Google or other resources to learn more about your own animal in the process!")
-   (printline "Ready? The game is beginning! ")
+   (printline "Feel free to use Google or other resources to learn more about your own animal in the process.")
+   (printline "Ready? Let's begin! ")
    (printline)
 )  
 
@@ -111,7 +114,14 @@
 =>
    (batchFile mammals.clp)
 
-   (undefrule hasFeathers)
+   /*
+   * Undefining other attribute rules that lead to other knowledge islands
+   * being batched in simultaneously, causing conflicts between guessing animals
+   * (other rules below also contain this functionality, but different variations
+   *  of rules are undefined depending on the knowledge island each attribute rule
+   *  relates to)
+   */
+   (undefrule hasFeathers)          ; 
    (undefrule isEndothermic)
    (undefrule isVertebrate)
    (undefrule fly)
@@ -303,12 +313,12 @@
    (assert (attribute (name metamorphosis) (value ?value)))
 )  ; defrule undergoMetamorphosis
 
-(defrule hasJointedAppendages
+(defrule hasJointedAppendages "Checks whether the user's animal has multiple types of jointed appendages instead of just arms or legs"
    (need-attribute (name appendages) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have jointed appendages?"))
+   (bind ?value (convertInput "Does your animal have multiple types of jointed appendages (instead of just arms or legs)?"))
    (assert (attribute (name appendages) (value ?value)))
-)  ; defrule hasJointedAppendages
+)  ; defrule hasJointedAppendages "Checks whether the user's animal has multiple types of jointed appendages instead of just arms or legs"
 
 (defrule hasGills
    (need-attribute (name gills) (value ?))
@@ -360,7 +370,7 @@
 /*
 * Creates and returns a list containing the six valid user inputs to the animal game: 
 * 'y', 'Y', 'u', 'U', 'n', and 'N'
-* @return                     the list of the six inputs
+* @return                     the list of the six valid inputs
 */
 (deffunction validInputs ()
    (bind ?inputs (create$))
@@ -387,7 +397,7 @@
    (while (= ?result "invalid")
       (printline)
 
-      (bind ?input (askline ?question " "))
+      (bind ?input (askline (sym-cat (+ ?*questions_asked* 1) ". " ?question " ")))
       (bind ?character (sub-string 1 1 ?input))
 
       (bind ?validInputs (validInputs))
@@ -402,7 +412,7 @@
        else
          (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
       )  ; if (integerp ?valid) then
-   )  ; while (= ?result "invalid)
+   )  ; while (= ?result "invalid")
 
    (bind ?*questions_asked* (++ ?*questions_asked*))
 
@@ -410,12 +420,55 @@
 )  ; deffunction convertInput (?question)
 
 /*
+* Creates and returns a list containing the ten (case-sensitive) vowels: 
+* 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', and 'U'
+* @return                     the list of the ten case-sensitive vowels
+*/
+(deffunction vowels ()
+   (bind ?inputs (create$))
+
+   (bind ?inputs (insert$ ?inputs 1 "a"))
+   (bind ?inputs (insert$ ?inputs 2 "A"))
+   (bind ?inputs (insert$ ?inputs 3 "e"))
+   (bind ?inputs (insert$ ?inputs 4 "E"))
+   (bind ?inputs (insert$ ?inputs 5 "i"))
+   (bind ?inputs (insert$ ?inputs 6 "I"))
+   (bind ?inputs (insert$ ?inputs 7 "o"))
+   (bind ?inputs (insert$ ?inputs 8 "O"))
+   (bind ?inputs (insert$ ?inputs 9 "u"))
+   (bind ?inputs (insert$ ?inputs 10 "U"))
+
+   (return ?inputs)
+)  ; deffunction vowels ()
+
+/*
+* Returns the proper article adjective ('a'/'an') for the given animal
+* based on the first character of the animal name
+* Ex: 'goat' would return 'a', while 'eagle' would return 'an'
+* @param animal               the animal whose article adjective to return
+* @return                     'a' if the animal's name begins with a vowel,
+*                             'an' otherwise
+*/
+(deffunction properArticle (?animal)
+   (bind ?vowels (vowels))
+   (bind ?found (member$ (sub-string 1 1 ?animal) ?vowels))
+
+   (bind ?result "an")
+   (if (integerp ?found) then
+      (bind ?result "a")
+   )
+
+   (return ?result)
+)  ; deffunction properArticle (?animal)
+
+/*
 * Guesses the given animal if the given attributes match those of the given animal
-* @param animal              the animal to guess
+* @param animal               the animal to guess
 */
 (deffunction guessAnimal (?animal)
    (halt)
-   (bind ?input (convertInput (sym-cat "Is your animal a(n) " ?animal "? ")))
+   (bind ?question ((sym-cat "Is your animal " (properArticle ?animal) " " ?animal "? ")))
+   (bind ?input (convertInput ?question))
 
    (if (= ?input T) then
       (printline "I win! ")

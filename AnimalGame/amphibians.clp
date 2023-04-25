@@ -3,17 +3,17 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
-* Contains rules for select amphibians as well as rules for select attributes 
+* Contains rules for guessing select amphibians as well as rules for certain attributes 
 * to help differentiate between these amphibians
 *
 * Amphibian Rules:
 * frog
 * salamander
-* axolotl
+* tadpole
 * caecilian
 *
-* Attribute Rules:
-* hasLongTail
+* Amphibian Attribute Rules:
+* hasTail
 * hasEyelids
 */
 
@@ -35,11 +35,11 @@
    (guessAnimal salamander)
 )
 
-(defrule axolotl
+(defrule tadpole
    (attribute (name tail)    (value T))
    (attribute (name eyelids) (value F))
 =>
-   (guessAnimal axolotl)
+   (guessAnimal tadpole)
 )
 
 (defrule caecilian
@@ -52,10 +52,10 @@
 /*****
 * Rules checking whether the user's animal has the titular attribute
 */
-(defrule hasLongTail
+(defrule hasTail
    (need-attribute (name tail) (value ?))
 =>
-   (bind ?value (convertInput "Does your animal have a typically longer tail?"))
+   (bind ?value (convertInput "Does your animal typically have a tail?"))
    (assert (attribute (name tail) (value ?value)))
 )
 

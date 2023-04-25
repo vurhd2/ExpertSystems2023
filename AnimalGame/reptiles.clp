@@ -3,11 +3,15 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
-* Contains rules for select reptiles 
+* Contains rules for guessing select reptiles, which are differentiated 
+* solely by the hasShell attribute rule found in the main file (AnimalGame.clp)
 *
-* Amphibian Rules:
+* Reptile Rules:
 * turtle
 * crocodile
+*
+* Main File Attribute Rules Used:
+* hasShell
 */
 
 /*****

@@ -3,13 +3,18 @@
 * Date of Creation: 4/10/23
 *
 * Description of Module:
-* Contains rules for select insects
+* Contains rules for guessing select insects, which are differentiated solely
+* by the canFly and isSolitary attribute rules found in the main file (AnimalGame.clp)
 *
 * Insect Rules:
 * bee
-* spider
+* grasshopper
 * ant
 * beetle
+*
+* Main File Attribute Rules Used:
+* canFly
+* isSolitary
 */
 
 /*****
@@ -23,11 +28,11 @@
    (guessAnimal bee)
 )
 
-(defrule spider
+(defrule grasshopper
    (attribute (name fly)      (value F))
    (attribute (name solitary) (value T))
 =>
-   (guessAnimal spider)
+   (guessAnimal grasshopper)
 )
 
 (defrule ant
