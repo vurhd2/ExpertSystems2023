@@ -25,28 +25,28 @@
    (attribute (name tail)    (value F))
    (attribute (name eyelids) (value T))
 =>
-   (guessAnimal frog)
+   (guessAnimal "frog")
 )
 
 (defrule salamander
    (attribute (name tail)    (value T))
    (attribute (name eyelids) (value T))
 =>
-   (guessAnimal salamander)
+   (guessAnimal "salamander")
 )
 
 (defrule tadpole
    (attribute (name tail)    (value T))
    (attribute (name eyelids) (value F))
 =>
-   (guessAnimal tadpole)
+   (guessAnimal "tadpole")
 )
 
 (defrule caecilian
    (attribute (name tail)    (value F))
    (attribute (name eyelids) (value F))
 =>
-   (guessAnimal caecilian)
+   (guessAnimal "caecilian")
 )
 
 /*****

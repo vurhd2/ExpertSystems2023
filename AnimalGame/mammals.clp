@@ -29,7 +29,7 @@
 * canPierce
 *
 * Main File Attribute Rules Used:
-* liveOnLand
+* livesOnLand
 * isSolitary
 */
 
@@ -42,7 +42,7 @@
    (attribute (name pattern)  (value F))
    (attribute (name solitary) (value F))
 =>
-   (guessAnimal goat)
+   (guessAnimal "goat")
 )
 
 (defrule pig
@@ -52,7 +52,7 @@
    (attribute (name pattern)   (value F))
    (attribute (name solitary)  (value F))
 =>
-   (guessAnimal pig)
+   (guessAnimal "pig")
 )
 
 (defrule whale
@@ -60,7 +60,7 @@
    (attribute (name solitary) (value T))
    (attribute (name snout)    (value F))
 =>
-   (guessAnimal whale)
+   (guessAnimal "whale")
 )
 
 (defrule platypus
@@ -68,7 +68,7 @@
    (attribute (name solitary) (value T))
    (attribute (name snout)    (value T))
 =>
-   (guessAnimal platypus)
+   (guessAnimal "platypus")
 )
 
 (defrule dolphin
@@ -76,7 +76,7 @@
    (attribute (name solitary) (value F))
    (attribute (name snout)    (value T))
 =>
-   (guessAnimal dolphin)
+   (guessAnimal "dolphin")
 )
 
 (defrule kangaroo
@@ -84,7 +84,7 @@
    (attribute (name claws)     (value T))
    (attribute (name snout)     (value T))
 =>
-   (guessAnimal kangaroo)
+   (guessAnimal "kangaroo")
 )
 
 (defrule panda
@@ -92,7 +92,7 @@
    (attribute (name claws)     (value T))
    (attribute (name snout)     (value F))
 =>
-   (guessAnimal panda)
+   (guessAnimal "panda")
 )
 
 (defrule cat
@@ -100,7 +100,7 @@
    (attribute (name solitary)  (value T))
    (attribute (name herbivore) (value F))
 =>
-   (guessAnimal cat)
+   (guessAnimal "cat")
 )
 
 (defrule elephant
@@ -108,21 +108,21 @@
    (attribute (name pattern)  (value F))
    (attribute (name solitary) (value T))
 =>
-   (guessAnimal elephant)
+   (guessAnimal "elephant")
 )
 
 (defrule dog
    (attribute (name pattern) (value T))
    (attribute (name snout)   (value T))
 =>
-   (guessAnimal dog)
+   (guessAnimal "dog")
 )
 
 (defrule hippo
    (attribute (name hooves)    (value T))
    (attribute (name herbivore) (value F))
 =>
-   (guessAnimal hippo)
+   (guessAnimal "hippo")
 )
 
 (defrule monkey
@@ -131,7 +131,7 @@
    (attribute (name claws)     (value F))
    (attribute (name hooves)    (value F))
 =>
-   (guessAnimal monkey)
+   (guessAnimal "monkey")
 )
 
 /*****

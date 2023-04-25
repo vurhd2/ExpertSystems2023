@@ -21,11 +21,11 @@
 (defrule turtle
    (attribute (name shell) (value T))
 =>
-   (guessAnimal turtle)
+   (guessAnimal "turtle")
 )
 
 (defrule crocodile
    (attribute (name shell) (value F))
 =>
-   (guessAnimal crocodile)
+   (guessAnimal "crocodile")
 )

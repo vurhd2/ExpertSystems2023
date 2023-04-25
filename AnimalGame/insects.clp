@@ -25,26 +25,26 @@
    (attribute (name fly)      (value T))
    (attribute (name solitary) (value F))
 =>
-   (guessAnimal bee)
+   (guessAnimal "bee")
 )
 
 (defrule grasshopper
    (attribute (name fly)      (value F))
    (attribute (name solitary) (value T))
 =>
-   (guessAnimal grasshopper)
+   (guessAnimal "grasshopper")
 )
 
 (defrule ant
    (attribute (name fly)      (value F))
    (attribute (name solitary) (value F))
 =>
-   (guessAnimal ant)
+   (guessAnimal "ant")
 )
 
 (defrule beetle
    (attribute (name fly)      (value T))
    (attribute (name solitary) (value T))
 =>
-   (guessAnimal beetle)
+   (guessAnimal "beetle")
 )

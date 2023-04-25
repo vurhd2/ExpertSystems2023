@@ -224,14 +224,14 @@
    (attribute (name metamorphosis) (value F))
    (attribute (name gills)         (value T))
 =>
-   (guessAnimal fish)
+   (guessAnimal "fish")
 )  ; defrule fish
 
 (defrule jellyfish
    (attribute (name exoskeleton) (value F))
    (attribute (name radial)      (value T))
 =>
-   (guessAnimal jellyfish)
+   (guessAnimal "jellyfish")
 )  ; defrule jellyfish
 
 (defrule sea_urchin
@@ -446,16 +446,17 @@
 * based on the first character of the animal name
 * Ex: 'goat' would return 'a', while 'eagle' would return 'an'
 * @param animal               the animal whose article adjective to return
-* @return                     'a' if the animal's name begins with a vowel,
-*                             'an' otherwise
+* @precondition               animal is provided in a string form
+* @return                     'an' if the animal's name begins with a vowel,
+*                             'a'  otherwise
 */
 (deffunction properArticle (?animal)
    (bind ?vowels (vowels))
    (bind ?found (member$ (sub-string 1 1 ?animal) ?vowels))
 
-   (bind ?result "an")
+   (bind ?result "a")
    (if (integerp ?found) then
-      (bind ?result "a")
+      (bind ?result "an")
    )
 
    (return ?result)
@@ -464,19 +465,18 @@
 /*
 * Guesses the given animal if the given attributes match those of the given animal
 * @param animal               the animal to guess
+* @precondition                animal is provided in a string form
 */
 (deffunction guessAnimal (?animal)
    (halt)
-   (bind ?question ((sym-cat "Is your animal " (properArticle ?animal) " " ?animal "? ")))
+   (bind ?question (sym-cat "Is your animal " (properArticle ?animal) " " ?animal "? "))
    (bind ?input (convertInput ?question))
 
    (if (= ?input T) then
       (printline "I win! ")
     else
       (if (= ?input F) then
-         (printline "Looks like I lose...")
-       else
-         (printline "Sorry, I couldn't understand that. I'll just assume that I lost... ")
+         (printline "Looks like I lost! Congratulations on your win! ")
       )
    )  ; if (= ?input T) then
 

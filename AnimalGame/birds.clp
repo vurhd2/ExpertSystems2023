@@ -20,7 +20,7 @@
 * makesPipingSound
 *
 * Main File Attribute Rules Used:
-* liveOnLand
+* livesOnLand
 * canFly
 */
 
@@ -32,7 +32,7 @@
    (attribute (name land) (value T))
    (attribute (name fly)  (value F))
 =>
-   (guessAnimal chicken)
+   (guessAnimal "chicken")
 )
 
 (defrule eagle
@@ -42,13 +42,13 @@
    (attribute (name piping)      (value T))
    (attribute (name nocturnal)   (value F))
 =>
-   (guessAnimal eagle)
+   (guessAnimal "eagle")
 )
 
 (defrule owl
    (attribute (name nocturnal) (value T))
 =>
-   (guessAnimal owl)
+   (guessAnimal "owl")
 )
 
 (defrule hawk
@@ -57,7 +57,7 @@
    (attribute (name roundwinged) (value T))
    (attribute (name piping)      (value F))
 =>
-   (guessAnimal hawk)
+   (guessAnimal "hawk")
 )
 
 (defrule falcon
@@ -66,13 +66,13 @@
    (attribute (name roundwinged) (value F))
    (attribute (name piping)      (value T))
 =>
-   (guessAnimal falcon)
+   (guessAnimal "falcon")
 )
 
 (defrule penguin
    (attribute (name land) (value F))
 =>
-   (guessAnimal penguin)
+   (guessAnimal "penguin")
 )
 
 /*****
