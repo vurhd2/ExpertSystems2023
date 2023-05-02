@@ -12,37 +12,46 @@
 * after which it recommends the best formula to solve for the asked variable
 *
 * Nomenclature for variables:
-* theta         - angular position
-* s             - arc length
-* r             - radius
-* deltaTheta    - change in angular position
-* theta_f       - final angular position
-* theta_i       - initial angular position
-* T             - time
-* deltaT        - change in time
-* t_f           - final time
-* t_i           - initial time
-* v             - velocity
-* w             - angular velocity
-* deltaW        - change in angular velocity
-* w_f           - final angular velocity
-* w_i           - initial angular velocity
-* averageW      - average angular velocity
-* functionW     - angular velocity as a function of time
-* functionTheta - angular position as a function of time
-* a             - acceleration
-* alpha         - angular acceleration
-* deltaAlpha    - change in angular acceleration
-* averageAlpha  - average angular acceleration
-* alpha_f       - final angular acceleration
-* alpha_i       - initial angular acceleration
-* functionAlpha - angular acceleration as a function of time
-* period        - period of circular motion
-* K             - rotational kinetic energy
-* I             - moment of inertia
-* I_com         - moment of inertia at center of mass (used mainly for parallel axis theorem)
-* m             - mass
-* h             - distance between rotation axes (used mainly for parallel axis theorem)
+* theta            - angular position
+* s                - arc length
+* r                - radius
+* deltaTheta       - change in angular position
+* theta_f          - final angular position
+* theta_i          - initial angular position
+* T                - time
+* deltaT           - change in time
+* t_f              - final time
+* t_i              - initial time
+* v                - velocity
+* w                - angular velocity
+* deltaW           - change in angular velocity
+* w_f              - final angular velocity
+* w_i              - initial angular velocity
+* averageW         - average angular velocity
+* functionW        - angular velocity as a function of time
+* functionTheta    - angular position as a function of time
+* a                - acceleration
+* alpha            - angular acceleration
+* deltaAlpha       - change in angular acceleration
+* averageAlpha     - average angular acceleration
+* alpha_f          - final angular acceleration
+* alpha_i          - initial angular acceleration
+* functionAlpha    - angular acceleration as a function of time
+* period           - period of circular motion
+* K                - rotational kinetic energy
+* I                - moment of inertia
+* I_com            - moment of inertia at center of mass (used mainly for parallel axis theorem)
+* m                - mass
+* h                - distance between rotation axes (used mainly for parallel axis theorem)
+* torque_vector    - torque vector
+* F_vector         - force vector
+* r_vector         - radius/distance vector
+* torque_magnitude - magnitude of torque
+* torque_net       - net torque
+* p                - momentum
+* p_vector         - momentum vector
+* L                - angular momentum
+* functionL        - angular momentum as a function of time
 */
 
 /*
