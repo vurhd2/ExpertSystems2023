@@ -358,9 +358,129 @@
 )
 
 (defrule parallelAxis_I
-   (variable (name I) (value G))
+   (variable (name I)     (value S))
    (variable (name I_com) (value G))
-   (variable (name w) (value S))
+   (variable (name m)     (value G))
+   (variable (name h)     (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule parallelAxis_I
+   (variable (name I)     (value G))
+   (variable (name I_com) (value S))
+   (variable (name m)     (value G))
+   (variable (name h)     (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule parallelAxis_I
+   (variable (name I)     (value G))
+   (variable (name I_com) (value G))
+   (variable (name m)     (value S))
+   (variable (name h)     (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule parallelAxis_I
+   (variable (name I)     (value G))
+   (variable (name I_com) (value G))
+   (variable (name m)     (value G))
+   (variable (name h)     (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueVector_T
+   (variable (name torque_vector) (value S))
+   (variable (name r_vector)      (value G))
+   (variable (name F_vector)      (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueVector_T
+   (variable (name torque_vector) (value G))
+   (variable (name r_vector)      (value S))
+   (variable (name F_vector)      (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueVector_T
+   (variable (name torque_vector) (value G))
+   (variable (name r_vector)      (value G))
+   (variable (name F_vector)      (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueMagnitude_T
+   (variable (name torque_magnitude) (value S))
+   (variable (name r)                (value G))
+   (variable (name F)                (value G))
+   (variable (name theta)            (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueMagnitude_T
+   (variable (name torque_magnitude) (value G))
+   (variable (name r)                (value S))
+   (variable (name F)                (value G))
+   (variable (name theta)            (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueMagnitude_T
+   (variable (name torque_magnitude) (value G))
+   (variable (name r)                (value G))
+   (variable (name F)                (value S))
+   (variable (name theta)            (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule torqueMagnitude_T
+   (variable (name torque_magnitude) (value G))
+   (variable (name r)                (value G))
+   (variable (name F)                (value G))
+   (variable (name theta)            (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule netTorque_T
+   (variable (name torque_net) (value S))
+   (variable (name I)          (value G))
+   (variable (name alpha)      (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule netTorque_T
+   (variable (name torque_net) (value G))
+   (variable (name I)          (value S))
+   (variable (name alpha)      (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule netTorque_T
+   (variable (name torque_net) (value G))
+   (variable (name I)          (value G))
+   (variable (name alpha)      (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentumVector_T
+   (variable (name L_vector) (value G))
+   (variable (name r_vector) (value G))
+   (variable (name p_vector) (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
