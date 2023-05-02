@@ -6,15 +6,51 @@
 /*
 * Author: Dhruv Aron
 * Date of Creation: 4/15/23
-* Description of Module:
+* 
+* Description of Module: 
+* Provides a user interface for intaking what rotational physics variables are given and being asked to solve for,
+* after which it recommends the best formula to solve for the asked variable
+*
+* Nomenclature for variables:
+* theta         - angular position
+* s             - arc length
+* r             - radius
+* deltaTheta    - change in angular position
+* theta_f       - final angular position
+* theta_i       - initial angular position
+* T             - time
+* deltaT        - change in time
+* t_f           - final time
+* t_i           - initial time
+* v             - velocity
+* w             - angular velocity
+* deltaW        - change in angular velocity
+* w_f           - final angular velocity
+* w_i           - initial angular velocity
+* averageW      - average angular velocity
+* functionW     - angular velocity as a function of time
+* functionTheta - angular position as a function of time
+* a             - acceleration
+* alpha         - angular acceleration
+* deltaAlpha    - change in angular acceleration
+* averageAlpha  - average angular acceleration
+* alpha_f       - final angular acceleration
+* alpha_i       - initial angular acceleration
+* functionAlpha - angular acceleration as a function of time
+* period        - period of circular motion
+* K             - rotational kinetic energy
+* I             - moment of inertia
+* I_com         - moment of inertia at center of mass (used mainly for parallel axis theorem)
+* m             - mass
+* h             - distance between rotation axes (used mainly for parallel axis theorem)
 */
 
 /*
 * Defines a template for each variable within the rotational physics formulas
 * @slot name                  the name of the variable
-* @slot value                 the value indicating whether this variable applies to a given formula,
+* @slot value                 the value indicating whether this variable exists within a given formula,
 *                             with 'G' indicating that it is given and 'S' indicating that it needs to 
-*                             be solved for, otherwise 'F' if it does not apply
+*                             be solved for, otherwise 'N' if it does not apply
 */
 (deftemplate variable (slot name) (slot value))
 
@@ -477,12 +513,106 @@
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
+(defrule momentum_p
+   (variable (name p) (value S))
+   (variable (name m) (value G))
+   (variable (name v) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule momentum_m
+   (variable (name p) (value G))
+   (variable (name m) (value S))
+   (variable (name v) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule momentum_v
+   (variable (name p) (value G))
+   (variable (name m) (value G))
+   (variable (name v) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentumVector_T
+   (variable (name L_vector) (value S))
+   (variable (name r_vector) (value G))
+   (variable (name p_vector) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentumVector_T
+   (variable (name L_vector) (value G))
+   (variable (name r_vector) (value S))
+   (variable (name p_vector) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
 (defrule angularMomentumVector_T
    (variable (name L_vector) (value G))
    (variable (name r_vector) (value G))
    (variable (name p_vector) (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentum_T
+   (variable (name L) (value S))
+   (variable (name I) (value G))
+   (variable (name w) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentum_T
+   (variable (name L) (value G))
+   (variable (name I) (value S))
+   (variable (name w) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule angularMomentum_T
+   (variable (name L) (value G))
+   (variable (name I) (value G))
+   (variable (name w) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantNetTorque_functionTorque
+   (variable (name functionTorque) (value S))
+   (variable (name functionL)      (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantNetTorque_functionL
+   (variable (name functionTorque) (value G))
+   (variable (name functionL)      (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularAcceleration_instantAlpha
+   (variable (name alpha)  (value S))
+   (variable (name functionAlpha) (value G))
+   (variable (name T)             (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(deffunction validVariables ()
+   (bind ?variables "theta s r deltaTheta theta_f theta_i deltaTime t_f t_i deltaW w_f w_i v a I I_com m h alpha p F ")
+   (bind ?variables (+ ? variables "functionAlpha functionTorque functionL functionW functionTheta L_vector p_vector r_vector "))
+   (bind ?variables (+ ? variables "F_vector torque_net torque_magnitude L_magnitude K averageAlpha averageW period T"))
+
+   (return (explode$ ?variables))
 )
 
 /*
