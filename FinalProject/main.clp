@@ -20,8 +20,6 @@
 
 (do-backward-chaining variable)     ; enable backward chaining using the variable template
 
-(defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
-
 /*****
 * Rules either starting or ending the animal game based on certain conditions
 * such as exceeding the question limit or running out of questions to ask
@@ -38,131 +36,334 @@
 )  
 
 (defrule angularPosition_theta
-   (variable (name angularPosition) (value S))
-   (variable (name arcLength)       (value G))
-   (variable (name radius)          (value G))
+   (variable (name theta) (value S))
+   (variable (name s)     (value G))
+   (variable (name r)     (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularPosition_arcLength
-   (variable (name angularPosition) (value G))
-   (variable (name arcLength)       (value S))
-   (variable (name radius)          (value G))
+   (variable (name theta) (value G))
+   (variable (name s)     (value S))
+   (variable (name r)     (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularPosition_radius
-   (variable (name angularPosition) (value G))
-   (variable (name arcLength)       (value G))
-   (variable (name radius)          (value S))
+   (variable (name theta) (value G))
+   (variable (name s)     (value G))
+   (variable (name r)     (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularDisplacement_displacement
-   (variable (name angularDisplacement)     (value S))
-   (variable (name angularPosition_final)   (value G))
-   (variable (name angularPosition_initial) (value G))
+   (variable (name deltaTheta) (value S))
+   (variable (name theta_f)    (value G))
+   (variable (name theta_i)    (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularDisplacement_finalPosition
-   (variable (name angularDisplacement)     (value G))
-   (variable (name angularPosition_final)   (value S))
-   (variable (name angularPosition_initial) (value G))
+   (variable (name deltaTheta) (value G))
+   (variable (name theta_f)    (value S))
+   (variable (name theta_i)    (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularDisplacement_initialPosition
-   (variable (name angularDisplacement)     (value G))
-   (variable (name angularPosition_final)   (value G))
-   (variable (name angularPosition_initial) (value S))
+   (variable (name deltaTheta) (value G))
+   (variable (name theta_f)    (value G))
+   (variable (name theta_i)    (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule deltaTime_delta
-   (variable (name deltaTime)    (value S))
-   (variable (name time_final)   (value G))
-   (variable (name time_initial) (value G))
+   (variable (name deltaT) (value S))
+   (variable (name t_f)    (value G))
+   (variable (name t_i)    (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule deltaTime_finalTime
-   (variable (name deltaTime)    (value G))
-   (variable (name time_final)   (value S))
-   (variable (name time_initial) (value G))
+   (variable (name deltaT) (value G))
+   (variable (name t_f)    (value S))
+   (variable (name t_i)    (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule deltaTime_initialTime
-   (variable (name deltaTime)    (value G))
-   (variable (name time_final)   (value G))
-   (variable (name time_initial) (value S))
+   (variable (name deltaT) (value G))
+   (variable (name t_f)    (value G))
+   (variable (name t_i)    (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule deltaAngularVelocity_de
+   (variable (name deltaW) (value S))
+   (variable (name w_f)    (value G))
+   (variable (name w_i)    (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule deltaAngularVelocity_de
+   (variable (name deltaW) (value G))
+   (variable (name w_f)    (value S))
+   (variable (name w_i)    (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule deltaAngularVelocity_de
+   (variable (name deltaW) (value G))
+   (variable (name w_f)    (value S))
+   (variable (name w_i)    (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule averageAngularVelocity_average
-   (variable (name aveAngularVelocity)  (value S))
-   (variable (name angularDisplacement) (value G))
-   (variable (name deltaTime)           (value G))
+   (variable (name averageW)   (value S))
+   (variable (name deltaTheta) (value G))
+   (variable (name deltaT)     (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule averageAngularVelocity_angularDisplacement
-   (variable (name aveAngularVelocity)  (value G))
-   (variable (name angularDisplacement) (value S))
-   (variable (name deltaTime)           (value G))
+   (variable (name averageW)   (value G))
+   (variable (name deltaTheta) (value S))
+   (variable (name deltaT)     (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule averageAngularVelocity_deltaTime
-   (variable (name aveAngularVelocity)  (value G))
-   (variable (name angularDisplacement) (value G))
-   (variable (name deltaTime)           (value S))
+   (variable (name averageW)   (value G))
+   (variable (name deltaTheta) (value G))
+   (variable (name deltaT)     (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule InstantAngularVelocity_functionAngularVelocity
-   (variable (name functionInstantAngularVelocity) (value S))
-   (variable (name functionAngularPosition)        (value G))
+(defrule instantAngularVelocity_functionAngularVelocity
+   (variable (name functionW)     (value S))
+   (variable (name functionTheta) (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule InstantAngularVelocity_functionAngularPosition
-   (variable (name functionInstantAngularVelocity) (value G))
-   (variable (name functionAngularPosition)        (value S))
+(defrule instantAngularVelocity_functionAngularPosition
+   (variable (name functionW)     (value G))
+   (variable (name functionTheta) (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule InstantAngularVelocity_instantAngularVelocity
-   (variable (name instantAngularVelocity)         (value S))
-   (variable (name functionInstantAngularVelocity) (value G))
-   (variable (name certainTime)                    (value G))
+(defrule instantAngularVelocity_instantAngularVelocity
+   (variable (name w)         (value S))
+   (variable (name functionW) (value G))
+   (variable (name T)         (value G))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule InstantAngularVelocity_instantAngularVelocity
-   (variable (name instantAngularVelocity)         (value G))
-   (variable (name functionInstantAngularVelocity) (value G))
-   (variable (name certainTime)                    (value S))
+(defrule instantAngularVelocity_instantAngularVelocity
+   (variable (name w)         (value G))
+   (variable (name functionW) (value G))
+   (variable (name T)         (value S))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
+(defrule averageAngularAcceleration_deltaTime
+   (variable (name averageAlpha) (value S))
+   (variable (name deltaW)       (value G))
+   (variable (name deltaT)       (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule averageAngularAcceleration_deltaTime
+   (variable (name averageAlpha) (value G))
+   (variable (name deltaW)       (value S))
+   (variable (name deltaT)       (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule averageAngularAcceleration_deltaTime
+   (variable (name averageAlpha) (value G))
+   (variable (name deltaW)       (value G))
+   (variable (name deltaT)       (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularVelocity_functionAngularPosition
+   (variable (name functionAlpha) (value S))
+   (variable (name functionW)     (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularVelocity_functionAngularPosition
+   (variable (name functionAlpha) (value G))
+   (variable (name functionW)     (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularAcceleration_instantAlpha
+   (variable (name alpha)  (value S))
+   (variable (name functionAlpha) (value G))
+   (variable (name T)             (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularAcceleration_instantAlpha
+   (variable (name alpha)  (value G))
+   (variable (name functionAlpha) (value S))
+   (variable (name T)             (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule instantAngularAcceleration_instantAlpha
+   (variable (name alpha)  (value G))
+   (variable (name functionAlpha) (value G))
+   (variable (name T)             (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearVelocity_v
+   (variable (name v) (value S))
+   (variable (name w) (value G))
+   (variable (name r) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearVelocity_w
+   (variable (name v) (value G))
+   (variable (name w) (value S))
+   (variable (name r) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearVelocity_r
+   (variable (name v) (value G))
+   (variable (name w) (value G))
+   (variable (name r) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearAcceleration_a
+   (variable (name a)     (value S))
+   (variable (name alpha) (value G))
+   (variable (name r) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearAcceleration_a
+   (variable (name a)     (value G))
+   (variable (name alpha) (value S))
+   (variable (name r)     (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule linearAcceleration_a
+   (variable (name a)     (value G))
+   (variable (name alpha) (value G))
+   (variable (name r)     (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule radialAcceleration_a
+   (variable (name a) (value S))
+   (variable (name w) (value G))
+   (variable (name r) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule radialAcceleration_a
+   (variable (name a) (value G))
+   (variable (name w) (value S))
+   (variable (name r) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule radialAcceleration_a
+   (variable (name a) (value G))
+   (variable (name w) (value G))
+   (variable (name r) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule period_period
+   (variable (name period) (value S))
+   (variable (name w)      (value G))
+=>
+
+)
+
+(defrule period_w
+   (variable (name period) (value G))
+   (variable (name w)      (value s))
+=>
+
+)
+
+(defrule rotationalKineticEnergy_K
+   (variable (name K) (value S))
+   (variable (name I) (value G))
+   (variable (name w) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule rotationalKineticEnergy_K
+   (variable (name K) (value G))
+   (variable (name I) (value S))
+   (variable (name w) (value G))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule rotationalKineticEnergy_K
+   (variable (name K) (value G))
+   (variable (name I) (value G))
+   (variable (name w) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
+
+(defrule parallelAxis_I
+   (variable (name I) (value G))
+   (variable (name I_com) (value G))
+   (variable (name w) (value S))
+=>
+   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+)
 
 /*
 * Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        
