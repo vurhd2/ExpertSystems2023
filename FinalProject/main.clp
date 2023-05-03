@@ -11,7 +11,7 @@
 * Provides a user interface for intaking what rotational physics variables are given and being asked to solve for,
 * after which it recommends the best formula to solve for the asked variable
 *
-* Key for variables:
+* Key for variables used throughout program:
 * theta            - angular position
 * s                - arc length
 * r                - radius
@@ -94,7 +94,7 @@
        (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & S)) (variable (name r) (value ?r & G))) 
        (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & G)) (variable (name r) (value ?r & S))))
 =>
-   (printline "Conclusion: Use theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "s = theta * r")
 )
 
 (defrule angularDisplacement
@@ -105,7 +105,7 @@
        (and (variable (name deltaTheta) (value ?deltaTheta & G)) (variable (name theta_f) (value ?theta_f & G)) 
             (variable (name theta_i) (value ?theta_i & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "deltaTheta = theta_f - theta_i")
 )
 
 (defrule changeInAngularVelocity
@@ -116,7 +116,7 @@
        (and (variable (name deltaW) (value ?deltaW & G)) (variable (name w_f) (value ?w_f & G)) 
             (variable (name w_i) (value ?w_i & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "deltaW = w_f - w_i")
 )
 
 (defrule averageAngularVelocity
@@ -127,14 +127,14 @@
        (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
             (variable (name deltaTime) (value ?deltaTime & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "averageW = deltaTheta / deltaTime")
 )
 
 (defrule functionAngularVelocity
    (or (and (variable (name functionW) (value ?functionW & S)) (variable (name functionTheta) (value ?functionTheta & G)))
        (and (variable (name functionW) (value ?functionW & G)) (variable (name functionTheta) (value ?functionTheta & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "w = d(theta)/dt")
 )
 
 (defrule averageAngularAcceleration
@@ -145,21 +145,21 @@
        (and (variable (name averageAlpha) (value ?averageAlpha & G)) (variable (name deltaW) (value ?deltaW & G)) 
             (variable (name deltaTime) (value ?deltaTime & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "averageAlpha = deltaW / deltaTime")
 )
 
 (defrule functionAngularAccelerationWithAngularVelocity
    (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionW) (value ?functionW & G)))
        (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionW) (value ?functionW & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "alpha = d(w)/dt")
 )
 
 (defrule functionAngularAccelerationWithAngularPosition
    (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionTheta) (value ?functionTheta & G)))
        (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionTheta) (value ?functionTheta & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "alpha = second derivative of theta")
 )
 
 (defrule linearVelocity
@@ -167,7 +167,7 @@
        (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
        (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "v = w * r")
 )
 
 (defrule linearAcceleration
@@ -175,7 +175,7 @@
        (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & G)) (variable (name r) (value ?r & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "a = alpha * r")
 )
 
 (defrule radialAccelerationWithAngularVelocity
@@ -183,7 +183,7 @@
        (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "a = w^2 * r")
 )
 
 (defrule radialAccelerationWithLinearVelocity
@@ -191,7 +191,7 @@
        (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "a = v^2 / r")
 )
 
 (defrule periodWithLinearVelocity
@@ -199,14 +199,14 @@
        (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
        (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
 =>
-
+   (suggestFormula "period = 2PI * r / v")
 )
 
 (defrule periodWithAngularVelocity
    (or (and (variable (name period) (value ?period & S)) (variable (name w) (value ?w & G)))
        (and (variable (name period) (value ?period & G)) (variable (name w) (value ?w & S))))
 =>
-
+   (suggestFormula "period = 2PI / w")
 )
 
 (defrule rotationalKineticEnergy
@@ -214,7 +214,7 @@
        (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
        (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "K = 0.5Iw^2")
 )
 
 (defrule parallelAxisTheorem
@@ -227,7 +227,7 @@
        (and (variable (name I) (value ?I & G)) (variable (name I_com) (value ?I_com & G)) 
             (variable (name m) (value ?m & G)) (variable (name h) (value ?h & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "I = I_com + Mh^2")
 )
 
 (defrule torqueVector
@@ -238,7 +238,7 @@
        (and (variable (name torque_vector) (value ?torque_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
             (variable (name F_vector) (value ?F_vector & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "torque_vector = r_vector x F_vector")
 )
 
 (defrule torqueMagnitude
@@ -251,7 +251,7 @@
        (and (variable (name torque_magnitude) (value ?torque_magnitude & G)) (variable (name r) (value ?r & G)) 
             (variable (name F) (value ?F & G)) (variable (name theta) (value ?theta & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "torque_magnitude = r * F * sin(theta)")
 )
 
 (defrule netTorque
@@ -262,7 +262,7 @@
        (and (variable (name torque_net) (value ?torque_net & G)) (variable (name I) (value ?I & G)) 
             (variable (name alpha) (value ?alpha & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "torque_net = I * alpha")
 )
 
 (defrule angularMomentumVector
@@ -275,7 +275,7 @@
        (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
             (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "L_vector = m * (r_vector x v_vector)")
 )
 
 (defrule angularMomentumMagnitude
@@ -299,22 +299,22 @@
             (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
             (variable (name theta) (value ?theta & S)))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "L_magnitude = r * m * v * sin(theta)")
 )
 
-(defrule angularMomentum_T
+(defrule angularMomentum
    (or (and (variable (name L) (value ?L & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
        (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
        (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "L = I * w")
 )
 
-(defrule instantNetTorque_functionTorque
+(defrule functionNetTorque
    (or (and (variable (name functionTorque) (value ?functionTorque & S)) (variable (name functionL) (value ?functionL & G)))
        (and (variable (name functionTorque) (value ?functionTorque & G)) (variable (name functionL) (value ?functionL & S))))
 =>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
+   (suggestFormula "torque = dL/dt")
 )
 
 /*
@@ -405,7 +405,7 @@
       (bind ?input (ask ?question))
 
       (bind ?validVariables (validVariables))
-      (bind ?valid (member$ (+ "" ?input) ?validVariables))
+      (bind ?valid (member$ (sym-cat "" ?input) ?validVariables))
 
       (if (integerp ?valid) then
          (bind ?result ?input) 
@@ -420,7 +420,7 @@
 )  ; deffunction findVariableBeingSolvedFor
 
 /*
-* Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        
+* Asks a given question and determines whether the user's input is an affirmative or negative response        
 * @param question             the question to ask and retrieve input from
 * @return                     T if the first character of user input is a 'y', 'Y', 'u', or 'U'
 *                             F if the first character of user input is an 'n' or 'N'
@@ -452,5 +452,16 @@
 
    (return ?result)
 )  ; deffunction convertInput (?question)
+
+/*
+* 
+*/
+(deffunction suggestFormula (?formula)
+   (haltGame)
+   
+   (printline (sym-cat "Based on your responses, we believe that you should use the formula: " ?formula))
+
+   (return)
+)
 
 (run)
