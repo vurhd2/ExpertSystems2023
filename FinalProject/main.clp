@@ -340,6 +340,41 @@
    (assert (variable (name r) (value ?value)))
 )
 
+(defrule needRadiusVector 
+   (need-variable (name r_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is a radius vector or distance vector to a point or rotation axis given?"))
+   (assert (variable (name r_vector) (value ?value)))
+)
+
+(defrule needDeltaTheta 
+   (need-variable (name deltaTheta) (value ?))
+=>
+   (bind ?value (convertInput "Is a difference in angles or angular positions given?"))
+   (assert (variable (name deltaTheta) (value ?value)))
+)
+
+(defrule needFinalTheta 
+   (need-variable (name theta_f) (value ?))
+=>
+   (bind ?value (convertInput "Is a final angle or angular position given?"))
+   (assert (variable (name theta_f) (value ?value)))
+)
+
+(defrule needInitialTheta 
+   (need-variable (name theta_i) (value ?))
+=>
+   (bind ?value (convertInput "Is an initial angle or angular position given?"))
+   (assert (variable (name theta_i) (value ?value)))
+)
+
+(defrule needTime 
+   (need-variable (name T) (value ?))
+=>
+   (bind ?value (convertInput "Is a time given?"))
+   (assert (variable (name T) (value ?value)))
+)
+
 /*
 * Halts the rule engine for the expert system
 */
