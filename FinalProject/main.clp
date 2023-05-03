@@ -11,18 +11,18 @@
 * Provides a user interface for intaking what rotational physics variables are given and being asked to solve for,
 * after which it recommends the best formula to solve for the asked variable
 *
-* Nomenclature for variables:
+* Key for variables:
 * theta            - angular position
 * s                - arc length
 * r                - radius
+* r_vector         - radius vector
 * deltaTheta       - change in angular position
 * theta_f          - final angular position
 * theta_i          - initial angular position
 * T                - time
 * deltaTime        - change in time
-* t_f              - final time
-* t_i              - initial time
 * v                - velocity
+* v_vector         - velocity vector
 * w                - angular velocity
 * deltaW           - change in angular velocity
 * w_f              - final angular velocity
@@ -32,25 +32,24 @@
 * functionTheta    - angular position as a function of time
 * a                - acceleration
 * alpha            - angular acceleration
-* deltaAlpha       - change in angular acceleration
 * averageAlpha     - average angular acceleration
-* alpha_f          - final angular acceleration
-* alpha_i          - initial angular acceleration
 * functionAlpha    - angular acceleration as a function of time
 * period           - period of circular motion
 * K                - rotational kinetic energy
 * I                - moment of inertia
 * I_com            - moment of inertia at center of mass (used mainly for parallel axis theorem)
 * m                - mass
-* h                - distance between rotation axes (used mainly for parallel axis theorem)
+* h                - distance between parallel rotation axes (used mainly for parallel axis theorem)
 * torque_vector    - torque vector
 * F_vector         - force vector
 * r_vector         - radius/distance vector
 * torque_magnitude - magnitude of torque
 * torque_net       - net torque
-* p                - momentum
-* p_vector         - momentum vector
+* functionTorque   - torque as a function of time
+* F                - force
 * L                - angular momentum
+* L_vector         - angular momentum vector
+* L_magnitude      - mangitude of angular momentum
 * functionL        - angular momentum as a function of time
 */
 
@@ -78,6 +77,14 @@
    (printline "Feel free to use Google or other resources to learn more about your own animal in the process.")
    (printline "Ready? Let's begin! ")
    (printline)
+)  
+
+(defrule giveUp "Ends the game and notifies the user that we were unable to suggest a formula based on the given variables"
+   (declare (salience -100))
+=>
+   (haltGame)
+   (printline "I'm not sure which formula to use... It seems like your problem might be too complex for our purposes!")
+   (printline "Sorry about that, and we wish you the best of luck in solving your problem!")
 )  
 
 (defrule angularPosition
@@ -256,83 +263,149 @@
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule angularMomentumVector_T
-   (variable (name L_vector) (value S))
-   (variable (name r_vector) (value G))
-   (variable (name p_vector) (value G))
+(defrule angularMomentumVector
+   (or (and (variable (name L_vector) (value ?L_vector & S)) (variable (name r_vector) (value ?r_vector & G)) 
+            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & G)))
+       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & S)) 
+            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & G)))
+       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
+            (variable (name v_vector) (value ?v_vector & S)) (variable (name m) (value ?m & G)))
+       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
+            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & S))))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule angularMomentumVector_T
-   (variable (name L_vector) (value G))
-   (variable (name r_vector) (value S))
-   (variable (name p_vector) (value G))
-=>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
-)
+(defrule angularMomentumMagnitude
+   (or (and (variable (name L_magnitude) (value ?L_magnitude & S)) (variable (name r) (value ?r & G)) 
+            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
+            (variable (name theta) (value ?theta & G))
 
-(defrule angularMomentumVector_T
-   (variable (name L_vector) (value G))
-   (variable (name r_vector) (value G))
-   (variable (name p_vector) (value S))
+       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & S)) 
+            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
+            (variable (name theta) (value ?theta & G))
+
+       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
+            (variable (name m) (value ?m & S)) (variable (name v) (value ?v & G))) 
+            (variable (name theta) (value ?theta & G))
+
+       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
+            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & S))) 
+            (variable (name theta) (value ?theta & G))
+
+       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
+            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
+            (variable (name theta) (value ?theta & S)))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule angularMomentum_T
-   (variable (name L) (value S))
-   (variable (name I) (value G))
-   (variable (name w) (value G))
-=>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
-)
-
-(defrule angularMomentum_T
-   (variable (name L) (value G))
-   (variable (name I) (value S))
-   (variable (name w) (value G))
-=>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
-)
-
-(defrule angularMomentum_T
-   (variable (name L) (value G))
-   (variable (name I) (value G))
-   (variable (name w) (value S))
+   (or (and (variable (name L) (value ?L & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
+       (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
+       (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
 (defrule instantNetTorque_functionTorque
-   (variable (name functionTorque) (value S))
-   (variable (name functionL)      (value G))
+   (or (and (variable (name functionTorque) (value ?functionTorque & S)) (variable (name functionL) (value ?functionL & G)))
+       (and (variable (name functionTorque) (value ?functionTorque & G)) (variable (name functionL) (value ?functionL & S))))
 =>
    (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
 )
 
-(defrule instantNetTorque_functionL
-   (variable (name functionTorque) (value G))
-   (variable (name functionL)      (value S))
-=>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
-)
-
-(defrule instantAngularAcceleration_instantAlpha
-   (variable (name alpha)  (value S))
-   (variable (name functionAlpha) (value G))
-   (variable (name T)             (value G))
-=>
-   (printline "Conclusion: theta = s / r, where theta is the angular position, s is the arc length, and r is the radius")
-)
-
+/*
+* 
+*/
 (deffunction validVariables ()
-   (bind ?variables "theta s r deltaTheta theta_f theta_i deltaTime t_f t_i deltaW w_f w_i v a I I_com m h alpha p F ")
-   (bind ?variables (+ ? variables "functionAlpha functionTorque functionL functionW functionTheta L_vector p_vector r_vector "))
-   (bind ?variables (+ ? variables "F_vector torque_net torque_magnitude L_magnitude K averageAlpha averageW period T"))
+   (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i T deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
+   (bind ?variables (+ ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
+   (bind ?variables (+ ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector L_magnitude"))
 
    (return (explode$ ?variables))
 )
+
+/*
+* Prints out the entire list of variables used within this program
+* as well as what concepts/quantities they refer to
+*/
+(deffunction printVariableKey ()
+   (printline "-----------Key for Variables-----------")
+   (printline "theta            - angular position")
+   (printline "s                - arc length")
+   (printline "r                - radius")
+   (printline "r_vector         - radius vector")
+   (printline "deltaTheta       - change in angular position")
+   (printline "theta_f          - final angular position")
+   (printline "theta_i          - initial angular position")
+   (printline "T                - time")
+   (printline "deltaTime        - change in time")
+   (printline "v                - velocity")
+   (printline "v_vector         - velocity vector")
+   (printline "w                - angular velocity")
+   (printline "deltaW           - change in angular velocity")
+   (printline "w_f              - final angular velocity")
+   (printline "w_i              - initial angular velocity")
+   (printline "averageW         - average angular velocity")
+   (printline "functionW        - angular velocity as a function of time")
+   (printline "functionTheta    - angular position as a function of time")
+   (printline "a                - acceleration")
+   (printline "alpha            - angular acceleration")
+   (printline "averageAlpha     - average angular acceleration")
+   (printline "functionAlpha    - angular acceleration as a function of time")
+   (printline "period           - period of circular motion")
+   (printline "K                - rotational kinetic energy")
+   (printline "I                - moment of inertia")
+   (printline "I_com            - moment of inertia at center of mass (used mainly for parallel axis theorem)")
+   (printline "m                - mass")
+   (printline "h                - distance between parallel rotation axes (used mainly for parallel axis theorem)")
+   (printline "torque_vector    - torque vector")
+   (printline "F_vector         - force vector")
+   (printline "r_vector         - radius/distance vector")
+   (printline "torque_magnitude - magnitude of torque")
+   (printline "torque_net       - net torque")
+   (printline "functionTorque   - torque as a function of time")
+   (printline "F                - force")
+   (printline "L                - angular momentum")
+   (printline "L_vector         - angular momentum vector")
+   (printline "L_magnitude      - mangitude of angular momentum")
+   (printline "functionL        - angular momentum as a function of time")
+   (printline)
+   (printline)
+
+   (return)
+)  ; deffunction printVariableKey ()
+
+/*
+* Finds what variable (from the above list) the user is trying
+* to solve for
+*/
+(deffunction findVariableBeingSolvedFor ()
+   (printVariableKey)
+  
+   (bind ?result "invalid")
+
+   (while (= ?result "invalid")
+      (printline)
+
+      (bind ?question "What variable are you trying to solve for? Please enter the exact short-hand shown within the variable key (case-sensitive). ")
+      (bind ?input (ask ?question))
+
+      (bind ?validVariables (validVariables))
+      (bind ?valid (member$ (+ "" ?input) ?validVariables))
+
+      (if (integerp ?valid) then
+         (bind ?result ?input) 
+       else
+         (printline "Valid variable not detected. Please enter a valid variable short-hand from the key.")
+      ) 
+   )  ; while (= ?result "invalid")
+
+   (assert (variable (name ?result) (value S)))
+
+   (return)
+)  ; deffunction findVariableBeingSolvedFor
 
 /*
 * Asks a given question and determines whether the user's input is an affirmative, negative, or indecisive response        
@@ -367,3 +440,5 @@
 
    (return ?result)
 )  ; deffunction convertInput (?question)
+
+(run)
