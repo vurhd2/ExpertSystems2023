@@ -68,15 +68,17 @@
 * Rules either starting or ending the animal game based on certain conditions
 * such as exceeding the question limit or running out of questions to ask
 */
-(defrule startProgram "Begins the expert system"
+(defrule startProgram "Starts the expert system"
    (declare (salience 100))
 =>
    (printline)
-   (printline "Welcome to the 20 questions animal game! ")
-   (printline "Please think of an animal and respond honestly to the following questions with anything starting with either 'yes' ('y'), 'no' ('n'), or 'unknown' ('u')!")
-   (printline "Feel free to use Google or other resources to learn more about your own animal in the process.")
-   (printline "Ready? Let's begin! ")
+   (printline "Welcome to the rotational physics formula suggester! ")
+   (printline "In a few moments, please tell me the one variable you are attempting to solve for as well as which other variables are or are not given.")
+   (printline "If a simple rotational physics formula exists that expresses the variable being asked for in terms of only the given variables, I will attempt to tell you it.")
+   (printline "If not, your problem might unfortunately be too vague or complex for this program... Ready? Let's begin! ")
    (printline)
+
+   (findVariableBeingSolvedFor)
 )  
 
 (defrule giveUp "Ends the game and notifies the user that we were unable to suggest a formula based on the given variables"
@@ -316,7 +318,17 @@
 )
 
 /*
-* 
+* Halts the rule engine for the expert system
+*/
+(deffunction haltGame ()
+   (halt)
+
+   (return)
+)
+
+/*
+* Returns a list of the valid variable short-hands used within this program
+* @return                  the list of valid variable short-hands
 */
 (deffunction validVariables ()
    (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i T deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
