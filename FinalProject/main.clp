@@ -64,6 +64,8 @@
 
 (do-backward-chaining variable)     ; enable backward chaining using the variable template
 
+(defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
+
 /*****
 * Rules either starting or ending the animal game based on certain conditions
 * such as exceeding the question limit or running out of questions to ask
@@ -317,6 +319,27 @@
    (suggestFormula "torque = dL/dt")
 )
 
+(defrule needTheta 
+   (need-variable (name theta) (value ?))
+=>
+   (bind ?value (convertInput "Is an angular position or angle between vectors given?"))
+   (assert (variable (name theta) (value ?value)))
+)
+
+(defrule needArcLength 
+   (need-variable (name s) (value ?))
+=>
+   (bind ?value (convertInput "Is an arc length given?"))
+   (assert (variable (name s) (value ?value)))
+)
+
+(defrule needRadius 
+   (need-variable (name r) (value ?))
+=>
+   (bind ?value (convertInput "Is a radius or distance to a rotation axis given?"))
+   (assert (variable (name r) (value ?value)))
+)
+
 /*
 * Halts the rule engine for the expert system
 */
@@ -332,8 +355,8 @@
 */
 (deffunction validVariables ()
    (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i T deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
-   (bind ?variables (+ ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
-   (bind ?variables (+ ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector L_magnitude"))
+   (bind ?variables (sym-cat ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
+   (bind ?variables (sym-cat ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector L_magnitude"))
 
    (return (explode$ ?variables))
 )
@@ -415,15 +438,24 @@
    )  ; while (= ?result "invalid")
 
    (assert (variable (name ?result) (value S)))
-
+   (printline ?result)
    (return)
 )  ; deffunction findVariableBeingSolvedFor
 
 /*
+* Creates and returns a list containing the four valid user inputs for the backward chained questions: 
+* 'y', 'Y', 'n', and 'N'
+* @return                     the list of the four valid inputs
+*/
+(deffunction validInputs ()
+   (return (explode$ "y Y n N"))
+)  ; deffunction validInputs ()
+
+/*
 * Asks a given question and determines whether the user's input is an affirmative or negative response        
 * @param question             the question to ask and retrieve input from
-* @return                     T if the first character of user input is a 'y', 'Y', 'u', or 'U'
-*                             F if the first character of user input is an 'n' or 'N'
+* @return                     G if the first character of user input is a 'y' or 'Y'
+*                             N if the first character of user input is an 'n' or 'N'
 */
 (deffunction convertInput (?question)
    (bind ?result "invalid")
@@ -431,20 +463,20 @@
    (while (= ?result "invalid")
       (printline)
 
-      (bind ?input (askline (sym-cat (+ ?*questions_asked* 1) ". " ?question " ")))
-      (bind ?character (sub-string 1 1 ?input))
+      (bind ?input (ask (sym-cat (+ ?*questions_asked* 1) ". " ?question " ")))
+      (bind ?character (sym-cat (sub-string 1 1 ?input)))
 
       (bind ?validInputs (validInputs))
       (bind ?valid (member$ ?character ?validInputs))
 
       (if (integerp ?valid) then
-         (if (<= ?valid 4) then
-            (bind ?result T)
+         (if (<= ?valid 2) then
+            (bind ?result G)
           else 
-            (bind ?result F)
+            (bind ?result N)
          )   
        else
-         (printline "Improper input detected. Please enter your response to the following question again ('y', 'n', or 'u').")
+         (printline "Improper input detected. Please enter your response to the following question again ('y' or 'n').")
       )  ; if (integerp ?valid) then
    )  ; while (= ?result "invalid")
 
