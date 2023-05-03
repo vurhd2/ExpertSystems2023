@@ -375,6 +375,118 @@
    (assert (variable (name T) (value ?value)))
 )
 
+(defrule needDeltaTime 
+   (need-variable (name deltaTime) (value ?))
+=>
+   (bind ?value (convertInput "Is a difference in times given?"))
+   (assert (variable (name deltaTime) (value ?value)))
+)
+
+(defrule needLinearVelocity 
+   (need-variable (name v) (value ?))
+=>
+   (bind ?value (convertInput "Is a linear velocity given?"))
+   (assert (variable (name v) (value ?value)))
+)
+
+(defrule needLinearVelocityVector 
+   (need-variable (name v_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is a linear velocity vector given?"))
+   (assert (variable (name v_vector) (value ?value)))
+)
+
+(defrule needAngularVelocity 
+   (need-variable (name w) (value ?))
+=>
+   (bind ?value (convertInput "Is an angular velocity given?"))
+   (assert (variable (name T) (value ?value)))
+)
+
+(defrule needDeltaW 
+   (need-variable (name deltaW) (value ?))
+=>
+   (bind ?value (convertInput "Is a change in angular velocity given?"))
+   (assert (variable (name deltaW) (value ?value)))
+)
+
+(defrule needFinalAngularVelocity 
+   (need-variable (name w_f) (value ?))
+=>
+   (bind ?value (convertInput "Is a final angular velocity given?"))
+   (assert (variable (name w_f) (value ?value)))
+)
+
+(defrule needInitialAngularVelocity 
+   (need-variable (name w_i) (value ?))
+=>
+   (bind ?value (convertInput "Is an initial angular velocity given?"))
+   (assert (variable (name w_i) (value ?value)))
+)
+
+(defrule needAverageAngularVelocity 
+   (need-variable (name averageW) (value ?))
+=>
+   (bind ?value (convertInput "Is an average angular velocity given?"))
+   (assert (variable (name averageW) (value ?value)))
+)
+
+(defrule needAngularVelocityFunction 
+   (need-variable (name functionW) (value ?))
+=>
+   (bind ?value (convertInput "Is the angular velocity given as a function of time?"))
+   (assert (variable (name functionW) (value ?value)))
+)
+
+(defrule needAngularPositionFunction 
+   (need-variable (name functionTheta) (value ?))
+=>
+   (bind ?value (convertInput "Is the angular position given as a function of time?"))
+   (assert (variable (name functionTheta) (value ?value)))
+)
+
+(defrule needLinearAcceleration 
+   (need-variable (name a) (value ?))
+=>
+   (bind ?value (convertInput "Is a linear acceleration given?"))
+   (assert (variable (name a) (value ?value)))
+)
+
+(defrule needAngularAcceleration 
+   (need-variable (name alpha) (value ?))
+=>
+   (bind ?value (convertInput "Is an angular acceleration given?"))
+   (assert (variable (name alpha) (value ?value)))
+)
+
+(defrule needAverageAngularAcceleration 
+   (need-variable (name averageAlpha) (value ?))
+=>
+   (bind ?value (convertInput "Is an average angular acceleration given?"))
+   (assert (variable (name averageAlpha) (value ?value)))
+)
+
+(defrule needAngularAccelerationFunction 
+   (need-variable (name functionAlpha) (value ?))
+=>
+   (bind ?value (convertInput "Is angular acceleration given as a function of time?"))
+   (assert (variable (name functionAlpha) (value ?value)))
+)
+
+(defrule needPeriod 
+   (need-variable (name period) (value ?))
+=>
+   (bind ?value (convertInput "Is a period for circular motion given?"))
+   (assert (variable (name period) (value ?value)))
+)
+
+(defrule needRotationalKineticEnergy
+   (need-variable (name K) (value ?))
+=>
+   (bind ?value (convertInput "Is a rotational kinetic energy given?"))
+   (assert (variable (name K) (value ?value)))
+)
+
 /*
 * Halts the rule engine for the expert system
 */
