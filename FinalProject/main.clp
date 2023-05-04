@@ -49,7 +49,7 @@
 * F                - force
 * L                - angular momentum
 * L_vector         - angular momentum vector
-* L_magnitude      - mangitude of angular momentum
+* L_magnitude      - magnitude of angular momentum
 * functionL        - angular momentum as a function of time
 */
 
@@ -345,6 +345,7 @@
 =>
    (bind ?value (convertInput "Is a radius vector or distance vector to a point or rotation axis given?"))
    (assert (variable (name r_vector) (value ?value)))
+   (printline ?value)
 )
 
 (defrule needDeltaTheta 
@@ -487,6 +488,111 @@
    (assert (variable (name K) (value ?value)))
 )
 
+(defrule needMomentOfInertia
+   (need-variable (name I) (value ?))
+=>
+   (bind ?value (convertInput "Is a moment of inertia given (not necessarily at the center of mass)?"))
+   (assert (variable (name I) (value ?value)))
+)
+
+(defrule needMomentOfInertiaAtCenterOfMass
+   (need-variable (name I_com) (value ?))
+=>
+   (bind ?value (convertInput "Is a moment of inertia given at the center of mass?"))
+   (assert (variable (name I_com) (value ?value)))
+)
+
+(defrule needMass
+   (need-variable (name m) (value ?))
+=>
+   (bind ?value (convertInput "Is the mass of the system given?"))
+   (assert (variable (name m) (value ?value)))
+)
+
+(defrule needDistanceBetweenAxes
+   (need-variable (name h) (value ?))
+=>
+   (bind ?value (convertInput "Is a perpendicular distance between parallel rotation axes given?"))
+   (assert (variable (name h) (value ?value)))
+)
+
+(defrule needTorqueVector
+   (need-variable (name torque_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is torque given as a vector?"))
+   (assert (variable (name torque_vector) (value ?value)))
+)
+
+(defrule needAngularMomentumFunction
+   (need-variable (name functionL) (value ?))
+=>
+   (bind ?value (convertInput "Is angular momentum given as a function of time?"))
+   (assert (variable (name functionL) (value ?value)))
+)
+
+(defrule needForceVector
+   (need-variable (name F_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is a force given as a vector?"))
+   (assert (variable (name F_vector) (value ?value)))
+)
+
+(defrule needRadiusVector
+   (need-variable (name r_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is a distance or radius given as a vector?"))
+   (assert (variable (name r_vector) (value ?value)))
+)
+
+(defrule needTorqueMagnitude
+   (need-variable (name torque_magnitude) (value ?))
+=>
+   (bind ?value (convertInput "Is the magnitude of torque given?"))
+   (assert (variable (name torque_magnitude) (value ?value)))
+)
+
+(defrule needNetTorque
+   (need-variable (name torque_net) (value ?))
+=>
+   (bind ?value (convertInput "Is the net torque given?"))
+   (assert (variable (name torque_net) (value ?value)))
+)
+
+(defrule needTorqueFunction
+   (need-variable (name functionTorque) (value ?))
+=>
+   (bind ?value (convertInput "Is torque given as a function of time?"))
+   (assert (variable (name functionTorque) (value ?value)))
+)
+
+(defrule needForce
+   (need-variable (name F) (value ?))
+=>
+   (bind ?value (convertInput "Is the magnitude of a force given?"))
+   (assert (variable (name F) (value ?value)))
+)
+
+(defrule needAngularMomentum
+   (need-variable (name L) (value ?))
+=>
+   (bind ?value (convertInput "Is the angular momentum given?"))
+   (assert (variable (name L) (value ?value)))
+)
+
+(defrule needAngularMomentumVector
+   (need-variable (name L_vector) (value ?))
+=>
+   (bind ?value (convertInput "Is the angular momentum given as a vector?"))
+   (assert (variable (name L_vector) (value ?value)))
+)
+
+(defrule needAngularMomentumMagnitude
+   (need-variable (name L_magnitude) (value ?))
+=>
+   (bind ?value (convertInput "Is the magnitude of angular momentum given?"))
+   (assert (variable (name L_magnitude) (value ?value)))
+)
+
 /*
 * Halts the rule engine for the expert system
 */
@@ -551,7 +657,7 @@
    (printline "F                - force")
    (printline "L                - angular momentum")
    (printline "L_vector         - angular momentum vector")
-   (printline "L_magnitude      - mangitude of angular momentum")
+   (printline "L_magnitude      - magnitude of angular momentum")
    (printline "functionL        - angular momentum as a function of time")
    (printline)
    (printline)
@@ -585,7 +691,7 @@
    )  ; while (= ?result "invalid")
 
    (assert (variable (name ?result) (value S)))
-   (printline ?result)
+
    (return)
 )  ; deffunction findVariableBeingSolvedFor
 
