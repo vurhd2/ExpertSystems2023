@@ -64,12 +64,12 @@
 
 (deftemplate target (slot name))
 
-(do-backward-chaining variable)     ; enable backward chaining using the variable template
+(do-backward-chaining variable)        ; enable backward chaining using the variable template
 
-(defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
+(defglobal ?*questions_asked* = 0)     ; the amount of questions asked so far
 
-(defglobal ?*FORMULA_SALIENCE* = 75)
-(defglobal ?*VARIABLE_SALIENCE* = 50)
+(defglobal ?*FORMULA_SALIENCE* = 75)   ; salience for all the rules that represent the formulas
+(defglobal ?*VARIABLE_SALIENCE* = 50)  ; salience for all the rules that ask the user whether a certain variable is given
 
 /************************************
 * Rules either starting or ending the expert system
@@ -90,9 +90,7 @@
 (defrule giveUp "Ends the expert system and notifies the user that we were unable to suggest a formula based on the given variables"
    (declare (salience -100))
 =>
-   (haltProgram)
-   (printline "I'm not sure which formula to use... It seems like your problem might be too complex for our purposes!")
-   (printline "Sorry about that, and we wish you the best of luck in solving your problem!")
+   (noFormulasLeft)
 )  
 
 /************************************
@@ -105,24 +103,23 @@
 
 (defrule angularPosition
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name theta) (value ?theta & S)) (variable (name s) (value ?s & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & S)) (variable (name r) (value ?r & G))) 
-       (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name theta))
+      (target (name s))
+      (target (name r))
+   )
+   (variable (name theta) (value ?theta))
+   (variable (name s) (value ?s)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "s = theta * r")
+   (if (or (and               (eq ?s G) (eq ?r G))
+           (and (eq ?theta G)           (eq ?r G))
+           (and (eq ?theta G) (eq ?s G)          )) then
+      (suggestFormula "s = theta * r")
+    else
+      ;(noFormulasLeft)
+   )
 )
-
-/*(defrule angularDisplacement "formula for angular displacement"
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name deltaTheta) (value ?deltaTheta & S)) (variable (name theta_f) (value ?theta_f & G)) 
-            (variable (name theta_i) (value ?theta_i & G)))
-       (and (variable (name deltaTheta) (value ?deltaTheta & G)) (variable (name theta_f) (value ?theta_f & S)) 
-            (variable (name theta_i) (value ?theta_i & G)))
-       (and (variable (name deltaTheta) (value ?deltaTheta & G)) (variable (name theta_f) (value ?theta_f & G)) 
-            (variable (name theta_i) (value ?theta_i & S))))
-=>
-   (suggestFormula "deltaTheta = theta_f - theta_i")
-)*/
 
 (defrule angularDisplacement "formula for angular displacement"
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -135,12 +132,12 @@
    (variable (name theta_f) (value ?theta_f)) 
    (variable (name theta_i) (value ?theta_i))
 =>
-   (if (or 
-         (and (eq ?deltaTheta S) (eq ?theta_f G) (eq ?theta_i G))
-         (and (eq ?deltaTheta G) (eq ?theta_f S) (eq ?theta_i G))
-         (and (eq ?deltaTheta G) (eq ?theta_f G) (eq ?theta_i S))
-       ) then
+   (if (or (and                    (eq ?theta_f G) (eq ?theta_i G))
+           (and (eq ?deltaTheta G)                 (eq ?theta_i G))
+           (and (eq ?deltaTheta G) (eq ?theta_f G)                )) then
       (suggestFormula "deltaTheta = theta_f - theta_i")
+    else
+      ;(noFormulasLeft)
    )
 )
 
@@ -157,7 +154,7 @@
 )
 
 (defrule averageAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
+   /*(declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name averageW) (value ?averageW & S)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
             (variable (name deltaTime) (value ?deltaTime & G)))
        (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & S)) 
@@ -165,7 +162,25 @@
        (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
             (variable (name deltaTime) (value ?deltaTime & S))))
 =>
-   (suggestFormula "averageW = deltaTheta / deltaTime")
+   (suggestFormula "averageW = deltaTheta / deltaTime")*/
+
+   (declare (salience ?*FORMULA_SALIENCE*))
+   (or
+      (target (name averageW))
+      (target (name deltaTheta))
+      (target (name deltaTime))
+   )
+   (variable (name averageW) (value ?averageW))
+   (variable (name deltaTheta) (value ?deltaTheta)) 
+   (variable (name deltaTime) (value ?deltaTime))
+=>
+   (if (or (and                  (eq ?deltaTheta G) (eq ?deltaTime G))
+           (and (eq ?averageW G)                    (eq ?deltaTime G))
+           (and (eq ?averageW G) (eq ?deltaTheta G)                  )) then
+      (suggestFormula "averageW = deltaTheta / deltaTime")
+    else
+      ;(noFormulasLeft)
+   )
 )
 
 (defrule functionAngularVelocity
@@ -790,7 +805,7 @@
 
    (assert (variable (name ?result) (value S)))
    (assert (target (name ?result)))
-   (facts)
+
    (return)
 )  ; deffunction findVariableBeingSolvedFor
 
@@ -844,6 +859,18 @@
    (haltProgram)
    
    (printline (sym-cat "Based on your responses, we believe that you should use the formula: " ?formula))
+
+   (return)
+)
+
+/*
+* 
+*/
+(deffunction noFormulasLeft ()
+   (haltProgram)
+
+   (printline "I'm not sure which formula to use... It seems like your problem might be too complex for our purposes!")
+   (printline "Sorry about that, and we wish you the best of luck in solving your problem!")
 
    (return)
 )
