@@ -87,6 +87,13 @@
    (findVariableBeingSolvedFor)
 )  
 
+(defrule noFormulasToUse
+   (declare (salience 60))
+   (variable (name finished) (value G))
+=>
+   (noFormulasLeft)
+)
+
 (defrule giveUp "Ends the expert system and notifies the user that we were unable to suggest a formula based on the given variables"
    (declare (salience -100))
 =>
@@ -118,6 +125,7 @@
       (suggestFormula "s = theta * r")
     else
       ;(noFormulasLeft)
+      (assert (variable (name finished) (value G)))
    )
 )
 
@@ -138,6 +146,7 @@
       (suggestFormula "deltaTheta = theta_f - theta_i")
     else
       ;(noFormulasLeft)
+      (assert (variable (name finished) (value G)))
    )
 )
 
@@ -180,6 +189,7 @@
       (suggestFormula "averageW = deltaTheta / deltaTime")
     else
       ;(noFormulasLeft)
+      (assert (variable (name finished) (value G)))
    )
 )
 
