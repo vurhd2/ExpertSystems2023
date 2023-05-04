@@ -62,13 +62,17 @@
 */
 (deftemplate variable (slot name) (slot value))
 
+(deftemplate target (slot name))
+
 (do-backward-chaining variable)     ; enable backward chaining using the variable template
 
 (defglobal ?*questions_asked* = 0)  ; the amount of questions asked so far
 
-/*****
-* Rules either starting or ending the animal game based on certain conditions
-* such as exceeding the question limit or running out of questions to ask
+(defglobal ?*FORMULA_SALIENCE* = 75)
+(defglobal ?*VARIABLE_SALIENCE* = 50)
+
+/************************************
+* Rules either starting or ending the expert system
 */
 (defrule startProgram "Starts the expert system"
    (declare (salience 100))
@@ -83,15 +87,24 @@
    (findVariableBeingSolvedFor)
 )  
 
-(defrule giveUp "Ends the game and notifies the user that we were unable to suggest a formula based on the given variables"
+(defrule giveUp "Ends the expert system and notifies the user that we were unable to suggest a formula based on the given variables"
    (declare (salience -100))
 =>
-   (haltGame)
+   (haltProgram)
    (printline "I'm not sure which formula to use... It seems like your problem might be too complex for our purposes!")
    (printline "Sorry about that, and we wish you the best of luck in solving your problem!")
 )  
 
+/************************************
+* Rules defining some of the most common/simple rotational physics formulas
+* The (or) construct is used to compile all user variations of the formula together, for example, with s = theta * r,
+* one variation is that 's' is being solved for while the other two are given, or maybe 'theta' is being solved for while
+* the other two are given instead
+* This (or) construct is why the pattern matching syntax is used within the left hand side of the rules
+*/
+
 (defrule angularPosition
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name theta) (value ?theta & S)) (variable (name s) (value ?s & G)) (variable (name r) (value ?r & G)))
        (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & S)) (variable (name r) (value ?r & G))) 
        (and (variable (name theta) (value ?theta & G)) (variable (name s) (value ?s & G)) (variable (name r) (value ?r & S))))
@@ -99,7 +112,8 @@
    (suggestFormula "s = theta * r")
 )
 
-(defrule angularDisplacement
+/*(defrule angularDisplacement "formula for angular displacement"
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name deltaTheta) (value ?deltaTheta & S)) (variable (name theta_f) (value ?theta_f & G)) 
             (variable (name theta_i) (value ?theta_i & G)))
        (and (variable (name deltaTheta) (value ?deltaTheta & G)) (variable (name theta_f) (value ?theta_f & S)) 
@@ -108,9 +122,30 @@
             (variable (name theta_i) (value ?theta_i & S))))
 =>
    (suggestFormula "deltaTheta = theta_f - theta_i")
+)*/
+
+(defrule angularDisplacement "formula for angular displacement"
+   (declare (salience ?*FORMULA_SALIENCE*))
+   (or
+      (target (name deltaTheta))
+      (target (name theta_f))
+      (target (name theta_i))
+   )
+   (variable (name deltaTheta) (value ?deltaTheta))
+   (variable (name theta_f) (value ?theta_f)) 
+   (variable (name theta_i) (value ?theta_i))
+=>
+   (if (or 
+         (and (eq ?deltaTheta S) (eq ?theta_f G) (eq ?theta_i G))
+         (and (eq ?deltaTheta G) (eq ?theta_f S) (eq ?theta_i G))
+         (and (eq ?deltaTheta G) (eq ?theta_f G) (eq ?theta_i S))
+       ) then
+      (suggestFormula "deltaTheta = theta_f - theta_i")
+   )
 )
 
 (defrule changeInAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name deltaW) (value ?deltaW & S)) (variable (name w_f) (value ?w_f & G)) 
             (variable (name w_i) (value ?w_i & G)))
        (and (variable (name deltaW) (value ?deltaW & G)) (variable (name w_f) (value ?w_f & S))
@@ -122,6 +157,7 @@
 )
 
 (defrule averageAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name averageW) (value ?averageW & S)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
             (variable (name deltaTime) (value ?deltaTime & G)))
        (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & S)) 
@@ -133,6 +169,7 @@
 )
 
 (defrule functionAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name functionW) (value ?functionW & S)) (variable (name functionTheta) (value ?functionTheta & G)))
        (and (variable (name functionW) (value ?functionW & G)) (variable (name functionTheta) (value ?functionTheta & S))))
 =>
@@ -140,6 +177,7 @@
 )
 
 (defrule averageAngularAcceleration
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name averageAlpha) (value ?averageAlpha & S)) (variable (name deltaW) (value ?deltaW & G))
             (variable (name deltaTime) (value ?deltaTime & G)))
        (and (variable (name averageAlpha) (value ?averageAlpha & G)) (variable (name deltaW) (value ?deltaW & S)) 
@@ -151,6 +189,7 @@
 )
 
 (defrule functionAngularAccelerationWithAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionW) (value ?functionW & G)))
        (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionW) (value ?functionW & S))))
 =>
@@ -158,6 +197,7 @@
 )
 
 (defrule functionAngularAccelerationWithAngularPosition
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionTheta) (value ?functionTheta & G)))
        (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionTheta) (value ?functionTheta & S))))
 =>
@@ -165,6 +205,7 @@
 )
 
 (defrule linearVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name v) (value ?v & S)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & G)))
        (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
        (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
@@ -173,6 +214,7 @@
 )
 
 (defrule linearAcceleration
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name a) (value ?a & S)) (variable (name alpha) (value ?alpha & G)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & G)) (variable (name r) (value ?r & S))))
@@ -181,6 +223,7 @@
 )
 
 (defrule radialAccelerationWithAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name a) (value ?a & S)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
@@ -189,6 +232,7 @@
 )
 
 (defrule radialAccelerationWithLinearVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name a) (value ?a & S)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
        (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
@@ -197,6 +241,7 @@
 )
 
 (defrule periodWithLinearVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name period) (value ?period & S)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & G)))
        (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
        (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
@@ -205,6 +250,7 @@
 )
 
 (defrule periodWithAngularVelocity
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name period) (value ?period & S)) (variable (name w) (value ?w & G)))
        (and (variable (name period) (value ?period & G)) (variable (name w) (value ?w & S))))
 =>
@@ -212,6 +258,7 @@
 )
 
 (defrule rotationalKineticEnergy
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name K) (value ?K & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
        (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
        (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
@@ -220,6 +267,7 @@
 )
 
 (defrule parallelAxisTheorem
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name I) (value ?I & S)) (variable (name I_com) (value ?I_com & G)) 
             (variable (name m) (value ?m & G)) (variable (name h) (value ?h & G)))
        (and (variable (name I) (value ?I & G)) (variable (name I_com) (value ?I_com & S)) 
@@ -233,6 +281,7 @@
 )
 
 (defrule torqueVector
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name torque_vector) (value ?torque_vector & S)) (variable (name r_vector) (value ?r_vector & G)) 
             (variable (name F_vector) (value ?F_vector & G)))
        (and (variable (name torque_vector) (value ?torque_vector & G)) (variable (name r_vector) (value ?r_vector & S)) 
@@ -244,6 +293,7 @@
 )
 
 (defrule torqueMagnitude
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name torque_magnitude) (value ?torque_magnitude & S)) (variable (name r) (value ?r & G)) 
             (variable (name F) (value ?F & G)) (variable (name theta) (value ?theta & G)))
        (and (variable (name torque_magnitude) (value ?torque_magnitude & G)) (variable (name r) (value ?r & S)) 
@@ -257,6 +307,7 @@
 )
 
 (defrule netTorque
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name torque_net) (value ?torque_net & S)) (variable (name I) (value ?I & G)) 
             (variable (name alpha) (value ?alpha & G)))
        (and (variable (name torque_net) (value ?torque_net & G)) (variable (name I) (value ?I & S)) 
@@ -268,6 +319,7 @@
 )
 
 (defrule angularMomentumVector
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name L_vector) (value ?L_vector & S)) (variable (name r_vector) (value ?r_vector & G)) 
             (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & G)))
        (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & S)) 
@@ -281,6 +333,7 @@
 )
 
 (defrule angularMomentumMagnitude
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name L_magnitude) (value ?L_magnitude & S)) (variable (name r) (value ?r & G)) 
             (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
             (variable (name theta) (value ?theta & G))
@@ -305,6 +358,7 @@
 )
 
 (defrule angularMomentum
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name L) (value ?L & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
        (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
        (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
@@ -313,13 +367,19 @@
 )
 
 (defrule functionNetTorque
+   (declare (salience ?*FORMULA_SALIENCE*))
    (or (and (variable (name functionTorque) (value ?functionTorque & S)) (variable (name functionL) (value ?functionL & G)))
        (and (variable (name functionTorque) (value ?functionTorque & G)) (variable (name functionL) (value ?functionL & S))))
 =>
    (suggestFormula "torque = dL/dt")
 )
 
+/************************************
+* Rules checking whether the user is given the titular variable
+*/
+
 (defrule needTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name theta) (value ?))
 =>
    (bind ?value (convertInput "Is an angular position or angle between vectors given?"))
@@ -327,6 +387,7 @@
 )
 
 (defrule needArcLength 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name s) (value ?))
 =>
    (bind ?value (convertInput "Is an arc length given?"))
@@ -334,6 +395,7 @@
 )
 
 (defrule needRadius 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name r) (value ?))
 =>
    (bind ?value (convertInput "Is a radius or distance to a rotation axis given?"))
@@ -341,6 +403,7 @@
 )
 
 (defrule needRadiusVector 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name r_vector) (value ?))
 =>
    (bind ?value (convertInput "Is a radius vector or distance vector to a point or rotation axis given?"))
@@ -349,6 +412,7 @@
 )
 
 (defrule needDeltaTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name deltaTheta) (value ?))
 =>
    (bind ?value (convertInput "Is a difference in angles or angular positions given?"))
@@ -356,6 +420,7 @@
 )
 
 (defrule needFinalTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name theta_f) (value ?))
 =>
    (bind ?value (convertInput "Is a final angle or angular position given?"))
@@ -363,6 +428,7 @@
 )
 
 (defrule needInitialTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name theta_i) (value ?))
 =>
    (bind ?value (convertInput "Is an initial angle or angular position given?"))
@@ -370,6 +436,7 @@
 )
 
 (defrule needTime 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name T) (value ?))
 =>
    (bind ?value (convertInput "Is a time given?"))
@@ -377,6 +444,7 @@
 )
 
 (defrule needDeltaTime 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name deltaTime) (value ?))
 =>
    (bind ?value (convertInput "Is a difference in times given?"))
@@ -384,6 +452,7 @@
 )
 
 (defrule needLinearVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name v) (value ?))
 =>
    (bind ?value (convertInput "Is a linear velocity given?"))
@@ -391,6 +460,7 @@
 )
 
 (defrule needLinearVelocityVector 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name v_vector) (value ?))
 =>
    (bind ?value (convertInput "Is a linear velocity vector given?"))
@@ -398,6 +468,7 @@
 )
 
 (defrule needAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name w) (value ?))
 =>
    (bind ?value (convertInput "Is an angular velocity given?"))
@@ -405,6 +476,7 @@
 )
 
 (defrule needDeltaW 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name deltaW) (value ?))
 =>
    (bind ?value (convertInput "Is a change in angular velocity given?"))
@@ -412,6 +484,7 @@
 )
 
 (defrule needFinalAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name w_f) (value ?))
 =>
    (bind ?value (convertInput "Is a final angular velocity given?"))
@@ -419,6 +492,7 @@
 )
 
 (defrule needInitialAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name w_i) (value ?))
 =>
    (bind ?value (convertInput "Is an initial angular velocity given?"))
@@ -426,6 +500,7 @@
 )
 
 (defrule needAverageAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name averageW) (value ?))
 =>
    (bind ?value (convertInput "Is an average angular velocity given?"))
@@ -433,6 +508,7 @@
 )
 
 (defrule needAngularVelocityFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name functionW) (value ?))
 =>
    (bind ?value (convertInput "Is the angular velocity given as a function of time?"))
@@ -440,6 +516,7 @@
 )
 
 (defrule needAngularPositionFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name functionTheta) (value ?))
 =>
    (bind ?value (convertInput "Is the angular position given as a function of time?"))
@@ -447,6 +524,7 @@
 )
 
 (defrule needLinearAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name a) (value ?))
 =>
    (bind ?value (convertInput "Is a linear acceleration given?"))
@@ -454,6 +532,7 @@
 )
 
 (defrule needAngularAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name alpha) (value ?))
 =>
    (bind ?value (convertInput "Is an angular acceleration given?"))
@@ -461,6 +540,7 @@
 )
 
 (defrule needAverageAngularAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name averageAlpha) (value ?))
 =>
    (bind ?value (convertInput "Is an average angular acceleration given?"))
@@ -468,6 +548,7 @@
 )
 
 (defrule needAngularAccelerationFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name functionAlpha) (value ?))
 =>
    (bind ?value (convertInput "Is angular acceleration given as a function of time?"))
@@ -475,6 +556,7 @@
 )
 
 (defrule needPeriod 
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name period) (value ?))
 =>
    (bind ?value (convertInput "Is a period for circular motion given?"))
@@ -482,6 +564,7 @@
 )
 
 (defrule needRotationalKineticEnergy
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name K) (value ?))
 =>
    (bind ?value (convertInput "Is a rotational kinetic energy given?"))
@@ -489,6 +572,7 @@
 )
 
 (defrule needMomentOfInertia
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name I) (value ?))
 =>
    (bind ?value (convertInput "Is a moment of inertia given (not necessarily at the center of mass)?"))
@@ -496,6 +580,7 @@
 )
 
 (defrule needMomentOfInertiaAtCenterOfMass
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name I_com) (value ?))
 =>
    (bind ?value (convertInput "Is a moment of inertia given at the center of mass?"))
@@ -503,6 +588,7 @@
 )
 
 (defrule needMass
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name m) (value ?))
 =>
    (bind ?value (convertInput "Is the mass of the system given?"))
@@ -510,6 +596,7 @@
 )
 
 (defrule needDistanceBetweenAxes
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name h) (value ?))
 =>
    (bind ?value (convertInput "Is a perpendicular distance between parallel rotation axes given?"))
@@ -517,6 +604,7 @@
 )
 
 (defrule needTorqueVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name torque_vector) (value ?))
 =>
    (bind ?value (convertInput "Is torque given as a vector?"))
@@ -524,6 +612,7 @@
 )
 
 (defrule needAngularMomentumFunction
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name functionL) (value ?))
 =>
    (bind ?value (convertInput "Is angular momentum given as a function of time?"))
@@ -531,6 +620,7 @@
 )
 
 (defrule needForceVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name F_vector) (value ?))
 =>
    (bind ?value (convertInput "Is a force given as a vector?"))
@@ -538,6 +628,7 @@
 )
 
 (defrule needRadiusVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name r_vector) (value ?))
 =>
    (bind ?value (convertInput "Is a distance or radius given as a vector?"))
@@ -545,6 +636,7 @@
 )
 
 (defrule needTorqueMagnitude
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name torque_magnitude) (value ?))
 =>
    (bind ?value (convertInput "Is the magnitude of torque given?"))
@@ -552,6 +644,7 @@
 )
 
 (defrule needNetTorque
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name torque_net) (value ?))
 =>
    (bind ?value (convertInput "Is the net torque given?"))
@@ -559,6 +652,7 @@
 )
 
 (defrule needTorqueFunction
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name functionTorque) (value ?))
 =>
    (bind ?value (convertInput "Is torque given as a function of time?"))
@@ -566,6 +660,7 @@
 )
 
 (defrule needForce
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name F) (value ?))
 =>
    (bind ?value (convertInput "Is the magnitude of a force given?"))
@@ -573,6 +668,7 @@
 )
 
 (defrule needAngularMomentum
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name L) (value ?))
 =>
    (bind ?value (convertInput "Is the angular momentum given?"))
@@ -580,6 +676,7 @@
 )
 
 (defrule needAngularMomentumVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name L_vector) (value ?))
 =>
    (bind ?value (convertInput "Is the angular momentum given as a vector?"))
@@ -587,6 +684,7 @@
 )
 
 (defrule needAngularMomentumMagnitude
+   (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name L_magnitude) (value ?))
 =>
    (bind ?value (convertInput "Is the magnitude of angular momentum given?"))
@@ -596,7 +694,7 @@
 /*
 * Halts the rule engine for the expert system
 */
-(deffunction haltGame ()
+(deffunction haltProgram ()
    (halt)
 
    (return)
@@ -691,7 +789,8 @@
    )  ; while (= ?result "invalid")
 
    (assert (variable (name ?result) (value S)))
-
+   (assert (target (name ?result)))
+   (facts)
    (return)
 )  ; deffunction findVariableBeingSolvedFor
 
@@ -742,7 +841,7 @@
 * 
 */
 (deffunction suggestFormula (?formula)
-   (haltGame)
+   (haltProgram)
    
    (printline (sym-cat "Based on your responses, we believe that you should use the formula: " ?formula))
 
