@@ -374,9 +374,9 @@
    (undefrule checkForConstantAngularAcceleration)
 )
 
-(defrule isolateTorqueMagnitude
+(defrule isolateTorqueOrForceMagnitude
    (declare (salience ?*ISOLATE_SALIENCE*))
-   (target (name torque_magnitude))
+   (or (target (name torque_magnitude)) (target (name F)))
 =>
    (buildTorqueMagnitude)
    (undefrule checkForConstantAngularAcceleration)
@@ -390,20 +390,28 @@
    (undefrule checkForConstantAngularAcceleration)
 )
 
-(defrule isolateFunctionTorque
+(defrule isolateFunctionTorqueOrAngularMomentum
    (declare (salience ?*ISOLATE_SALIENCE*))
-   (target (name functionTorque))
+   (or (target (name functionTorque)) (target (name functionL)))
 =>
    (buildFunctionTorque)
    (undefrule checkForConstantAngularAcceleration)
 )
 
-(defrule isolateForce
+(defrule isolateAngularMomentum
    (declare (salience ?*ISOLATE_SALIENCE*))
-   (target (name functionAlpha))
+   (target (name L))
 =>
-   (buildFunctionAngularAccelerationWithAngularPosition)
-   (buildFunctionAngularAccelerationWithAngularVelocity)
+   (buildAngularMomentum)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateAngularMomentumVector
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name L_vector))
+=>
+   (buildAngularMomentumVector)
    (undefrule checkForConstantAngularAcceleration)
 )
 

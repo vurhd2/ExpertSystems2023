@@ -11,23 +11,21 @@
 (defrule angularVelocityWithoutChangeInAngularPosition
    (declare (salience ?*FORMULA_SALIENCE*))
    (or
-      (target (name w))
+      (target (name w_f))
       (target (name w_i))
       (target (name alpha))
       (target (name t))
    )
-   (variable (name w) (value ?w))
+   (variable (name w_f) (value ?w_f))
    (variable (name w_i) (value ?w_i)) 
    (variable (name alpha) (value ?alpha))
    (variable (name t) (value ?t))
 =>
-   (if (or (and           (eq ?w_i G) (eq ?alpha G) (eq ?t G))
-           (and (eq ?w G)             (eq ?alpha G) (eq ?t G))
-           (and (eq ?w G) (eq ?w_i G)               (eq ?t G))
-           (and (eq ?w G) (eq ?w_i G) (eq ?alpha G)          )) then
-      (suggestFormula "w = w_i + (alpha * t)")
-    else
-      (assert (variable (name finished) (value G)))
+   (if (or (and             (eq ?w_i G) (eq ?alpha G) (eq ?t G))
+           (and (eq ?w_f G)             (eq ?alpha G) (eq ?t G))
+           (and (eq ?w_f G) (eq ?w_i G)               (eq ?t G))
+           (and (eq ?w_f G) (eq ?w_i G) (eq ?alpha G)          )) then
+      (suggestFormula "w_f = w_i + (alpha * t)")
    )
 )
 
@@ -55,21 +53,21 @@
 (defrule angularVelocityWithoutTime
    (declare (salience ?*FORMULA_SALIENCE*))
    (or
-      (target (name w))
+      (target (name w_f))
       (target (name w_i))
       (target (name alpha))
       (target (name deltaTheta))
    )
-   (variable (name w) (value ?w))
+   (variable (name w_f) (value ?w_f))
    (variable (name w_i) (value ?w_i)) 
    (variable (name alpha) (value ?alpha))
    (variable (name deltaTheta) (value ?deltaTheta))
 =>
-   (if (or (and           (eq ?w_i G) (eq ?alpha G) (eq ?deltaTheta G))
-           (and (eq ?w G)             (eq ?alpha G) (eq ?deltaTheta G))
-           (and (eq ?w G) (eq ?w_i G)               (eq ?deltaTheta G))
-           (and (eq ?w G) (eq ?w_i G) (eq ?alpha G)          )) then
-      (suggestFormula "w^2 = w_i^2 + 2(alpha * deltaTheta)")
+   (if (or (and             (eq ?w_i G) (eq ?alpha G) (eq ?deltaTheta G))
+           (and (eq ?w_f G)             (eq ?alpha G) (eq ?deltaTheta G))
+           (and (eq ?w_f G) (eq ?w_i G)               (eq ?deltaTheta G))
+           (and (eq ?w_f G) (eq ?w_i G) (eq ?alpha G)                   )) then
+      (suggestFormula "w_f^2 = w_i^2 + 2(alpha * deltaTheta)")
    )
 )
 
@@ -78,19 +76,19 @@
    (or
       (target (name deltaTheta))
       (target (name w_i))
-      (target (name w))
+      (target (name w_f))
       (target (name t))
    )
    (variable (name deltaTheta) (value ?deltaTheta))
    (variable (name w_i) (value ?w_i)) 
-   (variable (name w) (value ?w))
+   (variable (name w_f) (value ?w_f))
    (variable (name t) (value ?t))
 =>
-   (if (or (and                    (eq ?w_i G) (eq ?w G) (eq ?t G))
-           (and (eq ?deltaTheta G)             (eq ?w G) (eq ?t G))
-           (and (eq ?deltaTheta G) (eq ?w_i G)           (eq ?t G))
-           (and (eq ?deltaTheta G) (eq ?w_i G) (eq ?w G)          )) then
-      (suggestFormula "deltaTheta = 0.5 * (w + w_i) * t")
+   (if (or (and                    (eq ?w_i G) (eq ?w_f G) (eq ?t G))
+           (and (eq ?deltaTheta G)             (eq ?w_f G) (eq ?t G))
+           (and (eq ?deltaTheta G) (eq ?w_i G)             (eq ?t G))
+           (and (eq ?deltaTheta G) (eq ?w_i G) (eq ?w_f G)          )) then
+      (suggestFormula "deltaTheta = 0.5 * (w_f + w_i) * t")
    )
 )
 
@@ -98,19 +96,19 @@
    (declare (salience ?*FORMULA_SALIENCE*))
    (or
       (target (name deltaTheta))
-      (target (name w))
+      (target (name w_f))
       (target (name alpha))
       (target (name t))
    )
    (variable (name deltaTheta) (value ?deltaTheta))
-   (variable (name w) (value ?w)) 
+   (variable (name w_f) (value ?w_f)) 
    (variable (name alpha) (value ?alpha))
    (variable (name t) (value ?t))
 =>
-   (if (or (and                    (eq ?w G) (eq ?alpha G) (eq ?t G))
-           (and (eq ?deltaTheta G)           (eq ?alpha G) (eq ?t G))
-           (and (eq ?deltaTheta G) (eq ?w G)               (eq ?t G))
-           (and (eq ?deltaTheta G) (eq ?w G) (eq ?alpha G)          )) then
-      (suggestFormula "deltaTheta = (w * t) - (0.5 * alpha * t^2)")
+   (if (or (and                    (eq ?w_f G) (eq ?alpha G) (eq ?t G))
+           (and (eq ?deltaTheta G)             (eq ?alpha G) (eq ?t G))
+           (and (eq ?deltaTheta G) (eq ?w_f G)               (eq ?t G))
+           (and (eq ?deltaTheta G) (eq ?w_f G) (eq ?alpha G)          )) then
+      (suggestFormula "deltaTheta = (w_f * t) - (0.5 * alpha * t^2)")
    )
 )
