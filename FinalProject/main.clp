@@ -194,10 +194,10 @@
 
 (defrule needTime 
    (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name T) (value ?))
+   (need-variable (name t) (value ?))
 =>
    (bind ?value (convertInput "a time given?"))
-   (assert (variable (name T) (value ?value)))
+   (assert (variable (name t) (value ?value)))
 )
 
 (defrule needDeltaTime 
@@ -229,7 +229,7 @@
    (need-variable (name w) (value ?))
 =>
    (bind ?value (convertInput "an angular velocity given?"))
-   (assert (variable (name T) (value ?value)))
+   (assert (variable (name w) (value ?value)))
 )
 
 (defrule needDeltaW 
@@ -1482,6 +1482,7 @@
       ) 
    )  ; while (= ?result "invalid")
 
+   (assert (variable (name ?input) (value S))) ; initialize the variable to some other value than 'G' or 'N' to prevent redundant questions
    (assert (target (name ?result)))
 
    (return)
