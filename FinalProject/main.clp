@@ -53,24 +53,54 @@
 */
 
 /*
-* Defines a template for each variable within the rotational physics formulas
+* Defines a backward chained template for each variable within the rotational physics formulas
 * @slot name                  the name of the variable
 * @slot value                 the value indicating whether this variable exists within a given formula,
-*                             with 'G' indicating that it is given and 'S' indicating that it needs to 
-*                             be solved for, otherwise 'N' if it does not apply
+*                             with 'G' indicating that it is given, otherwise 'N' if it does not apply
 */
 (deftemplate variable (slot name) (slot value))
 
-(deftemplate target (slot name))
-
 (do-backward-chaining variable)              ; enable backward chaining using the variable template
+
+/*
+* Defines a forward chained template for the target variable (variable being solved for)
+*/
+(deftemplate target (slot name))
 
 (defglobal ?*questions_asked* = 0)           ; the amount of questions asked so far
 
 (defglobal ?*DIRECTORY* = "FinalProject/")   ; the directory housing this project's files
 
 (defglobal ?*FORMULA_SALIENCE* = 75)         ; salience for all the rules that represent the formulas
+(defglobal ?*ISOLATE_SALIENCE* = 60)         ; salience for all the rules that undefine other rules based on the variable solving for
 (defglobal ?*VARIABLE_SALIENCE* = 50)        ; salience for all the rules that ask the user whether a certain variable is given
+
+/************************************
+* List of global variables holding all the formulas used within this main file of the program
+*/
+(defglobal ?*ANGULAR_POSITION* = "theta = s * r")
+(defglobal ?*ANGULAR_DISPLACEMENT* = "deltaTheta = theta_f - theta_i")
+(defglobal ?*CHANGE_IN_ANGULAR_VELOCITY* = "deltaW = w_f - w_i")
+(defglobal ?*AVERAGE_ANGULAR_VELOCITY* = "averageW = deltaTheta / deltaTime")
+(defglobal ?*FUNCTION_ANGULAR_VELOCITY* = "w = first time derivative of 'theta' ")
+(defglobal ?*AVERAGE_ANGULAR_ACCELERATION* = "averageAlpha = deltaW / deltaTime")
+(defglobal ?*FUNCTION_ALPHA_WITH_W* = "alpha = first time derivative of 'w' ")
+(defglobal ?*FUNCTION_ALPHA_WITH_THETA* = "alpha = second time derivative of 'theta' ")
+(defglobal ?*LINEAR_VELOCITY* = "v = w * r")
+(defglobal ?*LINEAR_ACCELERATION* = "a = alpha * r")
+(defglobal ?*RADIAL_ACCELERATION_WITH_W* = "a = w^2 * r")
+(defglobal ?*RADIAL_ACCELERATION_WITH_V* = "a = v^2 / r")
+(defglobal ?*PERIOD_WITH_V* = "period = 2 * PI * r / v")
+(defglobal ?*PERIOD_WITH_W* = "period = 2 * PI / w")
+(defglobal ?*ROTATIONAL_KINETIC_ENERGY* = "K = 0.5 * I * w^2")
+(defglobal ?*PARALLEL_AXIS* = "I = I_com + (m * h^2)")
+(defglobal ?*TORQUE_VECTOR* = "torque_vector = r_vector x F_vector")
+(defglobal ?*TORQUE_MAGNITUDE* = "torque_magnitude = r * F * sin(theta)")
+(defglobal ?*TORQUE_NET* = "torque_net = I * alpha")
+(defglobal ?*ANGULAR_MOMENTUM_VECTOR* = "L_vector = m * (r_vector x v_vector)")
+(defglobal ?*ANGULAR_MOMENTUM_VECTOR_MAGNITUDE* = "L = r * m * v * sin(theta)")
+(defglobal ?*ANGULAR_MOMENTUM* = "L = I * w")
+(defglobal ?*FUNCTION_TORQUE* = "torque = first time derivative of 'L' ")
 
 /************************************
 * Rules either starting or ending the expert system
@@ -94,53 +124,67 @@
    (noFormulasLeft)
 )  
 
+
+
 /************************************
-* Rules defining some of the most common/simple rotational physics formulas
+* Functions that build rules defining some of the most common/simple rotational physics formulas
 * The (or) construct is used to compile all user variations of the formula together, for example, with s = theta * r,
 * one variation is that 's' is being solved for while the other two are given, or maybe 'theta' is being solved for while
 * the other two are given instead
 * This (or) construct is why the pattern matching syntax is used within the left hand side of the rules
 */
 
-(defrule angularPosition
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name theta))
-      (target (name s))
-      (target (name r))
-   )
-   (variable (name theta) (value ?theta))
-   (variable (name s) (value ?s)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and               (eq ?s G) (eq ?r G))
-           (and (eq ?theta G)           (eq ?r G))
-           (and (eq ?theta G) (eq ?s G)          )) then
-      (suggestFormula "s = theta * r")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)  ; defrule angularPosition
+(deffunction buildAngularPosition ()
+   (bind ?rule "
+   (defrule angularPosition
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name theta))
+         (target (name s))
+         (target (name r))
+      )
+      (variable (name theta) (value ?theta))
+      (variable (name s) (value ?s)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and               (eq ?s G) (eq ?r G))
+              (and (eq ?theta G)           (eq ?r G))
+              (and (eq ?theta G) (eq ?s G)          )) then
+         (suggestFormula ?*ANGULAR_POSITION*)
+      )
+   )  ; defrule angularPosition
+   ")
 
-(defrule angularDisplacement "formula for angular displacement"
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name deltaTheta))
-      (target (name theta_f))
-      (target (name theta_i))
-   )
-   (variable (name deltaTheta) (value ?deltaTheta))
-   (variable (name theta_f) (value ?theta_f)) 
-   (variable (name theta_i) (value ?theta_i))
-=>
-   (if (or (and                    (eq ?theta_f G) (eq ?theta_i G))
-           (and (eq ?deltaTheta G)                 (eq ?theta_i G))
-           (and (eq ?deltaTheta G) (eq ?theta_f G)                )) then
-      (suggestFormula "deltaTheta = theta_f - theta_i")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (build ?rule)
+
+   (return)
+)  ; deffunction buildAngularPosition
+
+(deffunction buildAngularDisplacement ()
+   (bind ?rule "
+   (defrule angularDisplacement
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name deltaTheta))
+         (target (name theta_f))
+         (target (name theta_i))
+      )
+      (variable (name deltaTheta) (value ?deltaTheta))
+      (variable (name theta_f) (value ?theta_f)) 
+      (variable (name theta_i) (value ?theta_i))
+   =>
+      (if (or (and                    (eq ?theta_f G) (eq ?theta_i G))
+              (and (eq ?deltaTheta G)                 (eq ?theta_i G))
+              (and (eq ?deltaTheta G) (eq ?theta_f G)                )) then
+         (suggestFormula ?*ANGULAR_DISPLACEMENT*)
+      )
+   )  ; defrule angularDisplacement
+   ")
+
+   (build ?rule)
+
+   (return)
+)  ; deffunction buildAngularDisplacement
 
 (defrule changeInAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -361,8 +405,6 @@
 =>
    (if (or (eq ?period G) (eq ?w G)) then
       (suggestFormula "period = 2PI / w")
-    else
-      (assert (variable (name finished) (value G)))
    )
 )
 
@@ -381,8 +423,6 @@
            (and (eq ?K G)           (eq ?w G))
            (and (eq ?K G) (eq ?I G)          )) then
       (suggestFormula "K = 0.5 * I * w^2")
-    else
-      (assert (variable (name finished) (value G)))
    )
 )
 
@@ -404,8 +444,6 @@
            (and (eq ?I G) (eq ?I_com G)           (eq ?h G))
            (and (eq ?I G) (eq ?I_com G) (eq ?m G)          )) then
       (suggestFormula "I = I_com + (M * h^2)")
-    else
-      (assert (variable (name finished) (value G)))
    )
 )
 
@@ -424,32 +462,35 @@
            (and (eq ?torque_vector G)                  (eq ?F_vector G))
            (and (eq ?torque_vector G) (eq ?r_vector G)                 )) then
       (suggestFormula "torque_vector = r_vector x F_vector")
-    else
-      (assert (variable (name finished) (value G)))
    )
 )
+(deffunction buildTorqueMagnitude ()
+   (bind ?rule "
+   (defrule torqueMagnitude
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name torque_magnitude))
+         (target (name r))
+         (target (name F))
+         (target (name theta))
+      )
+      (variable (name torque_magnitude) (value ?torque_magnitude))
+      (variable (name r) (value ?r)) 
+      (variable (name F) (value ?F))
+      (variable (name theta) (value ?theta))
+   =>
+      (if (or (and                          (eq ?r G) (eq ?F G) (eq ?theta G))
+              (and (eq ?torque_magnitude G)           (eq ?F G) (eq ?theta G))
+              (and (eq ?torque_magnitude G) (eq ?r G)           (eq ?theta G))
+              (and (eq ?torque_magnitude G) (eq ?r G) (eq ?F G)              )) then
+         (suggestFormula 'magnitude of torque vector = r * F * sin(theta)')
+      )
+   )  ; defrule torqueMagnitude
+   ")
 
-(defrule torqueMagnitude
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name torque_magnitude))
-      (target (name r))
-      (target (name F))
-      (target (name theta))
-   )
-   (variable (name torque_magnitude) (value ?torque_magnitude))
-   (variable (name r) (value ?r)) 
-   (variable (name F) (value ?F))
-   (variable (name theta) (value ?theta))
-=>
-   (if (or (and                          (eq ?r G) (eq ?F G) (eq ?theta G))
-           (and (eq ?torque_magnitude G)           (eq ?F G) (eq ?theta G))
-           (and (eq ?torque_magnitude G) (eq ?r G)           (eq ?theta G))
-           (and (eq ?torque_magnitude G) (eq ?r G) (eq ?F G)          )) then
-      (suggestFormula "magnitude of torque vector = r * F * sin(theta)")
-    else
-      (assert (variable (name finished) (value G)))
-   )
+   (build ?rule)
+
+   (return)
 )
 
 (defrule netTorque
@@ -494,31 +535,36 @@
       (assert (variable (name finished) (value G)))
    )
 )
+(deffunction buildAngularMomentumVectorMagnitude ()
+   (bind ?rule "
+   (defrule angularMomentumVectorMagnitude
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name L))
+         (target (name r))
+         (target (name m))
+         (target (name v))
+         (target (name theta))
+      )
+      (variable (name L) (value ?L))
+      (variable (name r) (value ?r)) 
+      (variable (name m) (value ?m))
+      (variable (name v) (value ?v))
+      (variable (name theta) (value ?theta))
+   =>
+      (if (or (and           (eq ?r G) (eq ?m G) (eq ?v G) (eq ?theta G))
+              (and (eq ?L G)           (eq ?m G) (eq ?v G) (eq ?theta G))
+              (and (eq ?L G) (eq ?r G)           (eq ?v G) (eq ?theta G))
+              (and (eq ?L G) (eq ?r G) (eq ?m G)           (eq ?theta G))
+              (and (eq ?L G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
+         (suggestFormula 'L = r * m * v * sin(theta)')
+      )
+   )  ; defrule angularMomentumVectorMagnitude
+   ")
 
-(defrule angularMomentumVectorMagnitude
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name L))
-      (target (name r))
-      (target (name m))
-      (target (name v))
-      (target (name theta))
-   )
-   (variable (name L) (value ?L))
-   (variable (name r) (value ?r)) 
-   (variable (name m) (value ?m))
-   (variable (name v) (value ?v))
-   (variable (name theta) (value ?theta))
-=>
-   (if (or (and           (eq ?r G) (eq ?m G) (eq ?v G) (eq ?theta G))
-           (and (eq ?L G)           (eq ?m G) (eq ?v G) (eq ?theta G))
-           (and (eq ?L G) (eq ?r G)           (eq ?v G) (eq ?theta G))
-           (and (eq ?L G) (eq ?r G) (eq ?m G)           (eq ?theta G))
-           (and (eq ?L G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
-      (suggestFormula "L = r * m * v * sin(theta)")
-    else
-      (assert (variable (name finished) (value G)))
-   )
+   (build ?rule)
+
+   (return)
 )
 
 (defrule angularMomentum
@@ -881,12 +927,19 @@
    (assert (variable (name constantAlpha) (value ?value)))
 )
 
+/************************************
+* Rules building only the relevant formulas that contain the titular variable
+* where the titular variable is the variable being solved for
+*/
+
 (defrule isolateTheta
+   (declare (salience ?*ISOLATE_SALIENCE*))
    (target (name theta))
 =>
-   (undefrule angularDisplacement)
-   (undefrule changeInAngularVelocity)
-   (undefrule )
+   (buildAngularPosition)
+   (buildTorqueMagnitude)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
 )
 
 /*
@@ -905,7 +958,7 @@
 (deffunction validVariables ()
    (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i t deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
    (bind ?variables (sym-cat ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
-   (bind ?variables (sym-cat ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector L_magnitude"))
+   (bind ?variables (sym-cat ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector"))
 
    (return (explode$ ?variables))
 )
@@ -949,7 +1002,7 @@
    (printline "r_vector         - radius/distance vector")
    (printline "torque_magnitude - magnitude of torque")
    (printline "torque_net       - net torque")
-   (printline "functionTorque   - torque as a function of time")
+   (printline "functionTorqueT  - torque as a function of time")
    (printline "F                - force")
    (printline "L                - angular momentum")
    (printline "L_vector         - angular momentum vector")
