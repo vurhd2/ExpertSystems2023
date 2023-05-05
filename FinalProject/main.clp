@@ -15,7 +15,7 @@
 * theta            - angular position
 * s                - arc length
 * r                - radius
-* r_vector         - radius vector
+* r_vector         - radius/distance vector
 * deltaTheta       - change in angular position
 * theta_f          - final angular position
 * theta_i          - initial angular position
@@ -42,7 +42,6 @@
 * h                - distance between parallel rotation axes (used mainly for parallel axis theorem)
 * torque_vector    - torque vector
 * F_vector         - force vector
-* r_vector         - radius/distance vector
 * torque_magnitude - magnitude of torque
 * torque_net       - net torque
 * functionTorque   - torque as a function of time
@@ -166,9 +165,245 @@
    (declare (salience ?*ISOLATE_SALIENCE*))
    (target (name r_vector))
 =>
-   (buildAngularPosition)
-   (buildTorqueMagnitude)
+   (buildTorqueVector)
+   (buildAngularMomentumVector)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateAngularDisplacement
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name deltaTheta))
+=>
+   (buildAngularDisplacement)
+   (buildAverageAngularVelocity)
+)
+
+(defrule isolateFinalOrInitialAngle
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (or (target (name theta_f)) (target (name theta_i)))
+=>
+   (buildAngularDisplacement)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateChangeInTime
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name deltaTime))
+=>
+   (buildAverageAngularAcceleration)
+   (buildAverageAngularVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateLinearVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name v))
+=>
+   (buildLinearVelocity)
+   (buildPeriodWithLinearVelocity)
+   (buildRadialAccelerationWithLinearVelocity)
    (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)  ; defrule isolateLinearVelocity
+
+(defrule isolateLinearVelocityVector
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name v_vector))
+=>
+   (buildAngularMomentum)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateAngularVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name w))
+=>
+   (buildLinearVelocity)
+   (buildPeriodWithAngularVelocity)
+   (buildRadialAccelerationWithAngularVelocity)
+   (buildAngularMomentum)
+   (buildRotationalKineticEnergy)
+)  ; defrule isolateAngularVelocity
+
+(defrule isolateChangeInAngularVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name deltaW))
+=>
+   (buildChangeInAngularVelocity)
+   (buildAverageAngularAcceleration)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateFinalOrInitialAngularVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (or (target (name w_f)) (target (name w_i)))
+=>
+   (buildChangeInAngularVelocity)
+)
+
+(defrule isolateChangeInAngularVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name deltaW))
+=>
+   (buildChangeInAngularVelocity)
+   (buildAverageAngularAcceleration)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateFunctionAngularVelocity
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name functionW))
+=>
+   (buildFunctionAngularAccelerationWithAngularVelocity)
+   (buildFunctionAngularVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateFunctionTheta
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name functionTheta))
+=>
+   (buildFunctionAngularAccelerationWithAngularPosition)
+   (buildFunctionAngularVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateLinearAcceleration
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name a))
+=>
+   (buildLinearAcceleration)
+   (buildRadialAccelerationWithAngularVelocity)
+   (buildRadialAccelerationWithLinearVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)  ; defrule isolateLinearAcceleration
+
+(defrule isolateAngularAcceleration
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name alpha))
+=>
+   (buildLinearAcceleration)
+   (buildNetTorque)
+)
+
+(defrule isolateAverageAngularAcceleration
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name averageAlpha))
+=>
+   (buildAverageAngularAcceleration)
+   (undefrule checkForConstantAngularAcceleration)
+) 
+
+(defrule isolateFunctionAngularAcceleration
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name functionAlpha))
+=>
+   (buildFunctionAngularAccelerationWithAngularPosition)
+   (buildFunctionAngularAccelerationWithAngularVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolatePeriod
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name period))
+=>
+   (buildPeriodWithAngularVelocity)
+   (buildPeriodWithLinearVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateRotationalKineticEnergy
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name K))
+=>
+   (buildRotationalKineticEnergy)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateMomentOfInertia
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name I))
+=>
+   (buildRotationalKineticEnergy)
+   (buildParallelAxisTheorem)
+   (buildNetTorque)
+   (buildAngularMomentum)
+   (undefrule checkForConstantAngularAcceleration)
+)  ; defrule isolateMomentOfInertia
+
+(defrule isolateMomentOfInertiaAtCenterOfMass
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name I_com))
+=>
+   (buildParallelAxisTheorem)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateMass
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name m))
+=>
+   (buildParallelAxisTheorem)
+   (buildAngularMomentumVector)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateDistanceBetweenAxes
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name h))
+=>
+   (buildParallelAxisTheorem)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateTorqueOrForceVector
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (or (target (name torque_vector)) (target (name F_vector)))
+=>
+   (buildTorqueVector)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateForceVector
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name F_vector))
+=>
+   (buildFunctionAngularAccelerationWithAngularPosition)
+   (buildFunctionAngularAccelerationWithAngularVelocity)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateTorqueMagnitude
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name torque_magnitude))
+=>
+   (buildTorqueMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateNetTorque
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name torque_net))
+=>
+   (buildNetTorque)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateFunctionTorque
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name functionTorque))
+=>
+   (buildFunctionTorque)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateForce
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name functionAlpha))
+=>
+   (buildFunctionAngularAccelerationWithAngularPosition)
+   (buildFunctionAngularAccelerationWithAngularVelocity)
    (undefrule checkForConstantAngularAcceleration)
 )
 
@@ -1153,7 +1388,7 @@
 (deffunction validVariables ()
    (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i t deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
    (bind ?variables (sym-cat ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
-   (bind ?variables (sym-cat ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector"))
+   (bind ?variables (sym-cat ?variables "F_vector torque_magnitude torque_net functionTorque F L L_vector"))
 
    (return (explode$ ?variables))
 )
@@ -1167,7 +1402,7 @@
    (printline "theta            - angular position")
    (printline "s                - arc length")
    (printline "r                - radius")
-   (printline "r_vector         - radius vector")
+   (printline "r_vector         - radius/distance vector")
    (printline "deltaTheta       - change in angular position")
    (printline "theta_f          - final angular position")
    (printline "theta_i          - initial angular position")
@@ -1194,7 +1429,6 @@
    (printline "h                - distance between parallel rotation axes (used mainly for parallel axis theorem)")
    (printline "torque_vector    - torque vector")
    (printline "F_vector         - force vector")
-   (printline "r_vector         - radius/distance vector")
    (printline "torque_magnitude - magnitude of torque")
    (printline "torque_net       - net torque")
    (printline "functionTorqueT  - torque as a function of time")
