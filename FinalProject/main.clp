@@ -427,7 +427,7 @@
 * Builds the rule that defines the angular position formula
 */
 (deffunction buildAngularPosition ()
-   (build ?rule "
+   (build "
    (defrule angularPosition
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -454,7 +454,7 @@
 * Builds the rule that defines the angular displacement formula
 */
 (deffunction buildAngularDisplacement ()
-   (build ?rule "
+   (build "
    (defrule angularDisplacement
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -482,7 +482,7 @@
 * formula
 */
 (deffunction buildChangeInAngularVelocity ()
-   (build ?rule "
+   (build "
    (defrule changeInAngularVelocity
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -510,7 +510,7 @@
 * formula
 */
 (deffunction buildAverageAngularVelocity ()
-   (build ?rule "
+   (build "
    (defrule averageAngularVelocity
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -884,7 +884,7 @@
 * of the torque vector
 */
 (deffunction buildTorqueMagnitude ()
-   (build ?rule "
+   (build "
    (defrule torqueMagnitude
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -974,7 +974,7 @@
 * of the angular momentum vector
 */
 (deffunction buildAngularMomentumVectorMagnitude ()
-   (bind ?rule "
+   (build "
    (defrule angularMomentumVectorMagnitude
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -999,8 +999,6 @@
       )
    )  ; defrule angularMomentumVectorMagnitude
    ")
-
-   (build ?rule)
 
    (return)
 )  ; deffunction buildAngularMomentumVectorMagnitude
