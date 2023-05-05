@@ -19,7 +19,7 @@
 * deltaTheta       - change in angular position
 * theta_f          - final angular position
 * theta_i          - initial angular position
-* T                - time
+* t                - time
 * deltaTime        - change in time
 * v                - velocity
 * v_vector         - velocity vector
@@ -47,9 +47,8 @@
 * torque_net       - net torque
 * functionTorque   - torque as a function of time
 * F                - force
-* L                - angular momentum
+* L                - (magnitude of) angular momentum
 * L_vector         - angular momentum vector
-* L_magnitude      - magnitude of angular momentum
 * functionL        - angular momentum as a function of time
 */
 
@@ -64,12 +63,14 @@
 
 (deftemplate target (slot name))
 
-(do-backward-chaining variable)        ; enable backward chaining using the variable template
+(do-backward-chaining variable)              ; enable backward chaining using the variable template
 
-(defglobal ?*questions_asked* = 0)     ; the amount of questions asked so far
+(defglobal ?*questions_asked* = 0)           ; the amount of questions asked so far
 
-(defglobal ?*FORMULA_SALIENCE* = 75)   ; salience for all the rules that represent the formulas
-(defglobal ?*VARIABLE_SALIENCE* = 50)  ; salience for all the rules that ask the user whether a certain variable is given
+(defglobal ?*DIRECTORY* = "FinalProject/")   ; the directory housing this project's files
+
+(defglobal ?*FORMULA_SALIENCE* = 75)         ; salience for all the rules that represent the formulas
+(defglobal ?*VARIABLE_SALIENCE* = 50)        ; salience for all the rules that ask the user whether a certain variable is given
 
 /************************************
 * Rules either starting or ending the expert system
@@ -86,13 +87,6 @@
 
    (findVariableBeingSolvedFor)
 )  
-
-(defrule noFormulasToUse
-   (declare (salience 60))
-   (variable (name finished) (value G))
-=>
-   (noFormulasLeft)
-)
 
 (defrule giveUp "Ends the expert system and notifies the user that we were unable to suggest a formula based on the given variables"
    (declare (salience -100))
@@ -124,10 +118,9 @@
            (and (eq ?theta G) (eq ?s G)          )) then
       (suggestFormula "s = theta * r")
     else
-      ;(noFormulasLeft)
       (assert (variable (name finished) (value G)))
    )
-)
+)  ; defrule angularPosition
 
 (defrule angularDisplacement "formula for angular displacement"
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -502,27 +495,27 @@
    )
 )
 
-(defrule angularMomentumMagnitude
+(defrule angularMomentumVectorMagnitude
    (declare (salience ?*FORMULA_SALIENCE*))
    (or
-      (target (name L_magnitude))
+      (target (name L))
       (target (name r))
       (target (name m))
       (target (name v))
       (target (name theta))
    )
-   (variable (name L_magnitude) (value ?L_magnitude))
+   (variable (name L) (value ?L))
    (variable (name r) (value ?r)) 
    (variable (name m) (value ?m))
    (variable (name v) (value ?v))
    (variable (name theta) (value ?theta))
 =>
-   (if (or (and                     (eq ?r G) (eq ?m G) (eq ?v G) (eq ?theta G))
-           (and (eq ?L_magnitude G)           (eq ?m G) (eq ?v G) (eq ?theta G))
-           (and (eq ?L_magnitude G) (eq ?r G)           (eq ?v G) (eq ?theta G))
-           (and (eq ?L_magnitude G) (eq ?r G) (eq ?m G)           (eq ?theta G))
-           (and (eq ?L_magnitude G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
-      (suggestFormula "magnitude of L vector = r * m * v * sin(theta)")
+   (if (or (and           (eq ?r G) (eq ?m G) (eq ?v G) (eq ?theta G))
+           (and (eq ?L G)           (eq ?m G) (eq ?v G) (eq ?theta G))
+           (and (eq ?L G) (eq ?r G)           (eq ?v G) (eq ?theta G))
+           (and (eq ?L G) (eq ?r G) (eq ?m G)           (eq ?theta G))
+           (and (eq ?L G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
+      (suggestFormula "L = r * m * v * sin(theta)")
     else
       (assert (variable (name finished) (value G)))
    )
@@ -562,6 +555,13 @@
     else
       (assert (variable (name finished) (value G)))
    )
+)
+
+(defrule givenConstantAngularAcceleration
+   (declare (salience ?*FORMULA_SALIENCE*))
+   (variable (name constantAlpha) (value G))
+=>
+   (batch (sym-cat ?*DIRECTORY* "constantAlpha.clp"))
 )
 
 /************************************
@@ -861,7 +861,7 @@
    (declare (salience ?*VARIABLE_SALIENCE*))
    (need-variable (name L) (value ?))
 =>
-   (bind ?value (convertInput "Is the angular momentum given?"))
+   (bind ?value (convertInput "Is the (magnitude of) angular momentum given?"))
    (assert (variable (name L) (value ?value)))
 )
 
@@ -873,12 +873,20 @@
    (assert (variable (name L_vector) (value ?value)))
 )
 
-(defrule needAngularMomentumMagnitude
+(defrule checkForConstantAngularAcceleration
    (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name L_magnitude) (value ?))
+   (need-variable (name constantAlpha) (value ?))
 =>
-   (bind ?value (convertInput "Is the magnitude of angular momentum given?"))
-   (assert (variable (name L_magnitude) (value ?value)))
+   (bind ?value (convertInput "Is it given that the angular acceleration is constant?"))
+   (assert (variable (name constantAlpha) (value ?value)))
+)
+
+(defrule isolateTheta
+   (target (name theta))
+=>
+   (undefrule angularDisplacement)
+   (undefrule changeInAngularVelocity)
+   (undefrule )
 )
 
 /*
@@ -895,7 +903,7 @@
 * @return                  the list of valid variable short-hands
 */
 (deffunction validVariables ()
-   (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i T deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
+   (bind ?variables "theta s r r_vector deltaTheta theta_f theta_i t deltaTime v v_vector w deltaW w_f w_i averageW functionW ")
    (bind ?variables (sym-cat ?variables "functionTheta a alpha averageAlpha functionAlpha period K I I_com m h torque_vector functionL "))
    (bind ?variables (sym-cat ?variables "F_vector r_vector torque_magnitude torque_net functionTorque F L L_vector L_magnitude"))
 
@@ -915,7 +923,7 @@
    (printline "deltaTheta       - change in angular position")
    (printline "theta_f          - final angular position")
    (printline "theta_i          - initial angular position")
-   (printline "T                - time")
+   (printline "t                - time")
    (printline "deltaTime        - change in time")
    (printline "v                - velocity")
    (printline "v_vector         - velocity vector")
