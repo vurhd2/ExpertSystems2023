@@ -131,11 +131,14 @@
 * The (or) construct is used to compile all user variations of the formula together, for example, with s = theta * r,
 * one variation is that 's' is being solved for while the other two are given, or maybe 'theta' is being solved for while
 * the other two are given instead
-* This (or) construct is why the pattern matching syntax is used within the left hand side of the rules
+* In order to use the (or) construct, the target template is used without backward chaining
 */
 
+/*
+* Builds the rule that defines the angular position formula
+*/
 (deffunction buildAngularPosition ()
-   (bind ?rule "
+   (build ?rule "
    (defrule angularPosition
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -155,13 +158,14 @@
    )  ; defrule angularPosition
    ")
 
-   (build ?rule)
-
    (return)
-)  ; deffunction buildAngularPosition
+)  ; deffunction buildAngularPosition ()
 
+/*
+* Builds the rule that defines the angular displacement formula
+*/
 (deffunction buildAngularDisplacement ()
-   (bind ?rule "
+   (build ?rule "
    (defrule angularDisplacement
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -181,178 +185,245 @@
    )  ; defrule angularDisplacement
    ")
 
-   (build ?rule)
+   (return)
+)  ; deffunction buildAngularDisplacement ()
+
+/*
+* Builds the rule that defines the change in angular velocity
+* formula
+*/
+(deffunction buildChangeInAngularVelocity ()
+   (build ?rule "
+   (defrule changeInAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name deltaW))
+         (target (name w_f))
+         (target (name w_i))
+      )
+      (variable (name deltaW) (value ?deltaW))
+      (variable (name w_f) (value ?w_f)) 
+      (variable (name w_i) (value ?w_i))
+   =>
+      (if (or (and                (eq ?w_f G) (eq ?w_i G))
+              (and (eq ?deltaW G)             (eq ?w_i G))
+              (and (eq ?deltaW G) (eq ?w_f G)            )) then
+         (suggestFormula ?*CHANGE_IN_ANGULAR_VELOCITY*)
+      )
+   )  ; defrule changeInAngularVelocity
+   ")
 
    (return)
-)  ; deffunction buildAngularDisplacement
+)  ; deffunction buildChangeInAngularVelocity ()
 
-(defrule changeInAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name deltaW))
-      (target (name w_f))
-      (target (name w_i))
-   )
-   (variable (name deltaW) (value ?deltaW))
-   (variable (name w_f) (value ?w_f)) 
-   (variable (name w_i) (value ?w_i))
-=>
-   (if (or (and                (eq ?w_f G) (eq ?w_i G))
-           (and (eq ?deltaW G)             (eq ?w_i G))
-           (and (eq ?deltaW G) (eq ?w_f G)            )) then
-      (suggestFormula "deltaW = w_f - w_i")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the average angular velocity
+* formula
+*/
+(deffunction buildAverageAngularVelocity ()
+   (build ?rule "
+   (defrule averageAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name averageW))
+         (target (name deltaTheta))
+         (target (name deltaTime))
+      )
+      (variable (name averageW) (value ?averageW))
+      (variable (name deltaTheta) (value ?deltaTheta)) 
+      (variable (name deltaTime) (value ?deltaTime))
+   =>
+      (if (or (and                  (eq ?deltaTheta G) (eq ?deltaTime G))
+              (and (eq ?averageW G)                    (eq ?deltaTime G))
+              (and (eq ?averageW G) (eq ?deltaTheta G)                  )) then
+         (suggestFormula ?*AVERAGE_ANGULAR_VELOCITY)
+      )
+   )  ; defrule averageAngularVelocity
+   ")
 
-(defrule averageAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name averageW))
-      (target (name deltaTheta))
-      (target (name deltaTime))
-   )
-   (variable (name averageW) (value ?averageW))
-   (variable (name deltaTheta) (value ?deltaTheta)) 
-   (variable (name deltaTime) (value ?deltaTime))
-=>
-   (if (or (and                  (eq ?deltaTheta G) (eq ?deltaTime G))
-           (and (eq ?averageW G)                    (eq ?deltaTime G))
-           (and (eq ?averageW G) (eq ?deltaTheta G)                  )) then
-      (suggestFormula "averageW = deltaTheta / deltaTime")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; deffunction buildAverageAngularVelocity ()
 
-(defrule functionAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name functionW))
-      (target (name functionTheta))
-   )
-   (variable (name functionW) (value ?functionW))
-   (variable (name functionTheta) (value ?functionTheta)) 
-=>
-   (if (or (eq ?functionTheta G) (eq ?functionW G)) then
-      (suggestFormula "w = d(theta)/dt")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the formula where angular velocity
+* is the first time derivative of angular position
+*/
+(deffunction buildFunctionAngularVelocity ()
+   (build "
+   (defrule functionAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name functionW))
+         (target (name functionTheta))
+      )
+      (variable (name functionW) (value ?functionW))
+      (variable (name functionTheta) (value ?functionTheta)) 
+   =>
+      (if (or (eq ?functionTheta G) (eq ?functionW G)) then
+         (suggestFormula ?*FUNCTION_ANGULAR_VELOCITY*)
+      )
+   )  ; defrule functionAngularVelocity
+   ")
 
-(defrule averageAngularAcceleration
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name averageAlpha))
-      (target (name deltaW))
-      (target (name deltaTime))
-   )
-   (variable (name averageAlpha) (value ?averageAlpha))
-   (variable (name deltaW) (value ?deltaW)) 
-   (variable (name deltaTime) (value ?deltaTime))
-=>
-   (if (or (and                      (eq ?deltaW G) (eq ?deltaTime G))
-           (and (eq ?averageAlpha G)                (eq ?deltaTime G))
-           (and (eq ?averageAlpha G) (eq ?deltaW G)                  )) then
-      (suggestFormula "averageAlpha = deltaW / deltaTime")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; deffunction buildFunctionAngularVelocity ()
 
-(defrule functionAngularAccelerationWithAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name functionAlpha))
-      (target (name functionW))
-   )
-   (variable (name functionAlpha) (value ?functionAlpha))
-   (variable (name functionW) (value ?functionW)) 
-=>
-   (if (or (eq ?functionAlpha G) (eq ?functionW G)) then
-      (suggestFormula "alpha = d(w)/dt")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the average angular
+* acceleration formula
+*/
+(deffunction buildAverageAngularAcceleration ()
+   (build "
+   (defrule averageAngularAcceleration
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name averageAlpha))
+         (target (name deltaW))
+         (target (name deltaTime))
+      )
+      (variable (name averageAlpha) (value ?averageAlpha))
+      (variable (name deltaW) (value ?deltaW)) 
+      (variable (name deltaTime) (value ?deltaTime))
+   =>
+      (if (or (and                      (eq ?deltaW G) (eq ?deltaTime G))
+              (and (eq ?averageAlpha G)                (eq ?deltaTime G))
+              (and (eq ?averageAlpha G) (eq ?deltaW G)                  )) then
+         (suggestFormula ?*AVERAGE_ANGULAR_ACCELERATION*)
+      )
+   )  ; defrule averageAngularAcceleration
+   ")
 
-(defrule functionAngularAccelerationWithAngularPosition
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name functionAlpha))
-      (target (name functionTheta))
-   )
-   (variable (name functionAlpha) (value ?functionAlpha))
-   (variable (name functionTheta) (value ?functionTheta)) 
-=>
-   (if (or (eq ?functionTheta G) (eq ?functionAlpha G)) then
-      (suggestFormula "alpha = second derivative of theta with respect to time")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; buildAverageAngularAcceleration ()
 
-(defrule linearVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name v))
-      (target (name w))
-      (target (name r))
-   )
-   (variable (name v) (value ?v))
-   (variable (name w) (value ?w)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and           (eq ?w G) (eq ?r G))
-           (and (eq ?v G)           (eq ?r G))
-           (and (eq ?v G) (eq ?w G)          )) then
-      (suggestFormula "v = w * r")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the formula where angular acceleration
+* is the first time derivative of angular velocity
+*/
+(deffunction buildFunctionAngularAccelerationWithAngularVelocity ()
+   (build "
+   (defrule functionAngularAccelerationWithAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name functionAlpha))
+         (target (name functionW))
+      )
+      (variable (name functionAlpha) (value ?functionAlpha))
+      (variable (name functionW) (value ?functionW)) 
+   =>
+      (if (or (eq ?functionAlpha G) (eq ?functionW G)) then
+         (suggestFormula ?*FUNCTION_ALPHA_WITH_W*)
+      )
+   )  ; defrule functionAngularAccelerationWithAngularVelocity
+   ")
 
-(defrule linearAcceleration
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name a))
-      (target (name alpha))
-      (target (name r))
-   )
-   (variable (name a) (value ?a))
-   (variable (name alpha) (value ?alpha)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and           (eq ?alpha G) (eq ?r G))
-           (and (eq ?a G)               (eq ?r G))
-           (and (eq ?a G) (eq ?alpha G)          )) then
-      (suggestFormula "a = alpha * r")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; deffunction buildFunctionAngularAccelerationWithAngularVelocity ()
 
-(defrule radialAccelerationWithAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name a))
-      (target (name w))
-      (target (name r))
-   )
-   (variable (name a) (value ?a))
-   (variable (name w) (value ?w)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and           (eq ?w G) (eq ?r G))
-           (and (eq ?a G)           (eq ?r G))
-           (and (eq ?a G) (eq ?w G)          )) then
-      (suggestFormula "a = r * w^2")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the formula where angular acceleration
+* is the second time derivative of angular position
+*/
+(deffunction buildFunctionAngularAccelerationWithAngularPosition ()
+   (build "
+   (defrule functionAngularAccelerationWithAngularPosition
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name functionAlpha))
+         (target (name functionTheta))
+      )
+      (variable (name functionAlpha) (value ?functionAlpha))
+      (variable (name functionTheta) (value ?functionTheta)) 
+   =>
+      (if (or (eq ?functionTheta G) (eq ?functionAlpha G)) then
+         (suggestFormula ?*FUNCTION_ALPHA_WITH_THETA*)
+      )
+   )  ; defrule functionAngularAccelerationWithAngularPosition
+   ")
+
+   (return)
+)  ; deffunction buildFunctionAngularAccelerationWithAngularPosition ()
+
+/*
+* Builds the rule that defines the angular to linear velocity formula
+*/
+(deffunction buildLinearVelocity ()
+   (build "
+   (defrule linearVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name v))
+         (target (name w))
+         (target (name r))
+      )
+      (variable (name v) (value ?v))
+      (variable (name w) (value ?w)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and           (eq ?w G) (eq ?r G))
+              (and (eq ?v G)           (eq ?r G))
+              (and (eq ?v G) (eq ?w G)          )) then
+         (suggestFormula ?*LINEAR_VELOCITY*)
+      )
+   )  ; defrule linearVelocity
+   ")
+
+   (return)
+)  ; deffunction buildLinearVelocity ()
+
+/*
+* Builds the rule that defines the angular to linear acceleration formula
+*/
+(deffunction buildLinearAcceleration ()
+   (build "
+   (defrule linearAcceleration
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name a))
+         (target (name alpha))
+         (target (name r))
+      )
+      (variable (name a) (value ?a))
+      (variable (name alpha) (value ?alpha)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and           (eq ?alpha G) (eq ?r G))
+              (and (eq ?a G)               (eq ?r G))
+              (and (eq ?a G) (eq ?alpha G)          )) then
+         (suggestFormula ?*LINEAR_ACCELERATION*)
+      )
+   )  ; defrule linearAcceleration
+   ")
+
+   (return)
+)  ; deffunction buildLinearAcceleration ()
+
+/*
+* Builds the rule that defines the formula 
+*/
+(deffunction buildRadialAccelerationWithAngularVelocity ()
+   (build "
+   (defrule radialAccelerationWithAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name a))
+         (target (name w))
+         (target (name r))
+      )
+      (variable (name a) (value ?a))
+      (variable (name w) (value ?w)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and           (eq ?w G) (eq ?r G))
+              (and (eq ?a G)           (eq ?r G))
+              (and (eq ?a G) (eq ?w G)          )) then
+         (suggestFormula ?*RADIAL_ACCELERATION_WITH_W)
+      )
+   )  ; defrule radialAccelerationWithAngularVelocity
+   ")
+
+   (return)
+)  ; deffunction buildRadialAccelerationWithAngularVelocity
 
 (defrule radialAccelerationWithLinearVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -535,6 +606,7 @@
       (assert (variable (name finished) (value G)))
    )
 )
+
 (deffunction buildAngularMomentumVectorMagnitude ()
    (bind ?rule "
    (defrule angularMomentumVectorMagnitude
@@ -557,7 +629,7 @@
               (and (eq ?L G) (eq ?r G)           (eq ?v G) (eq ?theta G))
               (and (eq ?L G) (eq ?r G) (eq ?m G)           (eq ?theta G))
               (and (eq ?L G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
-         (suggestFormula 'L = r * m * v * sin(theta)')
+         (suggestFormula ?*ANGULAR_MOMENTUM_VECTOR_MAGNITUDE*)
       )
    )  ; defrule angularMomentumVectorMagnitude
    ")
@@ -565,7 +637,7 @@
    (build ?rule)
 
    (return)
-)
+)  ; deffunction buildAngularMomentumVectorMagnitude
 
 (defrule angularMomentum
    (declare (salience ?*FORMULA_SALIENCE*))
