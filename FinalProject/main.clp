@@ -124,7 +124,53 @@
    (noFormulasLeft)
 )  
 
+/************************************
+* Rules building only the relevant formulas that contain the titular variable
+* where the titular variable is the variable being solved for
+*/
 
+(defrule isolateTheta
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name theta))
+=>
+   (buildAngularPosition)
+   (buildTorqueMagnitude)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateArcLength
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name s))
+=>
+   (buildAngularPosition)
+   (undefrule checkForConstantAngularAcceleration)
+)
+
+(defrule isolateRadius
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name r))
+=>
+   (buildAngularPosition)
+   (buildLinearVelocity)
+   (buildLinearAcceleration)
+   (buildRadialAccelerationWithAngularVelocity)
+   (buildRadialAccelerationWithLinearVelocity)
+   (buildPeriodWithLinearVelocity)
+   (buildTorqueMagnitude)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)  ; defrule isolateRadius
+
+(defrule isolateRadiusVector
+   (declare (salience ?*ISOLATE_SALIENCE*))
+   (target (name r_vector))
+=>
+   (buildAngularPosition)
+   (buildTorqueMagnitude)
+   (buildAngularMomentumVectorMagnitude)
+   (undefrule checkForConstantAngularAcceleration)
+)
 
 /************************************
 * Functions that build rules defining some of the most common/simple rotational physics formulas
@@ -399,7 +445,7 @@
 )  ; deffunction buildLinearAcceleration ()
 
 /*
-* Builds the rule that defines the formula 
+* Builds the rule that defines the formula "a = w^2 * r" 
 */
 (deffunction buildRadialAccelerationWithAngularVelocity ()
    (build "
@@ -417,7 +463,7 @@
       (if (or (and           (eq ?w G) (eq ?r G))
               (and (eq ?a G)           (eq ?r G))
               (and (eq ?a G) (eq ?w G)          )) then
-         (suggestFormula ?*RADIAL_ACCELERATION_WITH_W)
+         (suggestFormula ?*RADIAL_ACCELERATION_WITH_W*)
       )
    )  ; defrule radialAccelerationWithAngularVelocity
    ")
@@ -425,118 +471,177 @@
    (return)
 )  ; deffunction buildRadialAccelerationWithAngularVelocity
 
-(defrule radialAccelerationWithLinearVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name a))
-      (target (name v))
-      (target (name r))
-   )
-   (variable (name a) (value ?a))
-   (variable (name v) (value ?v)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and           (eq ?v G) (eq ?r G))
-           (and (eq ?a G)           (eq ?r G))
-           (and (eq ?a G) (eq ?v G)          )) then
-      (suggestFormula "a = v^2 / r")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* 
+*/
+(deffunction buildRadialAccelerationWithLinearVelocity ()
+   (build "
+   (defrule radialAccelerationWithLinearVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name a))
+         (target (name v))
+         (target (name r))
+      )
+      (variable (name a) (value ?a))
+      (variable (name v) (value ?v)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and           (eq ?v G) (eq ?r G))
+              (and (eq ?a G)           (eq ?r G))
+              (and (eq ?a G) (eq ?v G)          )) then
+         (suggestFormula ?*RADIAL_ACCELERATION_WITH_V*)
+      )
+   )  ; defrule radialAccelerationWithLinearVelocity
+   ")
 
-(defrule periodWithLinearVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name period))
-      (target (name v))
-      (target (name r))
-   )
-   (variable (name period) (value ?period))
-   (variable (name v) (value ?v)) 
-   (variable (name r) (value ?r))
-=>
-   (if (or (and                (eq ?v G) (eq ?r G))
-           (and (eq ?period G)           (eq ?r G))
-           (and (eq ?period G) (eq ?v G)          )) then
-      (suggestFormula "period = 2PI * r / v")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; deffunction buildRadialAccelerationWithLinearVelocity ()
 
-(defrule periodWithAngularVelocity
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name period))
-      (target (name w))
-   )
-   (variable (name period) (value ?period))
-   (variable (name w) (value ?w)) 
-=>
-   (if (or (eq ?period G) (eq ?w G)) then
-      (suggestFormula "period = 2PI / w")
-   )
-)
+/*
+* Builds the rule that defines the formulaic period of circular motion
+* in terms of linear velocity and the radius
+*/
+(deffunction buildPeriodWithLinearVelocity ()
+   (build "
+   (defrule periodWithLinearVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name period))
+         (target (name v))
+         (target (name r))
+      )
+      (variable (name period) (value ?period))
+      (variable (name v) (value ?v)) 
+      (variable (name r) (value ?r))
+   =>
+      (if (or (and                (eq ?v G) (eq ?r G))
+              (and (eq ?period G)           (eq ?r G))
+              (and (eq ?period G) (eq ?v G)          )) then
+         (suggestFormula ?*PERIOD_WITH_V*)
+      )
+   )  ; defrule periodWithLinearVelocity
+   ")
 
-(defrule rotationalKineticEnergy
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name K))
-      (target (name I))
-      (target (name w))
-   )
-   (variable (name K) (value ?K))
-   (variable (name I) (value ?I)) 
-   (variable (name w) (value ?w))
-=>
-   (if (or (and           (eq ?I G) (eq ?w G))
-           (and (eq ?K G)           (eq ?w G))
-           (and (eq ?K G) (eq ?I G)          )) then
-      (suggestFormula "K = 0.5 * I * w^2")
-   )
-)
+   (return)
+)  ; deffunction buildPeriodWithLinearVelocity ()
 
-(defrule parallelAxisTheorem
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name I))
-      (target (name I_com))
-      (target (name m))
-      (target (name h))
-   )
-   (variable (name I) (value ?I))
-   (variable (name I_com) (value ?I_com)) 
-   (variable (name m) (value ?m))
-   (variable (name h) (value ?h))
-=>
-   (if (or (and           (eq ?I_com G) (eq ?m G) (eq ?h G))
-           (and (eq ?I G)               (eq ?m G) (eq ?h G))
-           (and (eq ?I G) (eq ?I_com G)           (eq ?h G))
-           (and (eq ?I G) (eq ?I_com G) (eq ?m G)          )) then
-      (suggestFormula "I = I_com + (M * h^2)")
-   )
-)
+/*
+* Builds the rule that defines the period of circular motion
+* in terms of the angular velocity
+*/
+(deffunction buildPeriodWithAngularVelocity ()
+   (build "
+   (defrule periodWithAngularVelocity
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name period))
+         (target (name w))
+      )
+      (variable (name period) (value ?period))
+      (variable (name w) (value ?w)) 
+   =>
+      (if (or (eq ?period G) (eq ?w G)) then
+         (suggestFormula ?*PERIOD_WITH_W*)
+      )
+   )  ; defrule periodWithAngularVelocity
+   ")
 
-(defrule torqueVector
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name torque_vector))
-      (target (name r_vector))
-      (target (name F_vector))
-   )
-   (variable (name torque_vector) (value ?torque_vector))
-   (variable (name r_vector) (value ?r_vector)) 
-   (variable (name F_vector) (value ?F_vector))
-=>
-   (if (or (and                       (eq ?r_vector G) (eq ?F_vector G))
-           (and (eq ?torque_vector G)                  (eq ?F_vector G))
-           (and (eq ?torque_vector G) (eq ?r_vector G)                 )) then
-      (suggestFormula "torque_vector = r_vector x F_vector")
-   )
-)
+   (return)
+)  ; deffunction buildPeriodWithAngularVelocity ()
+
+/*
+* Builds the rule that defines the formula for 
+* rotational kinetic energy
+*/
+(deffunction buildRotationalKineticEnergy ()
+   (build "
+   (defrule rotationalKineticEnergy
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name K))
+         (target (name I))
+         (target (name w))
+      )
+      (variable (name K) (value ?K))
+      (variable (name I) (value ?I)) 
+      (variable (name w) (value ?w))
+   =>
+      (if (or (and           (eq ?I G) (eq ?w G))
+              (and (eq ?K G)           (eq ?w G))
+              (and (eq ?K G) (eq ?I G)          )) then
+         (suggestFormula ?*ROTATIONAL_KINETIC_ENERGY*)
+      )
+   )  ; defrule rotationalKineticEnergy
+   ")
+
+   (return)
+)  ; deffunction buildRotationalKineticEnergy ()
+
+/*
+* Builds the rule that defines the formula for 
+* the parallel axis theorem
+*/
+(deffunction buildParallelAxisTheorem ()
+   (build "
+   (defrule parallelAxisTheorem
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name I))
+         (target (name I_com))
+         (target (name m))
+         (target (name h))
+      )
+      (variable (name I) (value ?I))
+      (variable (name I_com) (value ?I_com)) 
+      (variable (name m) (value ?m))
+      (variable (name h) (value ?h))
+   =>
+      (if (or (and           (eq ?I_com G) (eq ?m G) (eq ?h G))
+              (and (eq ?I G)               (eq ?m G) (eq ?h G))
+              (and (eq ?I G) (eq ?I_com G)           (eq ?h G))
+              (and (eq ?I G) (eq ?I_com G) (eq ?m G)          )) then
+         (suggestFormula ?*PARALLEL_AXIS*)
+      )
+   )  ; defrule parallelAxisTheorem
+   ")
+
+   (return)
+)  ; deffunction buildParallelAxisTheorem ()
+
+/*
+* Builds the rule that defines the formula for the torque vector
+*/
+(deffunction buildTorqueVector ()
+   (build "
+   (defrule torqueVector
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name torque_vector))
+         (target (name r_vector))
+         (target (name F_vector))
+      )
+      (variable (name torque_vector) (value ?torque_vector))
+      (variable (name r_vector) (value ?r_vector)) 
+      (variable (name F_vector) (value ?F_vector))
+   =>
+      (if (or (and                       (eq ?r_vector G) (eq ?F_vector G))
+              (and (eq ?torque_vector G)                  (eq ?F_vector G))
+              (and (eq ?torque_vector G) (eq ?r_vector G)                 )) then
+         (suggestFormula ?*TORQUE_VECTOR*)
+      )
+   )  ; defrule torqueVector
+   ")
+
+   (return)
+)  ; deffunction buildTorqueVector ()
+
+/*
+* Builds the rule that defines the formula for the magnitude
+* of the torque vector
+*/
 (deffunction buildTorqueMagnitude ()
-   (bind ?rule "
+   (build ?rule "
    (defrule torqueMagnitude
       (declare (salience ?*FORMULA_SALIENCE*))
       (or
@@ -554,59 +659,77 @@
               (and (eq ?torque_magnitude G)           (eq ?F G) (eq ?theta G))
               (and (eq ?torque_magnitude G) (eq ?r G)           (eq ?theta G))
               (and (eq ?torque_magnitude G) (eq ?r G) (eq ?F G)              )) then
-         (suggestFormula 'magnitude of torque vector = r * F * sin(theta)')
+         (suggestFormula ?*TORQUE_MAGNITUDE*)
       )
    )  ; defrule torqueMagnitude
    ")
 
-   (build ?rule)
+   (return)
+)  ; deffunction buildTorqueMagnitude ()
+
+/*
+* Builds the rule that defines the formula for net torque
+*/
+(deffunction buildNetTorque ()
+   (build "
+   (defrule netTorque
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name torque_net))
+         (target (name I))
+         (target (name alpha))
+      )
+      (variable (name torque_net) (value ?torque_net))
+      (variable (name I) (value ?I)) 
+      (variable (name alpha) (value ?alpha))
+   =>
+      (if (or (and                    (eq ?I G) (eq ?alpha G))
+              (and (eq ?torque_net G)           (eq ?alpha G))
+              (and (eq ?torque_net G) (eq ?I G)              )) then
+         (suggestFormula ?*TORQUE_NET*)
+      )
+   )
+   ")
 
    (return)
-)
+)  ; deffunction buildNetTorque ()
 
-(defrule netTorque
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name torque_net))
-      (target (name I))
-      (target (name alpha))
-   )
-   (variable (name torque_net) (value ?torque_net))
-   (variable (name I) (value ?I)) 
-   (variable (name alpha) (value ?alpha))
-=>
-   (if (or (and                    (eq ?I G) (eq ?alpha G))
-           (and (eq ?torque_net G)           (eq ?alpha G))
-           (and (eq ?torque_net G) (eq ?I G)              )) then
-      (suggestFormula "net torque = I * alpha")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
 
-(defrule angularMomentumVector
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name L_vector))
-      (target (name r_vector))
-      (target (name m))
-      (target (name v_vector))
-   )
-   (variable (name L_vector) (value ?L_vector))
-   (variable (name r_vector) (value ?r_vector)) 
-   (variable (name m) (value ?m))
-   (variable (name v_vector) (value ?v_vector))
-=>
-   (if (or (and                  (eq ?r_vector G) (eq ?m G) (eq ?v_vector G))
-           (and (eq ?L_vector G)                  (eq ?m G) (eq ?v_vector G))
-           (and (eq ?L_vector G) (eq ?r_vector G)           (eq ?v_vector G))
-           (and (eq ?L_vector G) (eq ?r_vector G) (eq ?m G)                 )) then
-      (suggestFormula "L_vector = m * (r_vector x v_vector)")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the formula for
+* the angular momentum vector
+*/
+(deffunction buildAngularMomentumVector ()
+   (build "
+   (defrule angularMomentumVector
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name L_vector))
+         (target (name r_vector))
+         (target (name m))
+         (target (name v_vector))
+      )
+      (variable (name L_vector) (value ?L_vector))
+      (variable (name r_vector) (value ?r_vector)) 
+      (variable (name m) (value ?m))
+      (variable (name v_vector) (value ?v_vector))
+   =>
+      (if (or (and                  (eq ?r_vector G) (eq ?m G) (eq ?v_vector G))
+              (and (eq ?L_vector G)                  (eq ?m G) (eq ?v_vector G))
+              (and (eq ?L_vector G) (eq ?r_vector G)           (eq ?v_vector G))
+              (and (eq ?L_vector G) (eq ?r_vector G) (eq ?m G)                 )) then
+         (suggestFormula ?*ANGULAR_MOMENTUM_VECTOR*)
+      )
+   )  ; defrule angularMomentumVector
+   ")
 
+   (return)
+)  ; deffunction buildAngularMomentumVector ()
+
+/*
+* Builds the rule that defines the formula for the magnitude
+* of the angular momentum vector
+*/
 (deffunction buildAngularMomentumVectorMagnitude ()
    (bind ?rule "
    (defrule angularMomentumVectorMagnitude
@@ -639,41 +762,56 @@
    (return)
 )  ; deffunction buildAngularMomentumVectorMagnitude
 
-(defrule angularMomentum
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name L))
-      (target (name I))
-      (target (name w))
-   )
-   (variable (name L) (value ?L))
-   (variable (name I) (value ?I)) 
-   (variable (name w) (value ?w))
-=>
-   (if (or (and           (eq ?I G) (eq ?w G))
-           (and (eq ?L G)           (eq ?w G))
-           (and (eq ?L G) (eq ?I G)          )) then
-      (suggestFormula "L = I * w")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+/*
+* Builds the rule that defines the formula for angular momentum
+*/
+(deffunction buildAngularMomentum ()
+   (build "
+   (defrule angularMomentum
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name L))
+         (target (name I))
+         (target (name w))
+      )
+      (variable (name L) (value ?L))
+      (variable (name I) (value ?I)) 
+      (variable (name w) (value ?w))
+   =>
+      (if (or (and           (eq ?I G) (eq ?w G))
+              (and (eq ?L G)           (eq ?w G))
+              (and (eq ?L G) (eq ?I G)          )) then
+         (suggestFormula ?*ANGULAR_MOMENTUM*)
+      ) 
+   )  ; defrule angularMomentum
+   ")
 
-(defrule functionNetTorque
-   (declare (salience ?*FORMULA_SALIENCE*))
-   (or
-      (target (name functionTorque))
-      (target (name functionL))
-   )
-   (variable (name functionTorque) (value ?functionTorque))
-   (variable (name functionL) (value ?functionL)) 
-=>
-   (if (or (eq ?functionTorque G) (eq ?functionL G)) then
-      (suggestFormula "torque = dL/dt")
-    else
-      (assert (variable (name finished) (value G)))
-   )
-)
+   (return)
+)  ; deffunction buildAngularMomentum ()
+
+/*
+* Builds the rule that defines the function where torque
+* is the first time derivative of angular mometum
+*/
+(deffunction buildFunctionTorque ()
+   (build "
+   (defrule functionTorque
+      (declare (salience ?*FORMULA_SALIENCE*))
+      (or
+         (target (name functionTorque))
+         (target (name functionL))
+      )
+      (variable (name functionTorque) (value ?functionTorque))
+      (variable (name functionL) (value ?functionL)) 
+   =>
+      (if (or (eq ?functionTorque G) (eq ?functionL G)) then
+         (suggestFormula ?*FUNCTION_TORQUE*)
+      )
+   )  ; defrule functionTorque
+   ")
+
+   (return)
+)  ; deffunction buildFunctionTorque ()
 
 (defrule givenConstantAngularAcceleration
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -997,21 +1135,6 @@
 =>
    (bind ?value (convertInput "Is it given that the angular acceleration is constant?"))
    (assert (variable (name constantAlpha) (value ?value)))
-)
-
-/************************************
-* Rules building only the relevant formulas that contain the titular variable
-* where the titular variable is the variable being solved for
-*/
-
-(defrule isolateTheta
-   (declare (salience ?*ISOLATE_SALIENCE*))
-   (target (name theta))
-=>
-   (buildAngularPosition)
-   (buildTorqueMagnitude)
-   (buildAngularMomentumVectorMagnitude)
-   (undefrule checkForConstantAngularAcceleration)
 )
 
 /*
