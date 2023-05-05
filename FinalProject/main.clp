@@ -145,34 +145,31 @@
            (and (eq ?deltaTheta G) (eq ?theta_f G)                )) then
       (suggestFormula "deltaTheta = theta_f - theta_i")
     else
-      ;(noFormulasLeft)
       (assert (variable (name finished) (value G)))
    )
 )
 
 (defrule changeInAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name deltaW) (value ?deltaW & S)) (variable (name w_f) (value ?w_f & G)) 
-            (variable (name w_i) (value ?w_i & G)))
-       (and (variable (name deltaW) (value ?deltaW & G)) (variable (name w_f) (value ?w_f & S))
-            (variable (name w_i) (value ?w_i & G)))
-       (and (variable (name deltaW) (value ?deltaW & G)) (variable (name w_f) (value ?w_f & G)) 
-            (variable (name w_i) (value ?w_i & S))))
+   (or
+      (target (name deltaW))
+      (target (name w_f))
+      (target (name w_i))
+   )
+   (variable (name deltaW) (value ?deltaW))
+   (variable (name w_f) (value ?w_f)) 
+   (variable (name w_i) (value ?w_i))
 =>
-   (suggestFormula "deltaW = w_f - w_i")
+   (if (or (and                (eq ?w_f G) (eq ?w_i G))
+           (and (eq ?deltaW G)             (eq ?w_i G))
+           (and (eq ?deltaW G) (eq ?w_f G)            )) then
+      (suggestFormula "deltaW = w_f - w_i")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule averageAngularVelocity
-   /*(declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name averageW) (value ?averageW & S)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
-            (variable (name deltaTime) (value ?deltaTime & G)))
-       (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & S)) 
-            (variable (name deltaTime) (value ?deltaTime & G)))
-       (and (variable (name averageW) (value ?averageW & G)) (variable (name deltaTheta) (value ?deltaTheta & G)) 
-            (variable (name deltaTime) (value ?deltaTime & S))))
-=>
-   (suggestFormula "averageW = deltaTheta / deltaTime")*/
-
    (declare (salience ?*FORMULA_SALIENCE*))
    (or
       (target (name averageW))
@@ -188,215 +185,383 @@
            (and (eq ?averageW G) (eq ?deltaTheta G)                  )) then
       (suggestFormula "averageW = deltaTheta / deltaTime")
     else
-      ;(noFormulasLeft)
       (assert (variable (name finished) (value G)))
    )
 )
 
 (defrule functionAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name functionW) (value ?functionW & S)) (variable (name functionTheta) (value ?functionTheta & G)))
-       (and (variable (name functionW) (value ?functionW & G)) (variable (name functionTheta) (value ?functionTheta & S))))
+   (or
+      (target (name functionW))
+      (target (name functionTheta))
+   )
+   (variable (name functionW) (value ?functionW))
+   (variable (name functionTheta) (value ?functionTheta)) 
 =>
-   (suggestFormula "w = d(theta)/dt")
+   (if (or (eq ?functionTheta G) (eq ?functionW G)) then
+      (suggestFormula "w = d(theta)/dt")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule averageAngularAcceleration
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name averageAlpha) (value ?averageAlpha & S)) (variable (name deltaW) (value ?deltaW & G))
-            (variable (name deltaTime) (value ?deltaTime & G)))
-       (and (variable (name averageAlpha) (value ?averageAlpha & G)) (variable (name deltaW) (value ?deltaW & S)) 
-            (variable (name deltaTime) (value ?deltaTime & G)))
-       (and (variable (name averageAlpha) (value ?averageAlpha & G)) (variable (name deltaW) (value ?deltaW & G)) 
-            (variable (name deltaTime) (value ?deltaTime & S))))
+   (or
+      (target (name averageAlpha))
+      (target (name deltaW))
+      (target (name deltaTime))
+   )
+   (variable (name averageAlpha) (value ?averageAlpha))
+   (variable (name deltaW) (value ?deltaW)) 
+   (variable (name deltaTime) (value ?deltaTime))
 =>
-   (suggestFormula "averageAlpha = deltaW / deltaTime")
+   (if (or (and                      (eq ?deltaW G) (eq ?deltaTime G))
+           (and (eq ?averageAlpha G)                (eq ?deltaTime G))
+           (and (eq ?averageAlpha G) (eq ?deltaW G)                  )) then
+      (suggestFormula "averageAlpha = deltaW / deltaTime")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule functionAngularAccelerationWithAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionW) (value ?functionW & G)))
-       (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionW) (value ?functionW & S))))
+   (or
+      (target (name functionAlpha))
+      (target (name functionW))
+   )
+   (variable (name functionAlpha) (value ?functionAlpha))
+   (variable (name functionW) (value ?functionW)) 
 =>
-   (suggestFormula "alpha = d(w)/dt")
+   (if (or (eq ?functionAlpha G) (eq ?functionW G)) then
+      (suggestFormula "alpha = d(w)/dt")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule functionAngularAccelerationWithAngularPosition
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name functionAlpha) (value ?functionAlpha & S)) (variable (name functionTheta) (value ?functionTheta & G)))
-       (and (variable (name functionAlpha) (value ?functionAlpha & G)) (variable (name functionTheta) (value ?functionTheta & S))))
+   (or
+      (target (name functionAlpha))
+      (target (name functionTheta))
+   )
+   (variable (name functionAlpha) (value ?functionAlpha))
+   (variable (name functionTheta) (value ?functionTheta)) 
 =>
-   (suggestFormula "alpha = second derivative of theta")
+   (if (or (eq ?functionTheta G) (eq ?functionAlpha G)) then
+      (suggestFormula "alpha = second derivative of theta with respect to time")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule linearVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name v) (value ?v & S)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
-       (and (variable (name v) (value ?v & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name v))
+      (target (name w))
+      (target (name r))
+   )
+   (variable (name v) (value ?v))
+   (variable (name w) (value ?w)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "v = w * r")
+   (if (or (and           (eq ?w G) (eq ?r G))
+           (and (eq ?v G)           (eq ?r G))
+           (and (eq ?v G) (eq ?w G)          )) then
+      (suggestFormula "v = w * r")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule linearAcceleration
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name a) (value ?a & S)) (variable (name alpha) (value ?alpha & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & S)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name alpha) (value ?alpha & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name a))
+      (target (name alpha))
+      (target (name r))
+   )
+   (variable (name a) (value ?a))
+   (variable (name alpha) (value ?alpha)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "a = alpha * r")
+   (if (or (and           (eq ?alpha G) (eq ?r G))
+           (and (eq ?a G)               (eq ?r G))
+           (and (eq ?a G) (eq ?alpha G)          )) then
+      (suggestFormula "a = alpha * r")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule radialAccelerationWithAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name a) (value ?a & S)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & S)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name w) (value ?w & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name a))
+      (target (name w))
+      (target (name r))
+   )
+   (variable (name a) (value ?a))
+   (variable (name w) (value ?w)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "a = w^2 * r")
+   (if (or (and           (eq ?w G) (eq ?r G))
+           (and (eq ?a G)           (eq ?r G))
+           (and (eq ?a G) (eq ?w G)          )) then
+      (suggestFormula "a = r * w^2")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule radialAccelerationWithLinearVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name a) (value ?a & S)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
-       (and (variable (name a) (value ?a & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name a))
+      (target (name v))
+      (target (name r))
+   )
+   (variable (name a) (value ?a))
+   (variable (name v) (value ?v)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "a = v^2 / r")
+   (if (or (and           (eq ?v G) (eq ?r G))
+           (and (eq ?a G)           (eq ?r G))
+           (and (eq ?a G) (eq ?v G)          )) then
+      (suggestFormula "a = v^2 / r")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule periodWithLinearVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name period) (value ?period & S)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & G)))
-       (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & S)) (variable (name r) (value ?r & G)))
-       (and (variable (name period) (value ?period & G)) (variable (name v) (value ?v & G)) (variable (name r) (value ?r & S))))
+   (or
+      (target (name period))
+      (target (name v))
+      (target (name r))
+   )
+   (variable (name period) (value ?period))
+   (variable (name v) (value ?v)) 
+   (variable (name r) (value ?r))
 =>
-   (suggestFormula "period = 2PI * r / v")
+   (if (or (and                (eq ?v G) (eq ?r G))
+           (and (eq ?period G)           (eq ?r G))
+           (and (eq ?period G) (eq ?v G)          )) then
+      (suggestFormula "period = 2PI * r / v")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule periodWithAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name period) (value ?period & S)) (variable (name w) (value ?w & G)))
-       (and (variable (name period) (value ?period & G)) (variable (name w) (value ?w & S))))
+   (or
+      (target (name period))
+      (target (name w))
+   )
+   (variable (name period) (value ?period))
+   (variable (name w) (value ?w)) 
 =>
-   (suggestFormula "period = 2PI / w")
+   (if (or (eq ?period G) (eq ?w G)) then
+      (suggestFormula "period = 2PI / w")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule rotationalKineticEnergy
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name K) (value ?K & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
-       (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
-       (and (variable (name K) (value ?K & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
+   (or
+      (target (name K))
+      (target (name I))
+      (target (name w))
+   )
+   (variable (name K) (value ?K))
+   (variable (name I) (value ?I)) 
+   (variable (name w) (value ?w))
 =>
-   (suggestFormula "K = 0.5Iw^2")
+   (if (or (and           (eq ?I G) (eq ?w G))
+           (and (eq ?K G)           (eq ?w G))
+           (and (eq ?K G) (eq ?I G)          )) then
+      (suggestFormula "K = 0.5 * I * w^2")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule parallelAxisTheorem
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name I) (value ?I & S)) (variable (name I_com) (value ?I_com & G)) 
-            (variable (name m) (value ?m & G)) (variable (name h) (value ?h & G)))
-       (and (variable (name I) (value ?I & G)) (variable (name I_com) (value ?I_com & S)) 
-            (variable (name m) (value ?m & G)) (variable (name h) (value ?h & G)))
-       (and (variable (name I) (value ?I & G)) (variable (name I_com) (value ?I_com & G)) 
-            (variable (name m) (value ?m & S)) (variable (name h) (value ?h & G)))
-       (and (variable (name I) (value ?I & G)) (variable (name I_com) (value ?I_com & G)) 
-            (variable (name m) (value ?m & G)) (variable (name h) (value ?h & S))))
+   (or
+      (target (name I))
+      (target (name I_com))
+      (target (name m))
+      (target (name h))
+   )
+   (variable (name I) (value ?I))
+   (variable (name I_com) (value ?I_com)) 
+   (variable (name m) (value ?m))
+   (variable (name h) (value ?h))
 =>
-   (suggestFormula "I = I_com + Mh^2")
+   (if (or (and           (eq ?I_com G) (eq ?m G) (eq ?h G))
+           (and (eq ?I G)               (eq ?m G) (eq ?h G))
+           (and (eq ?I G) (eq ?I_com G)           (eq ?h G))
+           (and (eq ?I G) (eq ?I_com G) (eq ?m G)          )) then
+      (suggestFormula "I = I_com + (M * h^2)")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule torqueVector
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name torque_vector) (value ?torque_vector & S)) (variable (name r_vector) (value ?r_vector & G)) 
-            (variable (name F_vector) (value ?F_vector & G)))
-       (and (variable (name torque_vector) (value ?torque_vector & G)) (variable (name r_vector) (value ?r_vector & S)) 
-            (variable (name F_vector) (value ?F_vector & G)))
-       (and (variable (name torque_vector) (value ?torque_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
-            (variable (name F_vector) (value ?F_vector & S))))
+   (or
+      (target (name torque_vector))
+      (target (name r_vector))
+      (target (name F_vector))
+   )
+   (variable (name torque_vector) (value ?torque_vector))
+   (variable (name r_vector) (value ?r_vector)) 
+   (variable (name F_vector) (value ?F_vector))
 =>
-   (suggestFormula "torque_vector = r_vector x F_vector")
+   (if (or (and                       (eq ?r_vector G) (eq ?F_vector G))
+           (and (eq ?torque_vector G)                  (eq ?F_vector G))
+           (and (eq ?torque_vector G) (eq ?r_vector G)                 )) then
+      (suggestFormula "torque_vector = r_vector x F_vector")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule torqueMagnitude
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name torque_magnitude) (value ?torque_magnitude & S)) (variable (name r) (value ?r & G)) 
-            (variable (name F) (value ?F & G)) (variable (name theta) (value ?theta & G)))
-       (and (variable (name torque_magnitude) (value ?torque_magnitude & G)) (variable (name r) (value ?r & S)) 
-            (variable (name F) (value ?F & G)) (variable (name theta) (value ?theta & G)))
-       (and (variable (name torque_magnitude) (value ?torque_magnitude & G)) (variable (name r) (value ?r & G)) 
-            (variable (name F) (value ?F & S)) (variable (name theta) (value ?theta & G)))
-       (and (variable (name torque_magnitude) (value ?torque_magnitude & G)) (variable (name r) (value ?r & G)) 
-            (variable (name F) (value ?F & G)) (variable (name theta) (value ?theta & S))))
+   (or
+      (target (name torque_magnitude))
+      (target (name r))
+      (target (name F))
+      (target (name theta))
+   )
+   (variable (name torque_magnitude) (value ?torque_magnitude))
+   (variable (name r) (value ?r)) 
+   (variable (name F) (value ?F))
+   (variable (name theta) (value ?theta))
 =>
-   (suggestFormula "torque_magnitude = r * F * sin(theta)")
+   (if (or (and                          (eq ?r G) (eq ?F G) (eq ?theta G))
+           (and (eq ?torque_magnitude G)           (eq ?F G) (eq ?theta G))
+           (and (eq ?torque_magnitude G) (eq ?r G)           (eq ?theta G))
+           (and (eq ?torque_magnitude G) (eq ?r G) (eq ?F G)          )) then
+      (suggestFormula "magnitude of torque vector = r * F * sin(theta)")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule netTorque
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name torque_net) (value ?torque_net & S)) (variable (name I) (value ?I & G)) 
-            (variable (name alpha) (value ?alpha & G)))
-       (and (variable (name torque_net) (value ?torque_net & G)) (variable (name I) (value ?I & S)) 
-            (variable (name alpha) (value ?alpha & G)))
-       (and (variable (name torque_net) (value ?torque_net & G)) (variable (name I) (value ?I & G)) 
-            (variable (name alpha) (value ?alpha & S))))
+   (or
+      (target (name torque_net))
+      (target (name I))
+      (target (name alpha))
+   )
+   (variable (name torque_net) (value ?torque_net))
+   (variable (name I) (value ?I)) 
+   (variable (name alpha) (value ?alpha))
 =>
-   (suggestFormula "torque_net = I * alpha")
+   (if (or (and                    (eq ?I G) (eq ?alpha G))
+           (and (eq ?torque_net G)           (eq ?alpha G))
+           (and (eq ?torque_net G) (eq ?I G)              )) then
+      (suggestFormula "net torque = I * alpha")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule angularMomentumVector
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name L_vector) (value ?L_vector & S)) (variable (name r_vector) (value ?r_vector & G)) 
-            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & G)))
-       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & S)) 
-            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & G)))
-       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
-            (variable (name v_vector) (value ?v_vector & S)) (variable (name m) (value ?m & G)))
-       (and (variable (name L_vector) (value ?L_vector & G)) (variable (name r_vector) (value ?r_vector & G)) 
-            (variable (name v_vector) (value ?v_vector & G)) (variable (name m) (value ?m & S))))
+   (or
+      (target (name L_vector))
+      (target (name r_vector))
+      (target (name m))
+      (target (name v_vector))
+   )
+   (variable (name L_vector) (value ?L_vector))
+   (variable (name r_vector) (value ?r_vector)) 
+   (variable (name m) (value ?m))
+   (variable (name v_vector) (value ?v_vector))
 =>
-   (suggestFormula "L_vector = m * (r_vector x v_vector)")
+   (if (or (and                  (eq ?r_vector G) (eq ?m G) (eq ?v_vector G))
+           (and (eq ?L_vector G)                  (eq ?m G) (eq ?v_vector G))
+           (and (eq ?L_vector G) (eq ?r_vector G)           (eq ?v_vector G))
+           (and (eq ?L_vector G) (eq ?r_vector G) (eq ?m G)                 )) then
+      (suggestFormula "L_vector = m * (r_vector x v_vector)")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule angularMomentumMagnitude
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name L_magnitude) (value ?L_magnitude & S)) (variable (name r) (value ?r & G)) 
-            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
-            (variable (name theta) (value ?theta & G))
-
-       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & S)) 
-            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
-            (variable (name theta) (value ?theta & G))
-
-       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
-            (variable (name m) (value ?m & S)) (variable (name v) (value ?v & G))) 
-            (variable (name theta) (value ?theta & G))
-
-       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
-            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & S))) 
-            (variable (name theta) (value ?theta & G))
-
-       (and (variable (name L_magnitude) (value ?L_magnitude & G)) (variable (name r) (value ?r & G)) 
-            (variable (name m) (value ?m & G)) (variable (name v) (value ?v & G))) 
-            (variable (name theta) (value ?theta & S)))
+   (or
+      (target (name L_magnitude))
+      (target (name r))
+      (target (name m))
+      (target (name v))
+      (target (name theta))
+   )
+   (variable (name L_magnitude) (value ?L_magnitude))
+   (variable (name r) (value ?r)) 
+   (variable (name m) (value ?m))
+   (variable (name v) (value ?v))
+   (variable (name theta) (value ?theta))
 =>
-   (suggestFormula "L_magnitude = r * m * v * sin(theta)")
+   (if (or (and                     (eq ?r G) (eq ?m G) (eq ?v G) (eq ?theta G))
+           (and (eq ?L_magnitude G)           (eq ?m G) (eq ?v G) (eq ?theta G))
+           (and (eq ?L_magnitude G) (eq ?r G)           (eq ?v G) (eq ?theta G))
+           (and (eq ?L_magnitude G) (eq ?r G) (eq ?m G)           (eq ?theta G))
+           (and (eq ?L_magnitude G) (eq ?r G) (eq ?m G) (eq ?v G)              )) then
+      (suggestFormula "magnitude of L vector = r * m * v * sin(theta)")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule angularMomentum
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name L) (value ?L & S)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & G)))
-       (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & S)) (variable (name w) (value ?w & G)))
-       (and (variable (name L) (value ?L & G)) (variable (name I) (value ?I & G)) (variable (name w) (value ?w & S))))
+   (or
+      (target (name L))
+      (target (name I))
+      (target (name w))
+   )
+   (variable (name L) (value ?L))
+   (variable (name I) (value ?I)) 
+   (variable (name w) (value ?w))
 =>
-   (suggestFormula "L = I * w")
+   (if (or (and           (eq ?I G) (eq ?w G))
+           (and (eq ?L G)           (eq ?w G))
+           (and (eq ?L G) (eq ?I G)          )) then
+      (suggestFormula "L = I * w")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 (defrule functionNetTorque
    (declare (salience ?*FORMULA_SALIENCE*))
-   (or (and (variable (name functionTorque) (value ?functionTorque & S)) (variable (name functionL) (value ?functionL & G)))
-       (and (variable (name functionTorque) (value ?functionTorque & G)) (variable (name functionL) (value ?functionL & S))))
+   (or
+      (target (name functionTorque))
+      (target (name functionL))
+   )
+   (variable (name functionTorque) (value ?functionTorque))
+   (variable (name functionL) (value ?functionL)) 
 =>
-   (suggestFormula "torque = dL/dt")
+   (if (or (eq ?functionTorque G) (eq ?functionL G)) then
+      (suggestFormula "torque = dL/dt")
+    else
+      (assert (variable (name finished) (value G)))
+   )
 )
 
 /************************************
