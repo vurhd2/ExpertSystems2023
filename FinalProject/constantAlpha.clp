@@ -27,7 +27,7 @@
            (and (eq ?w_f G) (eq ?w_i G) (eq ?alpha G)          )) then
       (suggestFormula "w_f = w_i + (alpha * t)")
    )
-)
+)  ; defrule angularVelocityWithoutChangeInAngularPosition
 
 (defrule changeInAngularPositionWithAngularAccelerationAndInitialAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -48,7 +48,7 @@
            (and (eq ?deltaTheta G) (eq ?w_i G) (eq ?t G)          )) then
       (suggestFormula "deltaTheta = (w_i * t) + (0.5 * alpha * t^2)")
    )
-)
+)  ; defrule changeInAngularPositionWithAngularAccelerationAndInitialAngularVelocity
 
 (defrule angularVelocityWithoutTime
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -69,7 +69,7 @@
            (and (eq ?w_f G) (eq ?w_i G) (eq ?alpha G)                   )) then
       (suggestFormula "w_f^2 = w_i^2 + 2(alpha * deltaTheta)")
    )
-)
+)  ; defrule angularVelocityWithoutTime
 
 (defrule changeInAngularPositionWithoutAngularAcceleration
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -90,7 +90,7 @@
            (and (eq ?deltaTheta G) (eq ?w_i G) (eq ?w_f G)          )) then
       (suggestFormula "deltaTheta = 0.5 * (w_f + w_i) * t")
    )
-)
+)  ; defrule changeInAngularPositionWithoutAngularAcceleration
 
 (defrule changeInAngularPositionWithoutInitialAngularVelocity
    (declare (salience ?*FORMULA_SALIENCE*))
@@ -111,4 +111,4 @@
            (and (eq ?deltaTheta G) (eq ?w_f G) (eq ?alpha G)          )) then
       (suggestFormula "deltaTheta = (w_f * t) - (0.5 * alpha * t^2)")
    )
-)
+)  ; defrule changeInAngularPositionWithoutInitialAngularVelocity

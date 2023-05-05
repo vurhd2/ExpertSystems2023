@@ -9,7 +9,14 @@
 * 
 * Description of Module: 
 * Provides a user interface for intaking what rotational physics variables are given and being asked to solve for,
-* after which it recommends the best formula to solve for the asked variable
+* after which it recommends the best formula to solve for the asked variable. Only common formulas containing
+* at least one rotational quantity. For example, though deltaTime (change in time) is used within some of the contained
+* formulas, the formula to calculate deltaTime is not provided due to it not strictly dealing with rotational quantities.
+* Also, not all variations of each formula are provided. For example, the formula 'L = rmv * sin(theta)' is provided,
+* however there is not a variation provided that directly subsitutes 'mv' with 'p' instead, in the hopes that the user
+* already understands the linear kinematics relationship between 'p' and 'mv'. Finally, extremely obvious cases (mainly 
+* such as attempting to solve for a variable when already given a time and function of that variable with respect to time) 
+* are not supported.
 *
 * Key for variables used throughout program:
 * theta            - angular position
@@ -63,6 +70,7 @@
 
 /*
 * Defines a forward chained template for the target variable (variable being solved for)
+* @slot name                  the name of the variable being solved for
 */
 (deftemplate target (slot name))
 
@@ -122,6 +130,323 @@
 =>
    (noFormulasLeft)
 )  
+
+/************************************
+* Rules checking whether the user is given the titular variable
+*/
+
+(defrule needTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name theta) (value ?))
+=>
+   (bind ?value (convertInput "an angular position or angle between vectors given?"))
+   (assert (variable (name theta) (value ?value)))
+)
+
+(defrule needArcLength 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name s) (value ?))
+=>
+   (bind ?value (convertInput "an arc length given?"))
+   (assert (variable (name s) (value ?value)))
+)
+
+(defrule needRadius 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name r) (value ?))
+=>
+   (bind ?value (convertInput "a radius or distance to a rotation axis given?"))
+   (assert (variable (name r) (value ?value)))
+)
+
+(defrule needRadiusVector 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name r_vector) (value ?))
+=>
+   (bind ?value (convertInput "a radius vector or distance vector to a point or rotation axis given?"))
+   (assert (variable (name r_vector) (value ?value)))
+   (printline ?value)
+)
+
+(defrule needDeltaTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name deltaTheta) (value ?))
+=>
+   (bind ?value (convertInput "a difference in angles or angular positions given?"))
+   (assert (variable (name deltaTheta) (value ?value)))
+)
+
+(defrule needFinalTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name theta_f) (value ?))
+=>
+   (bind ?value (convertInput "a final angle or angular position given?"))
+   (assert (variable (name theta_f) (value ?value)))
+)
+
+(defrule needInitialTheta 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name theta_i) (value ?))
+=>
+   (bind ?value (convertInput "an initial angle or angular position given?"))
+   (assert (variable (name theta_i) (value ?value)))
+)
+
+(defrule needTime 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name T) (value ?))
+=>
+   (bind ?value (convertInput "a time given?"))
+   (assert (variable (name T) (value ?value)))
+)
+
+(defrule needDeltaTime 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name deltaTime) (value ?))
+=>
+   (bind ?value (convertInput "a difference in times given?"))
+   (assert (variable (name deltaTime) (value ?value)))
+)
+
+(defrule needLinearVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name v) (value ?))
+=>
+   (bind ?value (convertInput "a linear velocity given?"))
+   (assert (variable (name v) (value ?value)))
+)
+
+(defrule needLinearVelocityVector 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name v_vector) (value ?))
+=>
+   (bind ?value (convertInput "a linear velocity vector given?"))
+   (assert (variable (name v_vector) (value ?value)))
+)
+
+(defrule needAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name w) (value ?))
+=>
+   (bind ?value (convertInput "an angular velocity given?"))
+   (assert (variable (name T) (value ?value)))
+)
+
+(defrule needDeltaW 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name deltaW) (value ?))
+=>
+   (bind ?value (convertInput "a change in angular velocity given?"))
+   (assert (variable (name deltaW) (value ?value)))
+)
+
+(defrule needFinalAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name w_f) (value ?))
+=>
+   (bind ?value (convertInput "a final angular velocity given?"))
+   (assert (variable (name w_f) (value ?value)))
+)
+
+(defrule needInitialAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name w_i) (value ?))
+=>
+   (bind ?value (convertInput "an initial angular velocity given?"))
+   (assert (variable (name w_i) (value ?value)))
+)
+
+(defrule needAverageAngularVelocity 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name averageW) (value ?))
+=>
+   (bind ?value (convertInput "an average angular velocity given?"))
+   (assert (variable (name averageW) (value ?value)))
+)
+
+(defrule needAngularVelocityFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name functionW) (value ?))
+=>
+   (bind ?value (convertInput "the angular velocity given as a function of time?"))
+   (assert (variable (name functionW) (value ?value)))
+)
+
+(defrule needAngularPositionFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name functionTheta) (value ?))
+=>
+   (bind ?value (convertInput "the angular position given as a function of time?"))
+   (assert (variable (name functionTheta) (value ?value)))
+)
+
+(defrule needLinearAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name a) (value ?))
+=>
+   (bind ?value (convertInput "a linear acceleration given?"))
+   (assert (variable (name a) (value ?value)))
+)
+
+(defrule needAngularAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name alpha) (value ?))
+=>
+   (bind ?value (convertInput "an angular acceleration given?"))
+   (assert (variable (name alpha) (value ?value)))
+)
+
+(defrule needAverageAngularAcceleration 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name averageAlpha) (value ?))
+=>
+   (bind ?value (convertInput "an average angular acceleration given?"))
+   (assert (variable (name averageAlpha) (value ?value)))
+)
+
+(defrule needAngularAccelerationFunction 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name functionAlpha) (value ?))
+=>
+   (bind ?value (convertInput "angular acceleration given as a function of time?"))
+   (assert (variable (name functionAlpha) (value ?value)))
+)
+
+(defrule needPeriod 
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name period) (value ?))
+=>
+   (bind ?value (convertInput "a period for circular motion given?"))
+   (assert (variable (name period) (value ?value)))
+)
+
+(defrule needRotationalKineticEnergy
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name K) (value ?))
+=>
+   (bind ?value (convertInput "a rotational kinetic energy given?"))
+   (assert (variable (name K) (value ?value)))
+)
+
+(defrule needMomentOfInertia
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name I) (value ?))
+=>
+   (bind ?value (convertInput "a moment of inertia given (not necessarily at the center of mass)?"))
+   (assert (variable (name I) (value ?value)))
+)
+
+(defrule needMomentOfInertiaAtCenterOfMass
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name I_com) (value ?))
+=>
+   (bind ?value (convertInput "a moment of inertia given at the center of mass?"))
+   (assert (variable (name I_com) (value ?value)))
+)
+
+(defrule needMass
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name m) (value ?))
+=>
+   (bind ?value (convertInput "the mass of the system given?"))
+   (assert (variable (name m) (value ?value)))
+)
+
+(defrule needDistanceBetweenAxes
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name h) (value ?))
+=>
+   (bind ?value (convertInput "a perpendicular distance between parallel rotation axes given?"))
+   (assert (variable (name h) (value ?value)))
+)
+
+(defrule needTorqueVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name torque_vector) (value ?))
+=>
+   (bind ?value (convertInput "torque given as a vector?"))
+   (assert (variable (name torque_vector) (value ?value)))
+)
+
+(defrule needAngularMomentumFunction
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name functionL) (value ?))
+=>
+   (bind ?value (convertInput "angular momentum given as a function of time?"))
+   (assert (variable (name functionL) (value ?value)))
+)
+
+(defrule needForceVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name F_vector) (value ?))
+=>
+   (bind ?value (convertInput "a force given as a vector?"))
+   (assert (variable (name F_vector) (value ?value)))
+)
+
+(defrule needRadiusVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name r_vector) (value ?))
+=>
+   (bind ?value (convertInput "a distance or radius given as a vector?"))
+   (assert (variable (name r_vector) (value ?value)))
+)
+
+(defrule needTorqueMagnitude
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name torque_magnitude) (value ?))
+=>
+   (bind ?value (convertInput "the magnitude of torque given?"))
+   (assert (variable (name torque_magnitude) (value ?value)))
+)
+
+(defrule needNetTorque
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name torque_net) (value ?))
+=>
+   (bind ?value (convertInput "the net torque given?"))
+   (assert (variable (name torque_net) (value ?value)))
+)
+
+(defrule needTorqueFunction
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name functionTorque) (value ?))
+=>
+   (bind ?value (convertInput "torque given as a function of time?"))
+   (assert (variable (name functionTorque) (value ?value)))
+)
+
+(defrule needForce
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name F) (value ?))
+=>
+   (bind ?value (convertInput "the magnitude of a force given?"))
+   (assert (variable (name F) (value ?value)))
+)
+
+(defrule needAngularMomentum
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name L) (value ?))
+=>
+   (bind ?value (convertInput "the (magnitude of) angular momentum given?"))
+   (assert (variable (name L) (value ?value)))
+)
+
+(defrule needAngularMomentumVector
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name L_vector) (value ?))
+=>
+   (bind ?value (convertInput "the angular momentum given as a vector?"))
+   (assert (variable (name L_vector) (value ?value)))
+)
+
+(defrule checkForConstantAngularAcceleration
+   (declare (salience ?*VARIABLE_SALIENCE*))
+   (need-variable (name constantAlpha) (value ?))
+=>
+   (bind ?value (convertInput "it given that the angular acceleration is constant?"))
+   (assert (variable (name constantAlpha) (value ?value)))
+)
 
 /************************************
 * Rules building only the relevant formulas that contain the titular variable
@@ -931,7 +1256,7 @@
               (and (eq ?torque_net G) (eq ?I G)              )) then
          (suggestFormula ?*TORQUE_NET*)
       )
-   )
+   )  ; defrule netTorque
    ")
 
    (return)
@@ -1054,328 +1379,11 @@
    (return)
 )  ; deffunction buildFunctionTorque ()
 
-(defrule givenConstantAngularAcceleration
+(defrule givenConstantAngularAcceleration "Checks if the user is given that angular acceleration is constant"
    (declare (salience ?*FORMULA_SALIENCE*))
    (variable (name constantAlpha) (value G))
 =>
-   (batch (sym-cat ?*DIRECTORY* "constantAlpha.clp"))
-)
-
-/************************************
-* Rules checking whether the user is given the titular variable
-*/
-
-(defrule needTheta 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name theta) (value ?))
-=>
-   (bind ?value (convertInput "Is an angular position or angle between vectors given?"))
-   (assert (variable (name theta) (value ?value)))
-)
-
-(defrule needArcLength 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name s) (value ?))
-=>
-   (bind ?value (convertInput "Is an arc length given?"))
-   (assert (variable (name s) (value ?value)))
-)
-
-(defrule needRadius 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name r) (value ?))
-=>
-   (bind ?value (convertInput "Is a radius or distance to a rotation axis given?"))
-   (assert (variable (name r) (value ?value)))
-)
-
-(defrule needRadiusVector 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name r_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is a radius vector or distance vector to a point or rotation axis given?"))
-   (assert (variable (name r_vector) (value ?value)))
-   (printline ?value)
-)
-
-(defrule needDeltaTheta 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name deltaTheta) (value ?))
-=>
-   (bind ?value (convertInput "Is a difference in angles or angular positions given?"))
-   (assert (variable (name deltaTheta) (value ?value)))
-)
-
-(defrule needFinalTheta 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name theta_f) (value ?))
-=>
-   (bind ?value (convertInput "Is a final angle or angular position given?"))
-   (assert (variable (name theta_f) (value ?value)))
-)
-
-(defrule needInitialTheta 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name theta_i) (value ?))
-=>
-   (bind ?value (convertInput "Is an initial angle or angular position given?"))
-   (assert (variable (name theta_i) (value ?value)))
-)
-
-(defrule needTime 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name T) (value ?))
-=>
-   (bind ?value (convertInput "Is a time given?"))
-   (assert (variable (name T) (value ?value)))
-)
-
-(defrule needDeltaTime 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name deltaTime) (value ?))
-=>
-   (bind ?value (convertInput "Is a difference in times given?"))
-   (assert (variable (name deltaTime) (value ?value)))
-)
-
-(defrule needLinearVelocity 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name v) (value ?))
-=>
-   (bind ?value (convertInput "Is a linear velocity given?"))
-   (assert (variable (name v) (value ?value)))
-)
-
-(defrule needLinearVelocityVector 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name v_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is a linear velocity vector given?"))
-   (assert (variable (name v_vector) (value ?value)))
-)
-
-(defrule needAngularVelocity 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name w) (value ?))
-=>
-   (bind ?value (convertInput "Is an angular velocity given?"))
-   (assert (variable (name T) (value ?value)))
-)
-
-(defrule needDeltaW 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name deltaW) (value ?))
-=>
-   (bind ?value (convertInput "Is a change in angular velocity given?"))
-   (assert (variable (name deltaW) (value ?value)))
-)
-
-(defrule needFinalAngularVelocity 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name w_f) (value ?))
-=>
-   (bind ?value (convertInput "Is a final angular velocity given?"))
-   (assert (variable (name w_f) (value ?value)))
-)
-
-(defrule needInitialAngularVelocity 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name w_i) (value ?))
-=>
-   (bind ?value (convertInput "Is an initial angular velocity given?"))
-   (assert (variable (name w_i) (value ?value)))
-)
-
-(defrule needAverageAngularVelocity 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name averageW) (value ?))
-=>
-   (bind ?value (convertInput "Is an average angular velocity given?"))
-   (assert (variable (name averageW) (value ?value)))
-)
-
-(defrule needAngularVelocityFunction 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name functionW) (value ?))
-=>
-   (bind ?value (convertInput "Is the angular velocity given as a function of time?"))
-   (assert (variable (name functionW) (value ?value)))
-)
-
-(defrule needAngularPositionFunction 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name functionTheta) (value ?))
-=>
-   (bind ?value (convertInput "Is the angular position given as a function of time?"))
-   (assert (variable (name functionTheta) (value ?value)))
-)
-
-(defrule needLinearAcceleration 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name a) (value ?))
-=>
-   (bind ?value (convertInput "Is a linear acceleration given?"))
-   (assert (variable (name a) (value ?value)))
-)
-
-(defrule needAngularAcceleration 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name alpha) (value ?))
-=>
-   (bind ?value (convertInput "Is an angular acceleration given?"))
-   (assert (variable (name alpha) (value ?value)))
-)
-
-(defrule needAverageAngularAcceleration 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name averageAlpha) (value ?))
-=>
-   (bind ?value (convertInput "Is an average angular acceleration given?"))
-   (assert (variable (name averageAlpha) (value ?value)))
-)
-
-(defrule needAngularAccelerationFunction 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name functionAlpha) (value ?))
-=>
-   (bind ?value (convertInput "Is angular acceleration given as a function of time?"))
-   (assert (variable (name functionAlpha) (value ?value)))
-)
-
-(defrule needPeriod 
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name period) (value ?))
-=>
-   (bind ?value (convertInput "Is a period for circular motion given?"))
-   (assert (variable (name period) (value ?value)))
-)
-
-(defrule needRotationalKineticEnergy
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name K) (value ?))
-=>
-   (bind ?value (convertInput "Is a rotational kinetic energy given?"))
-   (assert (variable (name K) (value ?value)))
-)
-
-(defrule needMomentOfInertia
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name I) (value ?))
-=>
-   (bind ?value (convertInput "Is a moment of inertia given (not necessarily at the center of mass)?"))
-   (assert (variable (name I) (value ?value)))
-)
-
-(defrule needMomentOfInertiaAtCenterOfMass
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name I_com) (value ?))
-=>
-   (bind ?value (convertInput "Is a moment of inertia given at the center of mass?"))
-   (assert (variable (name I_com) (value ?value)))
-)
-
-(defrule needMass
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name m) (value ?))
-=>
-   (bind ?value (convertInput "Is the mass of the system given?"))
-   (assert (variable (name m) (value ?value)))
-)
-
-(defrule needDistanceBetweenAxes
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name h) (value ?))
-=>
-   (bind ?value (convertInput "Is a perpendicular distance between parallel rotation axes given?"))
-   (assert (variable (name h) (value ?value)))
-)
-
-(defrule needTorqueVector
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name torque_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is torque given as a vector?"))
-   (assert (variable (name torque_vector) (value ?value)))
-)
-
-(defrule needAngularMomentumFunction
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name functionL) (value ?))
-=>
-   (bind ?value (convertInput "Is angular momentum given as a function of time?"))
-   (assert (variable (name functionL) (value ?value)))
-)
-
-(defrule needForceVector
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name F_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is a force given as a vector?"))
-   (assert (variable (name F_vector) (value ?value)))
-)
-
-(defrule needRadiusVector
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name r_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is a distance or radius given as a vector?"))
-   (assert (variable (name r_vector) (value ?value)))
-)
-
-(defrule needTorqueMagnitude
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name torque_magnitude) (value ?))
-=>
-   (bind ?value (convertInput "Is the magnitude of torque given?"))
-   (assert (variable (name torque_magnitude) (value ?value)))
-)
-
-(defrule needNetTorque
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name torque_net) (value ?))
-=>
-   (bind ?value (convertInput "Is the net torque given?"))
-   (assert (variable (name torque_net) (value ?value)))
-)
-
-(defrule needTorqueFunction
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name functionTorque) (value ?))
-=>
-   (bind ?value (convertInput "Is torque given as a function of time?"))
-   (assert (variable (name functionTorque) (value ?value)))
-)
-
-(defrule needForce
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name F) (value ?))
-=>
-   (bind ?value (convertInput "Is the magnitude of a force given?"))
-   (assert (variable (name F) (value ?value)))
-)
-
-(defrule needAngularMomentum
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name L) (value ?))
-=>
-   (bind ?value (convertInput "Is the (magnitude of) angular momentum given?"))
-   (assert (variable (name L) (value ?value)))
-)
-
-(defrule needAngularMomentumVector
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name L_vector) (value ?))
-=>
-   (bind ?value (convertInput "Is the angular momentum given as a vector?"))
-   (assert (variable (name L_vector) (value ?value)))
-)
-
-(defrule checkForConstantAngularAcceleration
-   (declare (salience ?*VARIABLE_SALIENCE*))
-   (need-variable (name constantAlpha) (value ?))
-=>
-   (bind ?value (convertInput "Is it given that the angular acceleration is constant?"))
-   (assert (variable (name constantAlpha) (value ?value)))
+   (batch (sym-cat ?*DIRECTORY* "constantAlpha.clp")) 
 )
 
 /*
@@ -1474,7 +1482,6 @@
       ) 
    )  ; while (= ?result "invalid")
 
-   (assert (variable (name ?result) (value S)))
    (assert (target (name ?result)))
 
    (return)
@@ -1501,7 +1508,7 @@
    (while (= ?result "invalid")
       (printline)
 
-      (bind ?input (ask (sym-cat (+ ?*questions_asked* 1) ". " ?question " ")))
+      (bind ?input (ask (sym-cat (+ ?*questions_asked* 1) ". Is " ?question " ")))
       (bind ?character (sym-cat (sub-string 1 1 ?input)))
 
       (bind ?validInputs (validInputs))
